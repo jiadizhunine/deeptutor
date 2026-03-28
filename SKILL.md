@@ -16,7 +16,7 @@ description: >
   Also triggers on comparative requests ("帮我对比这三个导师", "compare these advisors").
 metadata:
   author: jiadizhu
-  version: "4.0"
+  version: "1.0"
   license: MIT
 ---
 
