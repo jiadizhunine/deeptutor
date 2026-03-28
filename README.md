@@ -12,7 +12,7 @@
 
 在选择研究生导师之前，用 AI 做一次深度尽职调查。DeepTutor 自动检索导师的学术成果、学生去向、社交舆情与实验室文化，生成一份独立的 HTML 评估报告，帮你做出更明智的读研决策。
 
-![Version](https://img.shields.io/badge/version-v4.0-blue)
+![Version](https://img.shields.io/badge/version-v1.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Claude_Code-purple)
 
@@ -42,10 +42,10 @@
 
 ```bash
 # 方法一：npx（推荐）
-npx skills add jiadizhu/deeptutor
+npx skills add jiadizhunine/deeptutor
 
 # 方法二：Git Clone
-git clone https://github.com/jiadizhu/deeptutor.git ~/.claude/skills/deeptutor
+git clone https://github.com/jiadizhunine/deeptutor.git ~/.claude/skills/deeptutor
 
 # 方法三：手动下载
 # 从 GitHub Releases 下载最新版本，解压到 ~/.claude/skills/deeptutor/
@@ -75,8 +75,8 @@ Investigate Prof. Smith at MIT Biology department
 
 ## 报告示例
 
-- [中文案例：张伟\_北京大学](./examples/张伟_北京大学.html)
-- [English Case: Sarah Mitchell, MIT](./examples/sarah_mitchell_MIT.html)
+- [中文案例：张伟\_北京大学](https://jiadizhunine.github.io/deeptutor/examples/张伟_北京大学.html)
+- [English Case: Sarah Mitchell, MIT](https://jiadizhunine.github.io/deeptutor/examples/sarah_mitchell_MIT.html)
 
 ---
 

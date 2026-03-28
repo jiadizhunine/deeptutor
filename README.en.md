@@ -12,7 +12,7 @@
 
 Before committing years of your life to a graduate advisor, let AI run a deep due diligence investigation. DeepTutor automatically searches a professor's publications, student outcomes, social reputation, and lab culture, then delivers a standalone HTML report to help you make a smarter decision.
 
-![Version](https://img.shields.io/badge/version-v4.0-blue)
+![Version](https://img.shields.io/badge/version-v1.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Claude_Code-purple)
 
@@ -42,10 +42,10 @@ Before committing years of your life to a graduate advisor, let AI run a deep du
 
 ```bash
 # Method 1: npx (recommended)
-npx skills add jiadizhu/deeptutor
+npx skills add jiadizhunine/deeptutor
 
 # Method 2: Git Clone
-git clone https://github.com/jiadizhu/deeptutor.git ~/.claude/skills/deeptutor
+git clone https://github.com/jiadizhunine/deeptutor.git ~/.claude/skills/deeptutor
 
 # Method 3: Manual Download
 # Download the latest release from GitHub Releases and extract to ~/.claude/skills/deeptutor/
@@ -75,8 +75,8 @@ DeepTutor automatically detects the language and region, launches the appropriat
 
 ## Report Examples
 
-- [English Case: Sarah Mitchell, MIT](./examples/sarah_mitchell_MIT.html)
-- [中文案例：张伟\_北京大学](./examples/张伟_北京大学.html)
+- [English Case: Sarah Mitchell, MIT](https://jiadizhunine.github.io/deeptutor/examples/sarah_mitchell_MIT.html)
+- [中文案例：张伟\_北京大学](https://jiadizhunine.github.io/deeptutor/examples/张伟_北京大学.html)
 
 ---
 
