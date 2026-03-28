@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepTutor 导师调查报告 — 张伟 | 北京大学</title>
+<style>
+  /* ========== Reset & Base ========== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei",
+                 "Noto Sans SC", sans-serif;
+    background: #F9FAFB;
+    color: #1F2937;
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ========== Sidebar Navigation ========== */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    height: 100vh;
+    background: #111827;
+    color: #D1D5DB;
+    overflow-y: auto;
+    padding: 24px 0;
+    z-index: 100;
+    transition: transform .3s ease;
+  }
+
+  .sidebar-header {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #374151;
+    margin-bottom: 12px;
+  }
+
+  .sidebar-header .logo {
+    font-size: 18px;
+    font-weight: 700;
+    color: #F59E0B;
+    letter-spacing: .5px;
+  }
+
+  .sidebar-header .subtitle {
+    font-size: 12px;
+    color: #9CA3AF;
+    margin-top: 4px;
+  }
+
+  .sidebar nav a {
+    display: block;
+    padding: 8px 20px;
+    font-size: 13px;
+    color: #D1D5DB;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: all .15s;
+  }
+
+  .sidebar nav a:hover,
+  .sidebar nav a:focus {
+    background: #1F2937;
+    color: #F59E0B;
+    border-left-color: #F59E0B;
+  }
+
+  .sidebar nav a .nav-num {
+    display: inline-block;
+    width: 22px;
+    color: #6B7280;
+    font-size: 11px;
+  }
+
+  /* ========== Main Content ========== */
+  .main {
+    margin-left: 260px;
+    flex: 1;
+    padding: 32px 40px 80px;
+    max-width: 960px;
+  }
+
+  /* ========== Disclaimer Banner ========== */
+  .disclaimer {
+    background: #FEF3C7;
+    border: 2px solid #F59E0B;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    font-size: 14px;
+    color: #92400E;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* ========== Header Card ========== */
+  .hero {
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    border-radius: 14px;
+    padding: 36px 32px;
+    color: #F9FAFB;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(245,158,11,.25) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero h1 { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+  .hero .title-sub { font-size: 15px; color: #D1D5DB; margin-bottom: 16px; }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    font-size: 13px;
+    color: #E5E7EB;
+  }
+
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+  .composite-badge {
+    position: absolute;
+    top: 28px; right: 32px;
+    background: #F59E0B;
+    color: #1F2937;
+    font-weight: 800;
+    font-size: 32px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 1;
+    box-shadow: 0 4px 14px rgba(245,158,11,.4);
+  }
+
+  .composite-badge small {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    margin-top: -2px;
+  }
+
+  /* ========== Section Cards ========== */
+  .card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 28px 28px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+
+  .card h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #F59E0B;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card h2 .sec-num {
+    background: #F59E0B;
+    color: #FFF;
+    font-size: 12px;
+    font-weight: 700;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #374151;
+    margin: 18px 0 8px;
+  }
+
+  .card p, .card li {
+    font-size: 14.5px;
+    color: #374151;
+    line-height: 1.75;
+  }
+
+  .card ul, .card ol {
+    padding-left: 20px;
+    margin: 8px 0;
+  }
+
+  .card li { margin-bottom: 4px; }
+
+  /* ========== Tables ========== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 13.5px;
+  }
+
+  thead th {
+    background: #F3F4F6;
+    color: #374151;
+    font-weight: 700;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 2px solid #D1D5DB;
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #E5E7EB;
+    vertical-align: top;
+  }
+
+  tbody tr:hover { background: #FFFBEB; }
+
+  /* ========== Score Badges ========== */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.6;
+  }
+
+  .badge-green  { background: #D1FAE5; color: #065F46; }
+  .badge-yellow { background: #FEF3C7; color: #92400E; }
+  .badge-red    { background: #FEE2E2; color: #991B1B; }
+
+  /* ========== Progress Bars ========== */
+  .dim-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13.5px;
+  }
+
+  .dim-label {
+    width: 200px;
+    flex-shrink: 0;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .dim-bar-wrap {
+    flex: 1;
+    height: 18px;
+    background: #E5E7EB;
+    border-radius: 9px;
+    overflow: hidden;
+  }
+
+  .dim-bar {
+    height: 100%;
+    border-radius: 9px;
+    transition: width .4s ease;
+  }
+
+  .dim-bar.green  { background: linear-gradient(90deg, #34D399, #10B981); }
+  .dim-bar.yellow { background: linear-gradient(90deg, #FBBF24, #F59E0B); }
+  .dim-bar.red    { background: linear-gradient(90deg, #F87171, #EF4444); }
+
+  .dim-score {
+    width: 50px;
+    text-align: right;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ========== Flag Items ========== */
+  .flag-list { list-style: none; padding: 0; }
+
+  .flag-list li {
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .flag-green {
+    background: #ECFDF5;
+    border-left: 4px solid #10B981;
+  }
+
+  .flag-yellow {
+    background: #FFFBEB;
+    border-left: 4px solid #F59E0B;
+  }
+
+  .flag-red {
+    background: #FEF2F2;
+    border-left: 4px solid #EF4444;
+  }
+
+  .flag-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ========== Source Link ========== */
+  .src {
+    font-size: 11px;
+    color: #9CA3AF;
+    text-decoration: none;
+    border-bottom: 1px dashed #D1D5DB;
+    margin-left: 4px;
+  }
+  .src:hover { color: #F59E0B; border-bottom-color: #F59E0B; }
+
+  /* ========== Match Matrix ========== */
+  .match-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    margin: 14px 0;
+  }
+
+  .match-cell {
+    text-align: center;
+    border-radius: 10px;
+    padding: 16px 10px;
+    font-weight: 700;
+  }
+
+  .match-cell .goal { font-size: 14px; margin-bottom: 6px; }
+  .match-cell .score { font-size: 28px; }
+  .match-cell .label { font-size: 11px; margin-top: 2px; }
+
+  .match-5 { background: #D1FAE5; color: #065F46; }
+  .match-4 { background: #A7F3D0; color: #065F46; }
+  .match-3 { background: #FEF3C7; color: #92400E; }
+  .match-2 { background: #FED7AA; color: #9A3412; }
+  .match-1 { background: #FEE2E2; color: #991B1B; }
+
+  /* ========== Timeline ========== */
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+    margin: 14px 0;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 8px; top: 0; bottom: 0;
+    width: 3px;
+    background: #E5E7EB;
+    border-radius: 2px;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -24px; top: 6px;
+    width: 12px; height: 12px;
+    background: #F59E0B;
+    border: 3px solid #FFFBEB;
+    border-radius: 50%;
+  }
+
+  .timeline-item .year {
+    font-size: 12px;
+    font-weight: 700;
+    color: #D97706;
+    margin-bottom: 2px;
+  }
+
+  .timeline-item .desc {
+    font-size: 14px;
+    color: #374151;
+  }
+
+  /* ========== Footer ========== */
+  .footer {
+    text-align: center;
+    padding: 32px 0 24px;
+    font-size: 13px;
+    color: #9CA3AF;
+    border-top: 1px solid #E5E7EB;
+    margin-top: 20px;
+  }
+
+  .footer strong { color: #D97706; }
+
+  /* ========== Mobile Responsive ========== */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 12px; left: 12px;
+    z-index: 200;
+    background: #111827;
+    color: #F59E0B;
+    border: none;
+    border-radius: 8px;
+    width: 42px; height: 42px;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 24px 16px 60px; }
+    .menu-toggle { display: flex; align-items: center; justify-content: center; }
+    .hero { padding: 28px 20px; }
+    .composite-badge { top: 16px; right: 16px; width: 64px; height: 64px; font-size: 26px; }
+    .dim-label { width: 140px; font-size: 12px; }
+    .match-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    table { font-size: 12px; }
+    thead th, tbody td { padding: 6px 8px; }
+  }
+
+  /* ========== Print ========== */
+  @media print {
+    .sidebar, .menu-toggle { display: none !important; }
+    .main { margin-left: 0; padding: 0; max-width: 100%; }
+    body { background: #FFF; }
+    .card { break-inside: avoid; box-shadow: none; border: 1px solid #CCC; }
+    .hero { background: #333 !important; color: #FFF !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .dim-bar-wrap, .dim-bar, .badge, .flag-green, .flag-yellow, .flag-red,
+    .match-cell { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Mobile Menu Toggle -->
+<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+
+<!-- ========== Sidebar ========== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">DeepTutor v4</div>
+    <div class="subtitle">导师深度调查报告</div>
+  </div>
+  <nav>
+    <a href="#sec1"><span class="nav-num">01</span> 基本信息</a>
+    <a href="#sec2"><span class="nav-num">02</span> 导师类型分类</a>
+    <a href="#sec3"><span class="nav-num">03</span> 师兄姐去向分析</a>
+    <a href="#sec4"><span class="nav-num">04</span> 红灯/绿灯速查</a>
+    <a href="#sec5"><span class="nav-num">05</span> 毕业目标匹配矩阵</a>
+    <a href="#sec6"><span class="nav-num">06</span> 教育与职业经历</a>
+    <a href="#sec7"><span class="nav-num">07</span> 研究方向</a>
+    <a href="#sec8"><span class="nav-num">08</span> 发表成果分析</a>
+    <a href="#sec9"><span class="nav-num">09</span> 合作者网络</a>
+    <a href="#sec10"><span class="nav-num">10</span> 经费与基金</a>
+    <a href="#sec11"><span class="nav-num">11</span> 学术指标</a>
+    <a href="#sec12"><span class="nav-num">12</span> 院系背景</a>
+    <a href="#sec13"><span class="nav-num">13</span> PUA/PUSH风险评估</a>
+    <a href="#sec14"><span class="nav-num">14</span> 多维度评分</a>
+    <a href="#sec15"><span class="nav-num">15</span> 总结与建议</a>
+  </nav>
+</aside>
+
+<!-- ========== Main Content ========== -->
+<div class="main">
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    &#9888;&#65039; 虚拟案例 &mdash; 仅用于演示 DeepTutor 报告格式，所有数据均为虚构
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>张伟</h1>
+    <div class="title-sub">北京大学生命科学学院 &middot; 教授 / 博导</div>
+    <div class="hero-meta">
+      <span>&#128218; 计算生物学 &amp; 基因组学</span>
+      <span>&#128200; h-index 35</span>
+      <span>&#128196; 82 篇论文</span>
+      <span>&#127891; 已毕业 14 名硕博生</span>
+    </div>
+    <div class="composite-badge">
+      4.1
+      <small>优秀</small>
+    </div>
+  </div>
+
+  <!-- ==================== Section 1 ==================== -->
+  <div class="card" id="sec1">
+    <h2><span class="sec-num">1</span> 基本信息</h2>
+    <table>
+      <tbody>
+        <tr><td style="width:140px; font-weight:600;">姓名</td><td>张伟 (Zhang Wei)</td></tr>
+        <tr><td style="font-weight:600;">职称</td><td>教授、博士生导师</td></tr>
+        <tr><td style="font-weight:600;">所在单位</td><td>北京大学生命科学学院 &middot; 生物信息学系</td></tr>
+        <tr><td style="font-weight:600;">办公地点</td><td>金光生命科学大楼 B318</td></tr>
+        <tr><td style="font-weight:600;">电子邮箱</td><td>zhangwei_bio@pku.edu.cn</td></tr>
+        <tr><td style="font-weight:600;">ORCID</td><td><a href="#" class="src">0000-0002-XXXX-XXXX</a></td></tr>
+        <tr><td style="font-weight:600;">Google Scholar</td><td><a href="#" class="src">scholar.google.com/citations?user=XXXXXX</a></td></tr>
+        <tr><td style="font-weight:600;">课题组主页</td><td><a href="#" class="src">zhanglab.bio.pku.edu.cn</a></td></tr>
+        <tr>
+          <td style="font-weight:600;">研究领域</td>
+          <td>计算基因组学、单细胞转录组分析、空间转录组学、调控网络推断、多组学整合</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ==================== Section 2 ==================== -->
+  <div class="card" id="sec2">
+    <h2><span class="sec-num">2</span> 导师类型分类</h2>
+
+    <table>
+      <thead>
+        <tr><th>类型</th><th>判定</th><th>置信度</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-green">学术型</span></td>
+          <td>主要匹配类型</td>
+          <td>高</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-yellow">指导型（次要）</span></td>
+          <td>部分匹配</td>
+          <td>中</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>分类依据</h3>
+    <ul>
+      <li><strong>学术型特征明显：</strong>课题组发表记录以高影响力学术期刊为主（Nature Methods、Genome Biology、Nucleic Acids Research），研究内容以方法学开发和基础科学问题为导向，非应用转化类课题。<a href="#" class="src">[来源]</a></li>
+      <li><strong>组会制度规范：</strong>据已毕业学生反馈，每周一次全组组会 + 每周一次一对一进展讨论，文献汇报每两周轮转一次。<a href="#" class="src">[知乎]</a></li>
+      <li><strong>论文参与度高：</strong>张伟教授亲自参与论文撰写和修改，尤其是方法学描述和算法验证部分，通讯作者占比超过 90%。</li>
+      <li><strong>兼具指导性：</strong>对低年级研究生（硕一、博一）提供较为详细的课题规划和技术指导，随年级增长逐渐放手，鼓励独立探索。</li>
+    </ul>
+
+    <h3>课题组日常模式</h3>
+    <p>课题组约 12-15 人，包括 2-3 名博士后、4-5 名博士生、3-4 名硕士生和 2-3 名本科实习生。工作氛围偏学术化，组内氛围较好但对科研产出有明确要求。博士生毕业前通常需要至少 1 篇一作高水平论文（IF &ge; 8），硕士生需完成 1 篇合作论文。</p>
+  </div>
+
+  <!-- ==================== Section 3 ==================== -->
+  <div class="card" id="sec3">
+    <h2><span class="sec-num">3</span> 师兄姐去向分析</h2>
+
+    <p style="margin-bottom:12px;">基于课题组网站、CNKI 学位论文检索、LinkedIn 及知乎相关帖文，追踪到以下已毕业学生的去向信息：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>姓名</th><th>在组时间</th><th>学位</th><th>一作论文</th><th>毕业去向</th><th>当前职位</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>刘明远</td><td>2015-2020</td><td>博士</td><td>3 篇 (Genome Biol., NAR, Bioinformatics)</td>
+          <td>斯坦福大学博士后</td><td>浙江大学 研究员/PI <a href="#" class="src">[来源]</a></td>
+        </tr>
+        <tr>
+          <td>陈雪婷</td><td>2016-2021</td><td>博士</td><td>2 篇 (Nature Methods, Genome Res.)</td>
+          <td>哈佛大学博士后</td><td>北京大学 助理教授 <a href="#" class="src">[来源]</a></td>
+        </tr>
+        <tr>
+          <td>王海洋</td><td>2017-2020</td><td>硕士</td><td>1 篇 (Bioinformatics)</td>
+          <td>字节跳动 AI Lab</td><td>字节跳动 高级算法工程师 <a href="#" class="src">[来源]</a></td>
+        </tr>
+        <tr>
+          <td>赵丽萍</td><td>2017-2022</td><td>博士</td><td>2 篇 (Cell Systems, Genome Biol.)</td>
+          <td>中科院生物物理所博士后</td><td>中科院 副研究员 <a href="#" class="src">[来源]</a></td>
+        </tr>
+        <tr>
+          <td>孙浩然</td><td>2018-2021</td><td>硕士</td><td>1 篇 (BMC Bioinformatics)</td>
+          <td>华大基因</td><td>华大基因 项目经理 <a href="#" class="src">[来源]</a></td>
+        </tr>
+        <tr>
+          <td>林思远</td><td>2018-2023</td><td>博士</td><td>3 篇 (Nature Commun., Genome Biol., NAR)</td>
+          <td>MIT 博士后</td><td>在站（进展顺利）<a href="#" class="src">[来源]</a></td>
+        </tr>
+        <tr>
+          <td>黄晓梅</td><td>2019-2022</td><td>硕士</td><td>1 篇 (Bioinformatics)</td>
+          <td>腾讯 天衍实验室</td><td>腾讯 算法研究员 <a href="#" class="src">[来源]</a></td>
+        </tr>
+        <tr>
+          <td>杨帆</td><td>2019-2024</td><td>博士</td><td>2 篇 (Genome Biol., Cell Rep. Methods)</td>
+          <td>北京生命科学研究所博士后</td><td>在站 <a href="#" class="src">[来源]</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>天花板 / 地板分析</h3>
+    <table>
+      <thead><tr><th>指标</th><th>评估</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;">天花板</td>
+          <td><span class="badge badge-green">较高</span> &mdash; 多名博士毕业生进入海外顶尖高校做博后，其中两人已回国获得 PI 职位（浙大、北大），产出与学术影响力突出。</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">地板</td>
+          <td><span class="badge badge-green">稳固</span> &mdash; 硕士毕业生均进入头部互联网公司或知名基因组公司，没有出现去向不明或滞留的情况。</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">学位完成时间</td>
+          <td><span class="badge badge-green">正常</span> &mdash; 博士平均 5.0 年（校方标准学制 5 年），硕士平均 3.0 年，未出现延毕现象。</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">学术/产业比</td>
+          <td>博士毕业生中约 75% 选择继续学术路线（博后 &rarr; PI），25% 转向产业界；硕士生则 100% 进入产业界。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:12px;"><strong>总体评价：</strong>学生培养记录优秀。博士生学术产出高、去向好，多人拿到独立 PI 职位，说明课题组的科研训练体系扎实。硕士生虽以就业为主，但去向均为行业头部企业，证明计算能力培养到位。此为该导师最突出的优势之一。</p>
+  </div>
+
+  <!-- ==================== Section 4 ==================== -->
+  <div class="card" id="sec4">
+    <h2><span class="sec-num">4</span> 红灯 / 绿灯速查</h2>
+
+    <ul class="flag-list">
+      <li class="flag-green">
+        <span class="flag-icon">&#9989;</span>
+        <div><strong>学生去向清晰可追踪</strong> &mdash; 所有已毕业学生均可在 LinkedIn、课题组网站或学术主页上找到去向信息，无"消失"的学生。<a href="#" class="src">[课题组网站]</a></div>
+      </li>
+      <li class="flag-green">
+        <span class="flag-icon">&#9989;</span>
+        <div><strong>发表记录连续稳定</strong> &mdash; 近五年每年稳定发表 6-10 篇论文，无论文空窗期，研究活跃度高。<a href="#" class="src">[Google Scholar]</a></div>
+      </li>
+      <li class="flag-green">
+        <span class="flag-icon">&#9989;</span>
+        <div><strong>学生一作论文比例健康</strong> &mdash; 约 65% 的论文以学生为第一作者，充分保障学生署名权益。<a href="#" class="src">[Scopus]</a></div>
+      </li>
+      <li class="flag-green">
+        <span class="flag-icon">&#9989;</span>
+        <div><strong>经费充足且持续</strong> &mdash; 当前在研项目包括国家自然科学基金重点项目、国家重点研发计划子课题等，总经费超过 800 万元。<a href="#" class="src">[NSFC]</a></div>
+      </li>
+      <li class="flag-green">
+        <span class="flag-icon">&#9989;</span>
+        <div><strong>支持学生参加学术会议</strong> &mdash; 知乎帖文提到组内学生每年至少参加 1 次国内/国际学术会议，差旅费由课题组报销。<a href="#" class="src">[知乎]</a></div>
+      </li>
+      <li class="flag-yellow">
+        <span class="flag-icon">&#9888;</span>
+        <div><strong>科研要求较高</strong> &mdash; 多位在读/已毕业学生提到，张老师对论文质量要求严格，投稿前需经历多轮修改（3-5 轮属常态），部分学生反映压力较大。<a href="#" class="src">[知乎]</a></div>
+      </li>
+      <li class="flag-yellow">
+        <span class="flag-icon">&#9888;</span>
+        <div><strong>寒暑假时间较紧</strong> &mdash; 有学生反映课题组对假期有一定限制，寒假一般放 10-14 天，暑假不鼓励长时间离开。<a href="#" class="src">[小红书]</a></div>
+      </li>
+      <li class="flag-red">
+        <span class="flag-icon">&#10060;</span>
+        <div><strong>偶有沟通风格强硬的反馈</strong> &mdash; 在知乎上有 1 条匿名帖子提到张老师在组会上批评学生时"措辞比较直接""不太留情面"。但该帖文关注度不高（仅 3 赞），且有其他帖子反驳称"严格但公正"。需综合判断。<a href="#" class="src">[知乎]</a></div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ==================== Section 5 ==================== -->
+  <div class="card" id="sec5">
+    <h2><span class="sec-num">5</span> 毕业目标匹配矩阵</h2>
+
+    <p style="margin-bottom:14px;">根据张伟课题组的培养特点、学生去向及课题性质，对不同毕业目标的匹配度如下（1-5 分）：</p>
+
+    <div class="match-grid">
+      <div class="match-cell match-5">
+        <div class="goal">读博深造</div>
+        <div class="score">5</div>
+        <div class="label">极度匹配</div>
+      </div>
+      <div class="match-cell match-4">
+        <div class="goal">高校/科研院所</div>
+        <div class="score">4</div>
+        <div class="label">高度匹配</div>
+      </div>
+      <div class="match-cell match-4">
+        <div class="goal">进大厂 (AI/算法)</div>
+        <div class="score">4</div>
+        <div class="label">高度匹配</div>
+      </div>
+      <div class="match-cell match-3">
+        <div class="goal">药企/CRO</div>
+        <div class="score">3</div>
+        <div class="label">一般匹配</div>
+      </div>
+      <div class="match-cell match-2">
+        <div class="goal">考公/考编</div>
+        <div class="score">2</div>
+        <div class="label">匹配度低</div>
+      </div>
+      <div class="match-cell match-2">
+        <div class="goal">纯拿学位</div>
+        <div class="score">2</div>
+        <div class="label">匹配度低</div>
+      </div>
+    </div>
+
+    <h3>匹配分析</h3>
+    <ul>
+      <li><strong>读博深造（5 分）：</strong>该课题组学术训练体系完善，博士毕业生有多人进入海外顶尖高校做博后并最终获得独立 PI 职位，属于读博深造的最优选择之一。</li>
+      <li><strong>高校/科研院所（4 分）：</strong>课题组的学术声誉和人脉网络为学生进入高校或科研院所提供了有力背书。扣 1 分是因为竞争激烈，需自身足够优秀。</li>
+      <li><strong>进大厂（4 分）：</strong>计算生物学的编程训练（Python、R、机器学习）与互联网大厂 AI/算法岗需求高度契合。多名硕士毕业生的去向已充分验证这条路径。</li>
+      <li><strong>药企/CRO（3 分）：</strong>课题组研究偏基础方法学开发，与药企实际业务场景（临床数据分析、靶点验证）有一定距离。但生信能力底子好，转型并非困难。</li>
+      <li><strong>考公/考编（2 分）：</strong>课题组对科研投入要求较高，假期相对有限，不太适合需要大量时间备考的同学。</li>
+      <li><strong>纯拿学位（2 分）：</strong>张老师对毕业论文质量有明确标准，想"混毕业"基本不可能。不适合没有科研动力的学生。</li>
+    </ul>
+  </div>
+
+  <!-- ==================== Section 6 ==================== -->
+  <div class="card" id="sec6">
+    <h2><span class="sec-num">6</span> 教育与职业经历</h2>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="year">1996 &mdash; 2000</div>
+        <div class="desc"><strong>清华大学 生物科学与技术系</strong> &mdash; 理学学士。本科期间即参与基因组注释课题，获清华大学优秀毕业论文。<a href="#" class="src">[来源]</a></div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2000 &mdash; 2005</div>
+        <div class="desc"><strong>清华大学 生物信息学中心</strong> &mdash; 理学博士。师从李建明教授（虚构），博士论文研究转录因子结合位点预测算法，发表 4 篇 SCI 论文。<a href="#" class="src">[CNKI]</a></div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2005 &mdash; 2009</div>
+        <div class="desc"><strong>哈佛大学 公共卫生学院 生物统计学系</strong> &mdash; 博士后研究员。合作导师 Prof. Michael Roberts（虚构），从事高通量测序数据统计方法开发，期间在 Genome Research 和 Bioinformatics 发表 5 篇论文。<a href="#" class="src">[来源]</a></div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2009 &mdash; 2014</div>
+        <div class="desc"><strong>北京大学 生命科学学院</strong> &mdash; 副教授。入选"北京大学百人计划"引进，获得 300 万元启动经费。建立计算基因组学实验室，招收第一批研究生。<a href="#" class="src">[来源]</a></div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2014 &mdash; 2016</div>
+        <div class="desc"><strong>国家自然科学基金 优秀青年科学基金获得者</strong> &mdash; 项目名称"单细胞转录组数据分析方法学研究"。<a href="#" class="src">[NSFC]</a></div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2016 &mdash; 至今</div>
+        <div class="desc"><strong>北京大学 生命科学学院</strong> &mdash; 教授、博士生导师。承担国家重点研发计划子课题、国家自然科学基金重点项目等。2022 年获教育部自然科学奖二等奖（排名第一）。<a href="#" class="src">[来源]</a></div>
+      </div>
+    </div>
+
+    <h3>学术任职</h3>
+    <ul>
+      <li>Genome Biology 编委会成员（Associate Editor）</li>
+      <li>中国生物信息学学会 常务理事</li>
+      <li>Bioinformatics 期刊审稿人</li>
+      <li>国家自然科学基金委 生命科学部 会评专家</li>
+    </ul>
+  </div>
+
+  <!-- ==================== Section 7 ==================== -->
+  <div class="card" id="sec7">
+    <h2><span class="sec-num">7</span> 研究方向</h2>
+
+    <p style="margin-bottom:12px;">张伟课题组的研究聚焦于计算方法学开发，为高通量生物数据分析提供算法工具。主要方向如下：</p>
+
+    <table>
+      <thead><tr><th>方向</th><th>具体内容</th><th>代表成果</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;">单细胞转录组分析</td>
+          <td>开发单细胞 RNA-seq 数据的降维、聚类和细胞类型注释算法。重点解决批次效应校正和稀有细胞识别问题。</td>
+          <td>scDeepCluster (Nature Methods, 2021) <a href="#" class="src">[链接]</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">空间转录组学</td>
+          <td>融合空间位置信息与基因表达数据，进行组织微环境解析和空间基因共表达网络构建。</td>
+          <td>SpaGCN (Genome Biology, 2023) <a href="#" class="src">[链接]</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">基因调控网络推断</td>
+          <td>基于机器学习与因果推断方法，从多组学数据中重建转录因子-靶基因调控关系。</td>
+          <td>DeepGRN (Nucleic Acids Res., 2020) <a href="#" class="src">[链接]</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">多组学数据整合</td>
+          <td>开发整合 scRNA-seq、scATAC-seq、空间组学等多模态数据的统计框架。</td>
+          <td>MultiOmicsVAE (Cell Systems, 2022) <a href="#" class="src">[链接]</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>方向评价</h3>
+    <p>计算生物学 / 生物信息学是当前生命科学领域最活跃的交叉学科方向之一。单细胞组学和空间组学方法学开发处于快速上升期，该课题组的研究方向与国际前沿高度吻合。从就业角度看，该方向毕业生在学术界和工业界（尤其是 AI 制药、基因组学公司、互联网 AI Lab）均有较强竞争力。<strong>方向前景评分：4.5/5（优秀）</strong>。</p>
+  </div>
+
+  <!-- ==================== Section 8 ==================== -->
+  <div class="card" id="sec8">
+    <h2><span class="sec-num">8</span> 发表成果分析</h2>
+
+    <table>
+      <thead><tr><th>指标</th><th>数值</th><th>同行比较</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">总论文数</td><td>82 篇</td><td>高于同院系同级别教授平均水平（~60 篇）</td></tr>
+        <tr><td style="font-weight:600;">h-index</td><td>35</td><td>位于同方向 Top 15%</td></tr>
+        <tr><td style="font-weight:600;">i10-index</td><td>58</td><td>优秀</td></tr>
+        <tr><td style="font-weight:600;">总引用次数</td><td>4,826 次</td><td>-</td></tr>
+        <tr><td style="font-weight:600;">近 5 年论文数</td><td>38 篇</td><td>年均 ~7.6 篇，产出稳定</td></tr>
+        <tr><td style="font-weight:600;">学生一作比例</td><td>~65%</td><td>健康水平</td></tr>
+      </tbody>
+    </table>
+
+    <h3>代表性论文（Top 10）</h3>
+    <table>
+      <thead>
+        <tr><th>#</th><th>论文标题</th><th>期刊</th><th>年份</th><th>引用</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>scDeepCluster: a deep learning framework for single-cell clustering</td><td>Nature Methods</td><td>2021</td><td>412 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>2</td><td>SpaGCN: integrating gene expression and spatial information for domain identification</td><td>Genome Biology</td><td>2023</td><td>189 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>3</td><td>DeepGRN: inferring gene regulatory networks from single-cell data</td><td>Nucleic Acids Res.</td><td>2020</td><td>356 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>4</td><td>MultiOmicsVAE: a variational autoencoder for multi-omics integration</td><td>Cell Systems</td><td>2022</td><td>148 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>5</td><td>BatchCorrector: a unified batch effect correction method for scRNA-seq</td><td>Genome Research</td><td>2019</td><td>287 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>6</td><td>CellAnnotator: automated cell type annotation using transfer learning</td><td>Genome Biology</td><td>2021</td><td>198 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>7</td><td>SpatialDE-CN: identifying spatially variable genes in Chinese population cohorts</td><td>Nature Commun.</td><td>2023</td><td>76 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>8</td><td>ChromNet: a deep neural network for chromatin accessibility prediction</td><td>Bioinformatics</td><td>2018</td><td>245 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>9</td><td>scATAC-bench: benchmarking computational methods for scATAC-seq analysis</td><td>Genome Biology</td><td>2020</td><td>312 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>10</td><td>TF-COMB: combinatorial transcription factor binding site prediction</td><td>Nucleic Acids Res.</td><td>2017</td><td>201 <a href="#" class="src">[链接]</a></td></tr>
+      </tbody>
+    </table>
+
+    <h3>发表趋势</h3>
+    <p>2020-2025 年发表趋势：8 &rarr; 7 &rarr; 9 &rarr; 8 &rarr; 6 &rarr; 7（篇/年）。整体稳定，未出现明显下滑或空窗。2023 年有 Genome Biology 和 Nature Communications 各 1 篇高水平成果。<strong>期刊质量分布：</strong>Top-tier（Nature系/Cell系/Genome Biology）占 ~25%，高水平（NAR/Bioinformatics/Genome Research）占 ~40%，中等偏上占 ~35%。整体发表质量优秀。</p>
+  </div>
+
+  <!-- ==================== Section 9 ==================== -->
+  <div class="card" id="sec9">
+    <h2><span class="sec-num">9</span> 合作者网络</h2>
+
+    <h3>校内合作者</h3>
+    <table>
+      <thead><tr><th>姓名</th><th>单位</th><th>合作方向</th><th>合作论文数</th></tr></thead>
+      <tbody>
+        <tr><td>李芳（虚构）</td><td>北大 生科院 细胞生物学系</td><td>单细胞实验数据提供与生物学验证</td><td>8 篇 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>周国强（虚构）</td><td>北大 数学科学学院</td><td>统计方法开发、贝叶斯模型</td><td>5 篇 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>吴晓东（虚构）</td><td>北大 前沿交叉学科研究院</td><td>多组学整合分析</td><td>4 篇 <a href="#" class="src">[链接]</a></td></tr>
+      </tbody>
+    </table>
+
+    <h3>校外/国际合作者</h3>
+    <table>
+      <thead><tr><th>姓名</th><th>单位</th><th>合作方向</th><th>合作论文数</th></tr></thead>
+      <tbody>
+        <tr><td>Prof. Michael Roberts（虚构）</td><td>哈佛大学 公共卫生学院</td><td>统计方法学、博后期间导师</td><td>12 篇 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>Prof. Sarah Chen（虚构）</td><td>斯坦福大学 遗传学系</td><td>空间转录组学工具验证</td><td>4 篇 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>王志远（虚构）</td><td>中山大学 生命科学学院</td><td>肿瘤单细胞数据分析</td><td>6 篇 <a href="#" class="src">[链接]</a></td></tr>
+        <tr><td>Prof. Thomas Mueller（虚构）</td><td>马克斯普朗克研究所</td><td>基因调控网络比较基因组学</td><td>3 篇 <a href="#" class="src">[链接]</a></td></tr>
+      </tbody>
+    </table>
+
+    <h3>合作网络评价</h3>
+    <p>合作网络国际化程度较高，与北美和欧洲顶尖实验室保持长期合作关系。校内合作覆盖实验生物学和统计学，形成"计算-实验-理论"的互补结构。值得注意的是，与博后导师 Prof. Roberts 的持续合作（12 篇论文）说明海外学术人脉深厚，有利于学生海外深造时获得推荐信支持。</p>
+  </div>
+
+  <!-- ==================== Section 10 ==================== -->
+  <div class="card" id="sec10">
+    <h2><span class="sec-num">10</span> 经费与基金</h2>
+
+    <table>
+      <thead>
+        <tr><th>项目名称</th><th>来源</th><th>时间</th><th>金额</th><th>角色</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>单细胞多组学数据整合分析的算法研究</td>
+          <td>国家自然科学基金 重点项目</td>
+          <td>2022-2026</td>
+          <td>300 万元</td>
+          <td>负责人 <a href="#" class="src">[NSFC]</a></td>
+        </tr>
+        <tr>
+          <td>空间转录组学关键计算方法开发</td>
+          <td>国家重点研发计划 子课题</td>
+          <td>2023-2027</td>
+          <td>280 万元</td>
+          <td>子课题负责人 <a href="#" class="src">[科技部]</a></td>
+        </tr>
+        <tr>
+          <td>基因调控网络推断的机器学习方法</td>
+          <td>国家自然科学基金 面上项目</td>
+          <td>2020-2023</td>
+          <td>65 万元</td>
+          <td>负责人（已结题）<a href="#" class="src">[NSFC]</a></td>
+        </tr>
+        <tr>
+          <td>单细胞转录组数据分析方法学研究</td>
+          <td>国家自然科学基金 优青项目</td>
+          <td>2014-2016</td>
+          <td>100 万元</td>
+          <td>负责人（已结题）<a href="#" class="src">[NSFC]</a></td>
+        </tr>
+        <tr>
+          <td>北京大学-华大基因联合研究项目</td>
+          <td>横向合作</td>
+          <td>2021-2024</td>
+          <td>120 万元</td>
+          <td>PI <a href="#" class="src">[来源]</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>经费评估</h3>
+    <ul>
+      <li><strong>总经费：</strong>当前在研经费约 700 万元（不含已结题项目），对于计算生物学方向而言非常充裕（该方向主要开支为人员工资和计算资源，不需要昂贵的实验设备）。</li>
+      <li><strong>资金来源多样性：</strong>纵向为主（NSFC + 科技部），辅以小量横向合作，结构健康。</li>
+      <li><strong>资金连续性：</strong>从优青（2014）到面上（2020）再到重点（2022），基金连续不断，无资金断档。</li>
+      <li><strong>对学生的意义：</strong>经费充足意味着研究生不需要担心补贴、计算资源和会议差旅等问题。</li>
+    </ul>
+  </div>
+
+  <!-- ==================== Section 11 ==================== -->
+  <div class="card" id="sec11">
+    <h2><span class="sec-num">11</span> 学术指标（同行比较）</h2>
+
+    <p style="margin-bottom:12px;">与北京大学生命科学学院同级别（教授/博导）计算方向教师的比较：</p>
+
+    <table>
+      <thead>
+        <tr><th>指标</th><th>张伟</th><th>院系同级别均值</th><th>全国同方向 Top 20% 线</th><th>评级</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;">论文总数</td><td>82</td><td>~60</td><td>~70</td>
+          <td><span class="badge badge-green">优秀</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">h-index</td><td>35</td><td>~25</td><td>~30</td>
+          <td><span class="badge badge-green">优秀</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">近 5 年论文</td><td>38</td><td>~28</td><td>~32</td>
+          <td><span class="badge badge-green">优秀</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Nature系/Cell系论文</td><td>3 篇</td><td>~1 篇</td><td>~2 篇</td>
+          <td><span class="badge badge-green">优秀</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">在研经费</td><td>~700 万</td><td>~400 万</td><td>~500 万</td>
+          <td><span class="badge badge-green">优秀</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">已毕业博士生</td><td>6 人</td><td>~4 人</td><td>~5 人</td>
+          <td><span class="badge badge-green">优秀</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">学生获 PI 职位数</td><td>3 人</td><td>~1 人</td><td>~2 人</td>
+          <td><span class="badge badge-green">优秀</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:12px;"><strong>总体定位：</strong>张伟教授在北京大学生命科学学院计算方向教师中属于第一梯队。各项学术指标均高于院系同级别均值，h-index 和学生培养成果尤为突出。与全国同方向教授相比，亦处于 Top 15-20% 水平。</p>
+  </div>
+
+  <!-- ==================== Section 12 ==================== -->
+  <div class="card" id="sec12">
+    <h2><span class="sec-num">12</span> 院系背景</h2>
+
+    <h3>北京大学 生命科学学院</h3>
+    <table>
+      <tbody>
+        <tr><td style="width:160px; font-weight:600;">学科评估</td><td>教育部第五轮学科评估 A+（生物学）<a href="#" class="src">[来源]</a></td></tr>
+        <tr><td style="font-weight:600;">全国排名</td><td>生物学科 Top 2（与清华并列）</td></tr>
+        <tr><td style="font-weight:600;">院系规模</td><td>全职教师约 120 人，其中教授/研究员约 60 人</td></tr>
+        <tr><td style="font-weight:600;">计算方向教师</td><td>约 8-10 人（含生物信息学、系统生物学、计算生物学方向）</td></tr>
+        <tr><td style="font-weight:600;">博士生名额</td><td>学术型博士每位博导每年 1-2 个名额</td></tr>
+        <tr><td style="font-weight:600;">硕士生名额</td><td>学术型硕士每年约 3-5 个名额（按系分配）</td></tr>
+        <tr><td style="font-weight:600;">毕业要求</td><td>博士：至少 1 篇 SCI 论文（院系要求，课题组实际要求更高）；硕士：完成学位论文答辩</td></tr>
+        <tr><td style="font-weight:600;">公共平台</td><td>高性能计算集群（GPU 节点充足）、测序平台、显微成像平台</td></tr>
+      </tbody>
+    </table>
+
+    <h3>平台优势</h3>
+    <ul>
+      <li><strong>计算资源：</strong>北大生科院与北大计算中心共建高性能计算平台，GPU 资源对计算生物学课题组有倾斜，对于深度学习方法开发非常有利。</li>
+      <li><strong>交叉合作生态：</strong>院内实验生物学课题组众多，计算方向学生容易找到生物学合作者，获取真实数据进行方法验证。</li>
+      <li><strong>学术交流活跃：</strong>北大生科院每周有多场学术报告（包括国际学者讲座），博士生有机会接触领域前沿。</li>
+      <li><strong>北京区位优势：</strong>毗邻中科院各研究所、清华大学、北京基因组研究所等，学术交流和实习机会丰富。</li>
+    </ul>
+  </div>
+
+  <!-- ==================== Section 13 ==================== -->
+  <div class="card" id="sec13">
+    <h2><span class="sec-num">13</span> PUA/PUSH 风险评估</h2>
+
+    <table>
+      <thead><tr><th>评估维度</th><th>风险等级</th><th>证据</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;">工作时间要求</td>
+          <td><span class="badge badge-yellow">中等</span></td>
+          <td>据学生反馈，课题组没有明确的打卡或签到制度，但博士生通常工作日全天在实验室/办公室，周末偶尔需要工作（约每月 1-2 次）。总体属于正常学术课题组水平。<a href="#" class="src">[知乎]</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">假期自由度</td>
+          <td><span class="badge badge-yellow">中等偏低</span></td>
+          <td>寒假一般可请 10-14 天假，暑假约 7-10 天。相比某些"放养型"课题组偏紧，但比严格型课题组宽松。需提前报备。<a href="#" class="src">[小红书]</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">情绪管理与沟通风格</td>
+          <td><span class="badge badge-yellow">低偏中</span></td>
+          <td>整体评价积极。知乎上有 1 条匿名帖文反映老师"批评时比较直接"，但多数评价认为"严格但公正""对事不对人"。未发现系统性的人格贬低或情绪操控证据。<a href="#" class="src">[知乎]</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">毕业卡控风险</td>
+          <td><span class="badge badge-green">低</span></td>
+          <td>所有已毕业学生均在标准学制内毕业（博士 5 年、硕士 3 年），无延毕记录。毕业要求明确且提前告知。<a href="#" class="src">[CNKI]</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">署名与学术伦理</td>
+          <td><span class="badge badge-green">低</span></td>
+          <td>学生一作比例约 65%，博士毕业前基本都能发出一作论文。未发现抢夺署名或学术不端的报告。<a href="#" class="src">[Scopus]</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">杂务/非学术任务</td>
+          <td><span class="badge badge-green">低</span></td>
+          <td>作为纯计算课题组，不涉及实验操作、仪器维护等杂务。学生反馈日常工作以科研为主。<a href="#" class="src">[知乎]</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>综合 PUA/PUSH 风险</h3>
+    <p style="padding:12px; background:#ECFDF5; border-radius:8px; border-left:4px solid #10B981; margin-top:8px;">
+      <strong>综合风险等级：低</strong><br>
+      张伟教授的课题组管理风格偏向严谨学术型，对科研产出有明确要求，但未达到 PUSH 或 PUA 的程度。没有发现系统性的剥削、人格贬低或不合理要求的证据。对于科研动力较强的学生，这种"高要求、高产出"的模式反而是有利的。但如果你是需要大量自由时间或者抗压能力较弱的同学，建议提前了解具体的作息安排。
+    </p>
+  </div>
+
+  <!-- ==================== Section 14 ==================== -->
+  <div class="card" id="sec14">
+    <h2><span class="sec-num">14</span> 多维度评分</h2>
+
+    <p style="margin-bottom:16px;">以下为基于 DeepTutor 评估框架的 9 维度打分，每项满分 5 分：</p>
+
+    <!-- Dimension 1 -->
+    <div class="dim-row">
+      <span class="dim-label">研究方向与前景</span>
+      <div class="dim-bar-wrap"><div class="dim-bar green" style="width:90%;"></div></div>
+      <span class="dim-score" style="color:#065F46;">4.5</span>
+    </div>
+    <!-- Dimension 2 -->
+    <div class="dim-row">
+      <span class="dim-label">发表成果与质量</span>
+      <div class="dim-bar-wrap"><div class="dim-bar green" style="width:86%;"></div></div>
+      <span class="dim-score" style="color:#065F46;">4.3</span>
+    </div>
+    <!-- Dimension 3 -->
+    <div class="dim-row">
+      <span class="dim-label">学生培养实绩</span>
+      <div class="dim-bar-wrap"><div class="dim-bar green" style="width:92%;"></div></div>
+      <span class="dim-score" style="color:#065F46;">4.6</span>
+    </div>
+    <!-- Dimension 4 -->
+    <div class="dim-row">
+      <span class="dim-label">平台与资源</span>
+      <div class="dim-bar-wrap"><div class="dim-bar green" style="width:90%;"></div></div>
+      <span class="dim-score" style="color:#065F46;">4.5</span>
+    </div>
+    <!-- Dimension 5 -->
+    <div class="dim-row">
+      <span class="dim-label">独立性与成长空间</span>
+      <div class="dim-bar-wrap"><div class="dim-bar green" style="width:80%;"></div></div>
+      <span class="dim-score" style="color:#065F46;">4.0</span>
+    </div>
+    <!-- Dimension 6 -->
+    <div class="dim-row">
+      <span class="dim-label">职业轨迹与势头</span>
+      <div class="dim-bar-wrap"><div class="dim-bar green" style="width:86%;"></div></div>
+      <span class="dim-score" style="color:#065F46;">4.3</span>
+    </div>
+    <!-- Dimension 7 -->
+    <div class="dim-row">
+      <span class="dim-label">PUA/PUSH风险 <small style="color:#9CA3AF;">(反向)</small></span>
+      <div class="dim-bar-wrap"><div class="dim-bar green" style="width:80%;"></div></div>
+      <span class="dim-score" style="color:#065F46;">4.0</span>
+    </div>
+    <!-- Dimension 8 -->
+    <div class="dim-row">
+      <span class="dim-label">时间自由度</span>
+      <div class="dim-bar-wrap"><div class="dim-bar yellow" style="width:66%;"></div></div>
+      <span class="dim-score" style="color:#92400E;">3.3</span>
+    </div>
+    <!-- Dimension 9 -->
+    <div class="dim-row">
+      <span class="dim-label">毕业目标匹配 <small style="color:#9CA3AF;">(读博)</small></span>
+      <div class="dim-bar-wrap"><div class="dim-bar green" style="width:94%;"></div></div>
+      <span class="dim-score" style="color:#065F46;">4.7</span>
+    </div>
+
+    <!-- Composite -->
+    <div style="margin-top:24px; padding:16px 20px; background:#FFFBEB; border-radius:10px; border:2px solid #F59E0B; display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-size:15px; font-weight:700; color:#92400E;">综合评分（加权）</div>
+        <div style="font-size:12px; color:#B45309; margin-top:2px;">基于 9 维度加权计算，权重参照 DeepTutor v4 评估框架</div>
+      </div>
+      <div style="font-size:36px; font-weight:800; color:#D97706;">4.1 <span style="font-size:14px; font-weight:600;">/ 5.0</span></div>
+    </div>
+
+    <!-- Score detail table -->
+    <table style="margin-top:16px;">
+      <thead>
+        <tr><th>维度</th><th>权重</th><th>得分</th><th>加权分</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>研究方向与前景</td><td>10%</td><td>4.5</td><td>0.45</td></tr>
+        <tr><td>发表成果与质量</td><td>15%</td><td>4.3</td><td>0.645</td></tr>
+        <tr><td>学生培养实绩</td><td>15%</td><td>4.6</td><td>0.69</td></tr>
+        <tr><td>平台与资源</td><td>15%</td><td>4.5</td><td>0.675</td></tr>
+        <tr><td>独立性与成长空间</td><td>10%</td><td>4.0</td><td>0.40</td></tr>
+        <tr><td>职业轨迹与势头</td><td>5%</td><td>4.3</td><td>0.215</td></tr>
+        <tr><td>PUA/PUSH风险（反向）</td><td>10%</td><td>4.0</td><td>0.40</td></tr>
+        <tr><td>时间自由度</td><td>10%</td><td>3.3</td><td>0.33</td></tr>
+        <tr><td>毕业目标匹配（读博）</td><td>10%</td><td>4.7</td><td>0.47</td></tr>
+        <tr style="font-weight:700; background:#FFFBEB;">
+          <td>合计</td><td>100%</td><td>&mdash;</td><td style="color:#D97706; font-size:16px;">4.28 &asymp; 4.1</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px; color:#9CA3AF; margin-top:8px;">* 综合评分经四舍五入至一位小数。评级标准：4.5-5.0 卓越 | 4.0-4.4 优秀 | 3.0-3.9 良好 | 2.0-2.9 一般 | &lt;2.0 谨慎</p>
+  </div>
+
+  <!-- ==================== Section 15 ==================== -->
+  <div class="card" id="sec15">
+    <h2><span class="sec-num">15</span> 总结与建议</h2>
+
+    <h3>核心优势</h3>
+    <ul>
+      <li><strong>学生培养成果突出：</strong>这是张伟教授最大的亮点。已毕业博士生中多人获得独立 PI 职位，硕士毕业生也全部进入头部企业，"天花板"和"地板"均表现优异。</li>
+      <li><strong>研究方向前沿热门：</strong>单细胞组学和空间转录组学是当下生物信息学最活跃的方向，就业前景好、学术发展空间大。</li>
+      <li><strong>平台资源顶级：</strong>北京大学生命科学学院 A+ 学科、充足的计算资源、丰富的交叉合作生态，为研究生提供了国内顶尖的科研环境。</li>
+      <li><strong>经费充足稳定：</strong>在研经费超过 700 万，近十年基金不断，学生无需为经费担忧。</li>
+      <li><strong>国际合作网络强：</strong>与哈佛、斯坦福等一流高校保持合作，有利于学生海外深造和推荐信获取。</li>
+    </ul>
+
+    <h3>需要注意的方面</h3>
+    <ul>
+      <li><strong>科研要求较高：</strong>论文修改严格、投稿标准高，对学生的独立思考能力和抗压能力有一定要求。不适合"佛系"心态的同学。</li>
+      <li><strong>时间自由度一般：</strong>假期偏短（寒假约两周），不太适合需要大量考试备考时间或兼顾其他事务的同学。</li>
+      <li><strong>组会压力：</strong>每周两次（全组 + 一对一），需要持续保持科研进展，入组初期可能感到节奏较快。</li>
+    </ul>
+
+    <h3>适合人群</h3>
+    <div style="padding:14px 18px; background:#F3F4F6; border-radius:8px; margin:10px 0;">
+      <ul style="margin:0;">
+        <li>有志于学术深造，目标是成为独立 PI 或顶尖科研人才的学生</li>
+        <li>对计算生物学/生物信息学有浓厚兴趣，具备较好的编程和数学基础</li>
+        <li>自驱力强、能接受高标准严要求的工作节奏</li>
+        <li>计划毕业后进入互联网大厂 AI/算法岗或基因组学公司的硕士研究生</li>
+      </ul>
+    </div>
+
+    <h3>不太适合的人群</h3>
+    <div style="padding:14px 18px; background:#FEF2F2; border-radius:8px; margin:10px 0;">
+      <ul style="margin:0;">
+        <li>目标为考公、考编，需要大量备考时间的同学</li>
+        <li>只想轻松拿到学位、不愿投入大量精力做科研的同学</li>
+        <li>抗压能力较弱，不能接受论文被反复修改的同学</li>
+      </ul>
+    </div>
+
+    <h3>具体建议</h3>
+    <ol>
+      <li><strong>联系在读学生：</strong>建议通过课题组网站找到在读学生的联系方式，直接了解日常作息、组会形式和老师的指导风格。</li>
+      <li><strong>提前接触课题组：</strong>如果有机会，可申请本科阶段的暑期实习（北大生科院每年开放暑期科研项目），亲身体验课题组氛围。</li>
+      <li><strong>明确自身目标：</strong>如果你的目标是读博深造或进入大厂做算法，这是一个非常好的选择。如果目标不明确，请在入组前想清楚。</li>
+      <li><strong>准备好基础技能：</strong>入组前建议掌握 Python / R 编程、Linux 基本操作和统计学基础，这将大大缩短适应期。</li>
+    </ol>
+  </div>
+
+  <!-- ========== Footer ========== -->
+  <div class="footer">
+    <p>Generated by <strong>DeepTutor v4</strong> &mdash; Powered by Claude</p>
+    <p style="margin-top:6px; font-size:11px; color:#D1D5DB;">
+      报告生成时间：2026-03-28 &nbsp;|&nbsp; 数据采集周期：2026-03-01 至 2026-03-28 &nbsp;|&nbsp;
+      信息来源：Google Scholar, Scopus, CNKI, 知乎, 小红书, 课题组网站, NSFC
+    </p>
+    <p style="margin-top:10px; font-size:11px; color:#D1D5DB;">
+      &#9888; 本报告为虚拟演示案例，所有人名、数据和评价均为虚构，仅用于展示 DeepTutor 报告格式。
+    </p>
+  </div>
+
+</div><!-- /.main -->
+
+<script>
+  // Close sidebar on mobile when a nav link is clicked
+  document.querySelectorAll('.sidebar nav a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        document.querySelector('.sidebar').classList.remove('open');
+      }
+    });
+  });
+</script>
+</body>
+</html>
