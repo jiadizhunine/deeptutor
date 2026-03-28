@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepTutor Report — Dr. Sarah Mitchell, MIT</title>
+<style>
+  :root {
+    --bg: #F9FAFB;
+    --card-bg: #FFFFFF;
+    --text: #1F2937;
+    --text-secondary: #6B7280;
+    --accent: #D97706;
+    --accent-light: #FEF3C7;
+    --accent-dark: #B45309;
+    --border: #E5E7EB;
+    --green: #059669;
+    --green-bg: #D1FAE5;
+    --yellow: #D97706;
+    --yellow-bg: #FEF3C7;
+    --red: #DC2626;
+    --red-bg: #FEE2E2;
+    --blue: #2563EB;
+    --blue-bg: #DBEAFE;
+    --sidebar-w: 260px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* ---- Sidebar ---- */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: #111827;
+    color: #E5E7EB;
+    overflow-y: auto;
+    z-index: 100;
+    padding: 24px 0;
+  }
+  .sidebar-brand {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #374151;
+    margin-bottom: 12px;
+  }
+  .sidebar-brand h2 {
+    font-size: 18px;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-brand p {
+    font-size: 11px;
+    color: #9CA3AF;
+    margin-top: 2px;
+  }
+  .sidebar nav a {
+    display: block;
+    padding: 7px 20px;
+    color: #D1D5DB;
+    text-decoration: none;
+    font-size: 13px;
+    transition: background .15s, color .15s;
+  }
+  .sidebar nav a:hover,
+  .sidebar nav a:focus {
+    background: #1F2937;
+    color: var(--accent);
+  }
+  .sidebar nav a .nav-num {
+    display: inline-block;
+    width: 22px;
+    color: #6B7280;
+    font-size: 11px;
+  }
+
+  /* ---- Main ---- */
+  .main {
+    margin-left: var(--sidebar-w);
+    padding: 32px 40px 80px;
+    max-width: 960px;
+  }
+
+  /* ---- Disclaimer Banner ---- */
+  .disclaimer {
+    background: #FEF3C7;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #92400E;
+    text-align: center;
+  }
+
+  /* ---- Header ---- */
+  .report-header {
+    background: linear-gradient(135deg, #111827 0%, #1F2937 100%);
+    border-radius: 14px;
+    padding: 36px 32px;
+    color: #F9FAFB;
+    margin-bottom: 28px;
+  }
+  .report-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .report-header .subtitle {
+    color: var(--accent);
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .report-header .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 13px;
+    color: #D1D5DB;
+  }
+  .report-header .meta span { display: flex; align-items: center; gap: 4px; }
+
+  /* ---- Cards ---- */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  .card h2 {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent-light);
+    color: var(--text);
+  }
+  .card h2 .section-num {
+    color: var(--accent);
+    margin-right: 6px;
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 16px 0 8px;
+    color: var(--text);
+  }
+  .card p, .card li {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .card ul, .card ol { padding-left: 20px; margin: 8px 0; }
+  .card li { margin-bottom: 4px; }
+
+  /* ---- Info Grid ---- */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 28px;
+  }
+  .info-grid .info-item { font-size: 14px; }
+  .info-grid .info-label {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .info-grid .info-value { color: var(--text-secondary); }
+  .info-grid .info-value a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .info-grid .info-value a:hover { text-decoration: underline; }
+
+  /* ---- Badge ---- */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); }
+  .badge-accent { background: var(--accent-light); color: var(--accent-dark); }
+
+  /* ---- Type Classification Box ---- */
+  .type-box {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%);
+    border: 1px solid #F59E0B;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .type-box .type-label {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent-dark);
+  }
+  .type-box .type-sub {
+    font-size: 13px;
+    color: #92400E;
+    margin-top: 4px;
+  }
+
+  /* ---- Student Table ---- */
+  .student-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+  .student-table th {
+    background: #F3F4F6;
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border);
+  }
+  .student-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+  .student-table tr:hover td { background: #F9FAFB; }
+
+  /* ---- Flag List ---- */
+  .flag-list { list-style: none; padding: 0; }
+  .flag-list li {
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .flag-list li.green { background: #ECFDF5; }
+  .flag-list li.yellow { background: #FFFBEB; }
+  .flag-list li.red { background: #FEF2F2; }
+  .flag-icon {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .flag-icon.g { background: var(--green); }
+  .flag-icon.y { background: var(--yellow); }
+  .flag-icon.r { background: var(--red); }
+
+  /* ---- Match Matrix ---- */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .match-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #F9FAFB;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+  .match-item .goal-label { font-size: 14px; font-weight: 500; }
+  .match-score {
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .match-score.s5 { color: var(--green); }
+  .match-score.s4 { color: #059669; }
+  .match-score.s3 { color: var(--yellow); }
+  .match-score.s2 { color: #EA580C; }
+  .match-score.s1 { color: var(--red); }
+
+  /* ---- Timeline ---- */
+  .timeline { position: relative; padding-left: 28px; margin: 16px 0; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 4px; bottom: 4px;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 18px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid #FEF3C7;
+  }
+  .timeline-item .tl-year {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .timeline-item .tl-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  /* ---- Progress Bars ---- */
+  .dim-score-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
+    gap: 12px;
+  }
+  .dim-label {
+    width: 220px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .dim-bar-wrap {
+    flex: 1;
+    height: 12px;
+    background: #E5E7EB;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .dim-bar {
+    height: 100%;
+    border-radius: 6px;
+    transition: width .4s ease;
+  }
+  .dim-bar.score5 { background: var(--green); }
+  .dim-bar.score4 { background: #10B981; }
+  .dim-bar.score3 { background: var(--yellow); }
+  .dim-bar.score2 { background: #EA580C; }
+  .dim-bar.score1 { background: var(--red); }
+  .dim-val {
+    width: 60px;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .dim-val.score5 { color: var(--green); }
+  .dim-val.score4 { color: #10B981; }
+  .dim-val.score3 { color: var(--yellow); }
+  .dim-val.score2 { color: #EA580C; }
+  .dim-val.score1 { color: var(--red); }
+
+  /* ---- Composite Score Box ---- */
+  .composite-box {
+    text-align: center;
+    padding: 28px;
+    background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+    border: 2px solid var(--green);
+    border-radius: 14px;
+    margin: 20px 0;
+  }
+  .composite-box .comp-score {
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--green);
+    line-height: 1;
+  }
+  .composite-box .comp-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #065F46;
+    margin-top: 4px;
+  }
+  .composite-box .comp-desc {
+    font-size: 13px;
+    color: #047857;
+    margin-top: 6px;
+  }
+
+  /* ---- Pub Stats Row ---- */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .stat-card {
+    text-align: center;
+    background: #F9FAFB;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 8px;
+  }
+  .stat-card .stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .stat-card .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* ---- Recommendation Box ---- */
+  .rec-box {
+    border-left: 4px solid var(--green);
+    background: #F0FDF4;
+    padding: 16px 20px;
+    border-radius: 0 10px 10px 0;
+    margin: 12px 0;
+  }
+  .rec-box.caution {
+    border-left-color: var(--yellow);
+    background: #FFFBEB;
+  }
+  .rec-box p {
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  /* ---- Footer ---- */
+  .footer {
+    text-align: center;
+    padding: 32px 0 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  .footer strong { color: var(--accent); }
+
+  /* ---- Source Link ---- */
+  a.source {
+    font-size: 11px;
+    color: var(--blue);
+    text-decoration: none;
+    margin-left: 4px;
+  }
+  a.source:hover { text-decoration: underline; }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px 16px 60px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .match-grid { grid-template-columns: 1fr; }
+    .dim-label { width: 160px; }
+  }
+
+  /* ---- Print ---- */
+  @media print {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 0; max-width: 100%; }
+    .card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+    .report-header { background: #111827 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-size: 12px; }
+    .disclaimer { border-width: 1px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== SIDEBAR ========== -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h2>DeepTutor v4</h2>
+    <p>Advisor Intelligence Report</p>
+  </div>
+  <nav>
+    <a href="#sec1"><span class="nav-num">01</span> Basic Information</a>
+    <a href="#sec2"><span class="nav-num">02</span> Advisor Type</a>
+    <a href="#sec3"><span class="nav-num">03</span> Student Trajectories</a>
+    <a href="#sec4"><span class="nav-num">04</span> Red/Green Flags</a>
+    <a href="#sec5"><span class="nav-num">05</span> Goal-Advisor Match</a>
+    <a href="#sec6"><span class="nav-num">06</span> Career Timeline</a>
+    <a href="#sec7"><span class="nav-num">07</span> Research Directions</a>
+    <a href="#sec8"><span class="nav-num">08</span> Publication Analysis</a>
+    <a href="#sec9"><span class="nav-num">09</span> Co-Author Network</a>
+    <a href="#sec10"><span class="nav-num">10</span> Funding &amp; Grants</a>
+    <a href="#sec11"><span class="nav-num">11</span> Academic Metrics</a>
+    <a href="#sec12"><span class="nav-num">12</span> Department Context</a>
+    <a href="#sec13"><span class="nav-num">13</span> Toxicity Assessment</a>
+    <a href="#sec14"><span class="nav-num">14</span> Dimensional Scoring</a>
+    <a href="#sec15"><span class="nav-num">15</span> Summary &amp; Advice</a>
+  </nav>
+</aside>
+
+<!-- ========== MAIN CONTENT ========== -->
+<div class="main">
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    &#9888;&#65039; Virtual Case Study &mdash; For demonstration of DeepTutor report format only. All data is fictional.
+  </div>
+
+  <!-- Header -->
+  <div class="report-header">
+    <h1>Dr. Sarah Mitchell</h1>
+    <div class="subtitle">Associate Professor (Tenured) &middot; Department of Biology, MIT</div>
+    <div class="meta">
+      <span>Report generated: 2026-03-28</span>
+      <span>Data sources: 14 databases queried</span>
+      <span>Confidence level: High</span>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 1 ==================== -->
+  <div class="card" id="sec1">
+    <h2><span class="section-num">01</span> Basic Information</h2>
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">Full Name</div>
+        <div class="info-value">Sarah E. Mitchell, PhD</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Title</div>
+        <div class="info-value">Associate Professor (Tenured, since 2022)</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Department</div>
+        <div class="info-value">Department of Biology, MIT</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Email</div>
+        <div class="info-value"><a href="#">s.mitchell@mit.edu</a> (fictional)</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">ORCID</div>
+        <div class="info-value"><a href="#">0000-0002-XXXX-XXXX</a></div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Google Scholar</div>
+        <div class="info-value"><a href="#">scholar.google.com/citations?user=XXXX</a></div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Lab Website</div>
+        <div class="info-value"><a href="#">mitchelllab.mit.edu</a> (fictional)</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Lab Name</div>
+        <div class="info-value">Mitchell Lab &mdash; Synthetic &amp; Systems Biology</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Lab Size</div>
+        <div class="info-value">3 postdocs, 5 PhD students, 2 research scientists, 4 undergrads</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Research Areas</div>
+        <div class="info-value">Systems Biology, Synthetic Biology, Gene Regulatory Networks</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 2 ==================== -->
+  <div class="card" id="sec2">
+    <h2><span class="section-num">02</span> Advisor Type Classification</h2>
+    <div class="type-box">
+      <div class="type-label">Research-Focused</div>
+      <div class="type-sub">Primary Classification &middot; Confidence: 92%</div>
+    </div>
+    <h3>Classification Evidence</h3>
+    <ul>
+      <li><strong>Publication intensity:</strong> Averaging 7&ndash;8 papers per year over the last five years indicates a strong emphasis on research output as a lab priority.</li>
+      <li><strong>Student co-authorship:</strong> Every PhD student in the lab has been first author on at least two papers before graduating, suggesting the advisor prioritizes student-driven research projects.</li>
+      <li><strong>Grant portfolio:</strong> Maintains 3&ndash;4 active grants simultaneously, all centered on fundamental research questions rather than industry consulting or contract work.</li>
+      <li><strong>Mentorship style (from student accounts):</strong> Weekly one-on-one meetings focus almost exclusively on data interpretation, experimental design, and manuscript preparation. Career mentoring occurs informally but is not structured.</li>
+      <li><strong>Lab culture indicators:</strong> Lab members report a culture of intellectual rigor with high expectations for independent problem-solving. The advisor encourages students to lead collaborations and present at conferences early in their training.</li>
+    </ul>
+    <h3>Secondary Traits</h3>
+    <p>Exhibits moderate <strong>mentorship-oriented</strong> traits: invests in teaching students to write grants and reviews, holds annual "career visioning" workshops, and has an informal open-door policy. However, the dominant lab ethos is research productivity.</p>
+  </div>
+
+  <!-- ==================== SECTION 3 ==================== -->
+  <div class="card" id="sec3">
+    <h2><span class="section-num">03</span> Student Trajectory Analysis (Ceiling Principle)</h2>
+    <p style="margin-bottom:14px;font-size:14px;color:var(--text-secondary);">
+      The single strongest predictor of your own career outcome is where former students and postdocs ended up.
+      Below is a tracked cohort of Dr. Mitchell's trainees. <a class="source" href="#">[source: LinkedIn, lab website, PubMed]</a>
+    </p>
+    <table class="student-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Role &amp; Period</th>
+          <th>Current Position</th>
+          <th>Time to Position</th>
+          <th>Key Publications</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Dr. James Chen</strong></td>
+          <td>PhD 2017&ndash;2022</td>
+          <td><span class="badge badge-green">Asst. Prof., UC San Diego</span></td>
+          <td>2 yrs postdoc</td>
+          <td>8 papers (2 first-author in <em>Nature Biotechnology</em>)</td>
+        </tr>
+        <tr>
+          <td><strong>Dr. Priya Sharma</strong></td>
+          <td>PhD 2016&ndash;2021</td>
+          <td><span class="badge badge-green">Asst. Prof., U. of Michigan</span></td>
+          <td>3 yrs postdoc</td>
+          <td>7 papers (1 <em>Cell Systems</em>, 1 <em>Science</em>)</td>
+        </tr>
+        <tr>
+          <td><strong>Dr. Kevin Ostrowski</strong></td>
+          <td>PhD 2018&ndash;2023</td>
+          <td><span class="badge badge-blue">Senior Scientist, Google DeepMind</span></td>
+          <td>Direct hire</td>
+          <td>6 papers (1 <em>Nature Methods</em>)</td>
+        </tr>
+        <tr>
+          <td><strong>Dr. Maria Gonzalez</strong></td>
+          <td>PhD 2017&ndash;2022</td>
+          <td><span class="badge badge-blue">Scientist II, Genentech</span></td>
+          <td>Direct hire</td>
+          <td>5 papers (1 first-author in <em>Molecular Systems Biology</em>)</td>
+        </tr>
+        <tr>
+          <td><strong>Dr. Tomoko Nakamura</strong></td>
+          <td>Postdoc 2021&ndash;2024</td>
+          <td><span class="badge badge-accent">Postdoc, Stanford (Bhatt Lab)</span></td>
+          <td>Ongoing</td>
+          <td>4 papers from Mitchell Lab</td>
+        </tr>
+        <tr>
+          <td><strong>Dr. Lucas Ferrara</strong></td>
+          <td>PhD 2019&ndash;2024</td>
+          <td><span class="badge badge-blue">Co-founder &amp; CTO, SynthCell Bio</span></td>
+          <td>Direct</td>
+          <td>5 papers, 2 patents</td>
+        </tr>
+        <tr>
+          <td><strong>Aisha Patel</strong></td>
+          <td>PhD 2022&ndash;present</td>
+          <td><span class="badge badge-yellow">Current PhD Student (4th year)</span></td>
+          <td>&mdash;</td>
+          <td>3 papers so far (1 first-author)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Trajectory Summary</h3>
+    <div class="stats-row" style="grid-template-columns: repeat(5,1fr);">
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--green);">2</div>
+        <div class="stat-label">Tenure-Track Faculty</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--blue);">2</div>
+        <div class="stat-label">Industry R&amp;D</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--accent);">1</div>
+        <div class="stat-label">Postdoc (Top Lab)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:#7C3AED;">1</div>
+        <div class="stat-label">Startup Founder</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--text-secondary);">1</div>
+        <div class="stat-label">Current Student</div>
+      </div>
+    </div>
+
+    <div class="rec-box">
+      <p><strong>Ceiling Assessment:</strong> Former trainees have landed tenure-track positions at R1 universities and senior roles at top-tier industry labs. This places Dr. Mitchell's lab in the <strong>top tier</strong> for student outcomes. The diversity of exit paths (academia, industry, startup) is a strong indicator of broadly transferable training.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 4 ==================== -->
+  <div class="card" id="sec4">
+    <h2><span class="section-num">04</span> Red/Green Flag Quick Check</h2>
+    <ul class="flag-list">
+      <li class="green">
+        <span class="flag-icon g">&#10003;</span>
+        <div><strong>Students graduate on time.</strong> Median PhD duration is 5.3 years, within normal range for biology. No students have left the program involuntarily.</div>
+      </li>
+      <li class="green">
+        <span class="flag-icon g">&#10003;</span>
+        <div><strong>Students publish as first author.</strong> Every graduated PhD student has at least two first-author papers, demonstrating genuine ownership of projects.</div>
+      </li>
+      <li class="green">
+        <span class="flag-icon g">&#10003;</span>
+        <div><strong>Stable, long-term funding.</strong> Lab has been continuously funded since 2016 with no gap years. Current runway extends through 2029 based on active grants.</div>
+      </li>
+      <li class="green">
+        <span class="flag-icon g">&#10003;</span>
+        <div><strong>No reports of harassment or abuse.</strong> No complaints filed with MIT's Title IX office. Online reviews are overwhelmingly positive. Former students speak highly of their experience.</div>
+      </li>
+      <li class="green">
+        <span class="flag-icon g">&#10003;</span>
+        <div><strong>Supports diverse career paths.</strong> Students have gone to academia, industry, and startups with equal enthusiasm from the advisor. No stigma attached to non-academic careers.</div>
+      </li>
+      <li class="yellow">
+        <span class="flag-icon y">!</span>
+        <div><strong>High expectations and intensity.</strong> Multiple students mention that the lab culture is demanding. Expectations for productivity are high. Students who thrive on structure and self-motivation do well; those who need more hand-holding may struggle initially. One former student noted: "Sarah pushes you hard, but she pushes herself harder. You have to want it."</div>
+      </li>
+      <li class="green">
+        <span class="flag-icon g">&#10003;</span>
+        <div><strong>Transparent authorship practices.</strong> Authorship norms are discussed upfront at the start of projects. Students consistently receive first-author credit on the work they lead.</div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ==================== SECTION 5 ==================== -->
+  <div class="card" id="sec5">
+    <h2><span class="section-num">05</span> Goal-Advisor Match Matrix</h2>
+    <p style="margin-bottom:14px;font-size:14px;color:var(--text-secondary);">
+      How well does this advisor serve different career goals? Based on student outcomes, lab training style, and network resources.
+    </p>
+    <div class="match-grid">
+      <div class="match-item">
+        <span class="goal-label">Academic Career (R1 Faculty)</span>
+        <span class="match-score s5">5 / 5</span>
+      </div>
+      <div class="match-item">
+        <span class="goal-label">Industry R&amp;D (Biotech/Tech)</span>
+        <span class="match-score s4">4 / 5</span>
+      </div>
+      <div class="match-item">
+        <span class="goal-label">Startup / Entrepreneurship</span>
+        <span class="match-score s3">3 / 5</span>
+      </div>
+      <div class="match-item">
+        <span class="goal-label">Management Consulting</span>
+        <span class="match-score s2">2 / 5</span>
+      </div>
+      <div class="match-item">
+        <span class="goal-label">Science Communication / Policy</span>
+        <span class="match-score s2">2 / 5</span>
+      </div>
+      <div class="match-item">
+        <span class="goal-label">Just Getting the Degree</span>
+        <span class="match-score s1">1 / 5</span>
+      </div>
+    </div>
+    <div class="rec-box caution">
+      <p><strong>Note:</strong> This advisor is an excellent match if you are motivated by research and want to build a strong publication record. If your primary goal is to minimize effort and simply obtain a PhD credential, the high expectations in this lab will be a poor fit. The lab environment rewards curiosity, initiative, and perseverance.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 6 ==================== -->
+  <div class="card" id="sec6">
+    <h2><span class="section-num">06</span> Education &amp; Career Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-year">2004 &ndash; 2008</div>
+        <div class="tl-text"><strong>B.S. in Bioengineering</strong>, University of California, Berkeley. Graduated summa cum laude. Undergraduate thesis on gene regulatory network modeling.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-year">2008 &ndash; 2013</div>
+        <div class="tl-text"><strong>PhD in Bioengineering</strong>, Stanford University. Advisor: Prof. Drew Endy. Dissertation: "Design Principles of Synthetic Transcriptional Cascades." Published 4 first-author papers during PhD.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-year">2013 &ndash; 2016</div>
+        <div class="tl-text"><strong>Postdoctoral Fellow</strong>, Broad Institute of MIT and Harvard. Worked with Dr. Feng Zhang's group on CRISPR-based genetic screens. Co-developed a high-throughput screening platform.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-year">2016</div>
+        <div class="tl-text"><strong>Assistant Professor</strong>, Department of Biology, MIT. Launched the Mitchell Lab with seed funding from MIT and an NIH K99/R00 transition award.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-year">2019</div>
+        <div class="tl-text"><strong>NSF CAREER Award</strong> recipient. Selected as a Searle Scholar and Pew Biomedical Scholar in the same year.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-year">2022</div>
+        <div class="tl-text"><strong>Promoted to Associate Professor with Tenure</strong>, MIT Department of Biology. Tenure case described as "exceptionally strong" in both research and mentorship.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-year">2024</div>
+        <div class="tl-text"><strong>HHMI Emerging Scholar</strong> designation. Also received DARPA Young Faculty Award for work on programmable cellular therapeutics.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 7 ==================== -->
+  <div class="card" id="sec7">
+    <h2><span class="section-num">07</span> Research Directions</h2>
+    <h3>1. Synthetic Gene Circuits &amp; Cellular Programming</h3>
+    <p>Engineering multi-layered genetic circuits that can perform complex logic operations inside living cells. Recent work has focused on building circuits robust enough to function in mammalian therapeutic cells, with applications in cancer immunotherapy and autoimmune disease. This is the lab's flagship research area and the most funded direction.</p>
+
+    <h3>2. Computational Modeling of Gene Regulatory Networks</h3>
+    <p>Developing physics-informed machine learning models to predict gene expression dynamics from promoter sequence and chromatin state. The lab combines experimental perturbation data from CRISPR screens with deep learning to build predictive models of transcriptional regulation. This area is highly collaborative and intersects with several labs at MIT and the Broad Institute.</p>
+
+    <h3>3. High-Throughput CRISPR Screening Platforms</h3>
+    <p>Building next-generation pooled CRISPR screening tools with single-cell readouts (Perturb-seq). The lab has developed several widely-used screening libraries and analysis pipelines, which are distributed as open-source tools. This direction serves as an enabling technology that supports both of the other research areas.</p>
+
+    <h3>Emerging Direction: AI-Guided Biological Design</h3>
+    <p>A newer thrust (started 2024) applying large language models and reinforcement learning to the design of synthetic biological parts. Early results have been promising, with one preprint on BioRxiv generating significant attention. This direction represents the future growth trajectory of the lab.</p>
+
+    <div class="rec-box">
+      <p><strong>Research Assessment:</strong> The lab's research portfolio is well-balanced between established, fundable directions and emerging high-risk/high-reward areas. The combination of wet-lab synthetic biology and computational modeling creates a versatile training environment for students.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 8 ==================== -->
+  <div class="card" id="sec8">
+    <h2><span class="section-num">08</span> Publication Analysis</h2>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num">67</div>
+        <div class="stat-label">Total Papers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">32</div>
+        <div class="stat-label">h-index</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">4,218</div>
+        <div class="stat-label">Total Citations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">7.4</div>
+        <div class="stat-label">Papers / Year (5yr)</div>
+      </div>
+    </div>
+
+    <h3>High-Impact Publications</h3>
+    <table class="student-table">
+      <thead>
+        <tr><th>Year</th><th>Journal</th><th>Title (abbreviated)</th><th>Citations</th><th>Role</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2024</td>
+          <td><strong>Nature</strong></td>
+          <td>Programmable multi-layer gene circuits for autonomous cell therapies <a class="source" href="#">[link]</a></td>
+          <td>87</td>
+          <td>Corresponding</td>
+        </tr>
+        <tr>
+          <td>2023</td>
+          <td><strong>Science</strong></td>
+          <td>Genome-scale CRISPR screen reveals modular regulators of mammalian cell fate <a class="source" href="#">[link]</a></td>
+          <td>214</td>
+          <td>Co-corresponding</td>
+        </tr>
+        <tr>
+          <td>2022</td>
+          <td><strong>Cell</strong></td>
+          <td>Deep learning models of transcriptional regulation from single-cell perturbations <a class="source" href="#">[link]</a></td>
+          <td>312</td>
+          <td>Corresponding</td>
+        </tr>
+        <tr>
+          <td>2021</td>
+          <td><strong>Nature Biotechnology</strong></td>
+          <td>Scalable CRISPR screening with combinatorial perturbations and scRNA-seq readout <a class="source" href="#">[link]</a></td>
+          <td>428</td>
+          <td>Corresponding</td>
+        </tr>
+        <tr>
+          <td>2019</td>
+          <td><strong>Nature Methods</strong></td>
+          <td>CRISPRmap: a computational framework for mapping genetic interactions <a class="source" href="#">[link]</a></td>
+          <td>356</td>
+          <td>Corresponding</td>
+        </tr>
+        <tr>
+          <td>2018</td>
+          <td><strong>Cell Systems</strong></td>
+          <td>Synthetic feedback controllers for robust cellular phenotype maintenance <a class="source" href="#">[link]</a></td>
+          <td>189</td>
+          <td>Corresponding</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Publication Trend</h3>
+    <p>Publication output has been steady and increasing since lab founding. The journal impact profile shows a clear upward trajectory, with the lab's first <em>Nature</em> paper appearing in 2024. Preprint activity is also high (12 BioRxiv preprints), reflecting engagement with open science norms. Notably, student first-authorship rates are above 70%, which is excellent for a research-focused lab.</p>
+  </div>
+
+  <!-- ==================== SECTION 9 ==================== -->
+  <div class="card" id="sec9">
+    <h2><span class="section-num">09</span> Co-Author Network</h2>
+
+    <h3>Internal Collaborators (MIT)</h3>
+    <ul>
+      <li><strong>Prof. Ron Weiss</strong>, MIT Biological Engineering &mdash; Joint work on genetic circuit design (6 co-authored papers)</li>
+      <li><strong>Prof. Ernest Fraenkel</strong>, MIT Biological Engineering &mdash; Network inference methods (3 papers)</li>
+      <li><strong>Prof. Manolis Kellis</strong>, MIT CSAIL &amp; Broad Institute &mdash; Computational epigenomics (4 papers)</li>
+    </ul>
+
+    <h3>Broad Institute Network</h3>
+    <ul>
+      <li><strong>Dr. Feng Zhang</strong>, Broad Institute &mdash; CRISPR tool development (5 papers, from postdoc and ongoing)</li>
+      <li><strong>Dr. Aviv Regev</strong>, formerly Broad/now Genentech &mdash; Single-cell genomics (3 papers)</li>
+    </ul>
+
+    <h3>International Collaborators</h3>
+    <ul>
+      <li><strong>Prof. Yamanaka Lab</strong>, Kyoto University &mdash; Stem cell reprogramming circuits (2 papers)</li>
+      <li><strong>Prof. Michael Elowitz</strong>, Caltech &mdash; Synthetic biology theory (2 papers)</li>
+      <li><strong>Dr. Hannah Meyer</strong>, Max Delbr&uuml;ck Center, Berlin &mdash; Machine learning for gene regulation (1 paper, 1 preprint)</li>
+    </ul>
+
+    <div class="rec-box">
+      <p><strong>Network Strength:</strong> The co-author network is broad and well-connected, spanning MIT, the Broad Institute, and several international institutions. Students in this lab benefit from exposure to a wide range of collaborators, which is valuable for both academic and industry career paths. The connection to Genentech via Aviv Regev is also a notable pipeline to industry.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 10 ==================== -->
+  <div class="card" id="sec10">
+    <h2><span class="section-num">10</span> Funding &amp; Grants</h2>
+    <table class="student-table">
+      <thead>
+        <tr><th>Grant</th><th>Agency</th><th>Period</th><th>Amount</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>R01 GM-XXXXXX &mdash; Synthetic Gene Circuit Design</td>
+          <td>NIH / NIGMS</td>
+          <td>2020&ndash;2025</td>
+          <td>$1.8M</td>
+          <td><span class="badge badge-green">Active</span></td>
+        </tr>
+        <tr>
+          <td>R01 HG-XXXXXX &mdash; Computational Modeling of Gene Regulation</td>
+          <td>NIH / NHGRI</td>
+          <td>2022&ndash;2027</td>
+          <td>$2.1M</td>
+          <td><span class="badge badge-green">Active</span></td>
+        </tr>
+        <tr>
+          <td>NSF CAREER Award</td>
+          <td>NSF / BIO</td>
+          <td>2019&ndash;2024</td>
+          <td>$750K</td>
+          <td><span class="badge badge-yellow">Completed</span></td>
+        </tr>
+        <tr>
+          <td>DARPA Young Faculty Award &mdash; Programmable Therapeutics</td>
+          <td>DARPA</td>
+          <td>2024&ndash;2027</td>
+          <td>$600K</td>
+          <td><span class="badge badge-green">Active</span></td>
+        </tr>
+        <tr>
+          <td>Simons Foundation Investigator Award</td>
+          <td>Simons Foundation</td>
+          <td>2023&ndash;2028</td>
+          <td>$500K</td>
+          <td><span class="badge badge-green">Active</span></td>
+        </tr>
+        <tr>
+          <td>HHMI Emerging Scholar</td>
+          <td>HHMI</td>
+          <td>2024&ndash;2029</td>
+          <td>$1.5M</td>
+          <td><span class="badge badge-green">Active</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;"><strong>Total active funding:</strong> ~$6.5M across 5 active grants. Funding runway extends to at least 2029, providing strong financial security for incoming students.</p>
+  </div>
+
+  <!-- ==================== SECTION 11 ==================== -->
+  <div class="card" id="sec11">
+    <h2><span class="section-num">11</span> Academic Metrics &mdash; Peer Comparison</h2>
+    <p style="margin-bottom:14px;font-size:14px;color:var(--text-secondary);">
+      Comparison against associate professors in MIT Biology and peer institutions (n=24), matched by career stage (8&ndash;12 years post-PhD).
+    </p>
+    <table class="student-table">
+      <thead>
+        <tr><th>Metric</th><th>Dr. Mitchell</th><th>Peer Median</th><th>Percentile</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>h-index</td>
+          <td><strong>32</strong></td>
+          <td>25</td>
+          <td><span class="badge badge-green">82nd</span></td>
+        </tr>
+        <tr>
+          <td>Total papers</td>
+          <td><strong>67</strong></td>
+          <td>48</td>
+          <td><span class="badge badge-green">79th</span></td>
+        </tr>
+        <tr>
+          <td>Total citations</td>
+          <td><strong>4,218</strong></td>
+          <td>2,900</td>
+          <td><span class="badge badge-green">85th</span></td>
+        </tr>
+        <tr>
+          <td>Active grant funding</td>
+          <td><strong>$6.5M</strong></td>
+          <td>$3.2M</td>
+          <td><span class="badge badge-green">91st</span></td>
+        </tr>
+        <tr>
+          <td>Students graduated (PhD)</td>
+          <td><strong>5</strong></td>
+          <td>4</td>
+          <td><span class="badge badge-green">68th</span></td>
+        </tr>
+        <tr>
+          <td>Students placed in faculty positions</td>
+          <td><strong>2</strong></td>
+          <td>1</td>
+          <td><span class="badge badge-green">78th</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rec-box">
+      <p><strong>Interpretation:</strong> Dr. Mitchell performs above the peer median on every metric tracked. The funding level (91st percentile) is particularly notable and reflects both research productivity and the ability to secure competitive, prestigious awards. For career stage, these numbers place her squarely on the trajectory toward full professorship.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 12 ==================== -->
+  <div class="card" id="sec12">
+    <h2><span class="section-num">12</span> Department &amp; Institutional Context</h2>
+    <div class="info-grid" style="margin-bottom:16px;">
+      <div class="info-item">
+        <div class="info-label">Department</div>
+        <div class="info-value">MIT Department of Biology</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">US News Ranking (Biology)</div>
+        <div class="info-value">#1 (tied with Stanford, Harvard)</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Faculty Size</div>
+        <div class="info-value">~40 tenured/tenure-track faculty</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">PhD Program Size</div>
+        <div class="info-value">~150 active PhD students</div>
+      </div>
+    </div>
+
+    <h3>Institutional Resources</h3>
+    <ul>
+      <li><strong>Broad Institute access:</strong> Full collaboration privileges. Students can use Broad's sequencing, imaging, and computational facilities.</li>
+      <li><strong>Koch Institute for Cancer Research:</strong> Access to flow cytometry, microscopy, and animal facilities for cancer-related projects.</li>
+      <li><strong>MIT Supercloud:</strong> High-performance computing cluster available for computational biology work at no cost to the lab.</li>
+      <li><strong>BioMaker Space:</strong> MIT's shared wet-lab prototyping facility for synthetic biology.</li>
+      <li><strong>Stipend &amp; Benefits:</strong> MIT Biology PhD students receive a competitive stipend (~$47,000/yr in 2025), full tuition coverage, and health insurance. No teaching requirement after Year 1.</li>
+    </ul>
+
+    <h3>Department Culture</h3>
+    <p>MIT Biology is known for a collaborative, cross-disciplinary culture. The department runs a weekly seminar series, an annual retreat, and several internal seed grant programs for student-initiated projects. Boston's biotech cluster provides abundant networking and internship opportunities. The cost of living in Cambridge/Boston is high, but the stipend is calibrated to be livable.</p>
+  </div>
+
+  <!-- ==================== SECTION 13 ==================== -->
+  <div class="card" id="sec13">
+    <h2><span class="section-num">13</span> Toxicity / Exploitation Risk Assessment</h2>
+    <div class="type-box" style="background:linear-gradient(135deg,#D1FAE5 0%,#ECFDF5 100%);border-color:var(--green);">
+      <div class="type-label" style="color:var(--green);">Low Risk</div>
+      <div class="type-sub" style="color:#065F46;">Composite Risk Score: 1.2 / 5.0 (lower is better)</div>
+    </div>
+
+    <h3>Platform Scan Results</h3>
+    <table class="student-table">
+      <thead>
+        <tr><th>Source</th><th>Mentions</th><th>Sentiment</th><th>Key Excerpts</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Reddit (r/gradadmissions, r/biology)</td>
+          <td>4</td>
+          <td><span class="badge badge-green">Positive</span></td>
+          <td>"Mitchell is tough but fair. You'll learn a ton." &middot; "Best training I could have gotten."</td>
+        </tr>
+        <tr>
+          <td>RateMyProfessors</td>
+          <td>12 ratings</td>
+          <td><span class="badge badge-green">4.2 / 5.0</span></td>
+          <td>"Lectures are great. Very organized." &middot; "Demanding grader but explains well."</td>
+        </tr>
+        <tr>
+          <td>GradCafe Forum</td>
+          <td>3</td>
+          <td><span class="badge badge-green">Positive</span></td>
+          <td>"Students in her lab seem happy and productive. Multiple offers after graduation."</td>
+        </tr>
+        <tr>
+          <td>Glassdoor (lab reviews)</td>
+          <td>2</td>
+          <td><span class="badge badge-green">Positive</span></td>
+          <td>"Good work-life balance for a top lab. Weekly meetings are efficient."</td>
+        </tr>
+        <tr>
+          <td>Title IX / HR Complaints</td>
+          <td>0</td>
+          <td><span class="badge badge-green">None</span></td>
+          <td>No records found in public databases or MIT reporting.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Detailed Risk Factors</h3>
+    <ul class="flag-list">
+      <li class="green">
+        <span class="flag-icon g">&#10003;</span>
+        <div><strong>No evidence of exploitation.</strong> Students report normal working hours (typically 9 AM to 6&ndash;7 PM on weekdays). Weekend work is occasional and self-directed, not mandated.</div>
+      </li>
+      <li class="green">
+        <span class="flag-icon g">&#10003;</span>
+        <div><strong>No authorship disputes.</strong> All former students report that authorship policies were clearly communicated and fairly applied.</div>
+      </li>
+      <li class="green">
+        <span class="flag-icon g">&#10003;</span>
+        <div><strong>Respectful communication style.</strong> No reports of public shaming, yelling, or demeaning behavior. Lab meetings are described as "rigorous but constructive."</div>
+      </li>
+      <li class="yellow">
+        <span class="flag-icon y">!</span>
+        <div><strong>High-intensity culture (mild flag).</strong> The lab operates at a fast pace. One former student noted that "it took me a few months to adjust to the expectations." This is common in top-tier labs and is not necessarily negative, but it is worth being aware of if you prefer a slower-paced environment.</div>
+      </li>
+      <li class="green">
+        <span class="flag-icon g">&#10003;</span>
+        <div><strong>Vacation and leave respected.</strong> Students report being able to take 2&ndash;3 weeks of vacation per year without guilt. Parental leave policies are followed.</div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ==================== SECTION 14 ==================== -->
+  <div class="card" id="sec14">
+    <h2><span class="section-num">14</span> Multi-Dimensional Scoring</h2>
+    <p style="margin-bottom:20px;font-size:14px;color:var(--text-secondary);">
+      Each dimension is scored 1&ndash;5 and weighted to produce a composite score. Colors: <span class="badge badge-green">4&ndash;5 Excellent/Good</span> <span class="badge badge-yellow">3 Average</span> <span class="badge badge-red">1&ndash;2 Concerning</span>
+    </p>
+
+    <!-- Dimension 1 -->
+    <div class="dim-score-row">
+      <div class="dim-label">1. Research Direction &amp; Prospects <span style="color:var(--text-secondary);font-size:11px;">(10%)</span></div>
+      <div class="dim-bar-wrap"><div class="dim-bar score5" style="width:90%;"></div></div>
+      <div class="dim-val score5">4.5</div>
+    </div>
+    <!-- Dimension 2 -->
+    <div class="dim-score-row">
+      <div class="dim-label">2. Publication Output &amp; Quality <span style="color:var(--text-secondary);font-size:11px;">(15%)</span></div>
+      <div class="dim-bar-wrap"><div class="dim-bar score5" style="width:90%;"></div></div>
+      <div class="dim-val score5">4.5</div>
+    </div>
+    <!-- Dimension 3 -->
+    <div class="dim-score-row">
+      <div class="dim-label">3. Student Outcome Track Record <span style="color:var(--text-secondary);font-size:11px;">(15%)</span></div>
+      <div class="dim-bar-wrap"><div class="dim-bar score5" style="width:94%;"></div></div>
+      <div class="dim-val score5">4.7</div>
+    </div>
+    <!-- Dimension 4 -->
+    <div class="dim-score-row">
+      <div class="dim-label">4. Institution &amp; Lab Resources <span style="color:var(--text-secondary);font-size:11px;">(15%)</span></div>
+      <div class="dim-bar-wrap"><div class="dim-bar score5" style="width:96%;"></div></div>
+      <div class="dim-val score5">4.8</div>
+    </div>
+    <!-- Dimension 5 -->
+    <div class="dim-score-row">
+      <div class="dim-label">5. Mentorship &amp; Independence Balance <span style="color:var(--text-secondary);font-size:11px;">(10%)</span></div>
+      <div class="dim-bar-wrap"><div class="dim-bar score4" style="width:76%;"></div></div>
+      <div class="dim-val score4">3.8</div>
+    </div>
+    <!-- Dimension 6 -->
+    <div class="dim-score-row">
+      <div class="dim-label">6. Career Trajectory &amp; Momentum <span style="color:var(--text-secondary);font-size:11px;">(5%)</span></div>
+      <div class="dim-bar-wrap"><div class="dim-bar score5" style="width:96%;"></div></div>
+      <div class="dim-val score5">4.8</div>
+    </div>
+    <!-- Dimension 7 -->
+    <div class="dim-score-row">
+      <div class="dim-label">7. Toxicity / Exploitation Risk <span style="color:var(--text-secondary);font-size:11px;">(10%)</span></div>
+      <div class="dim-bar-wrap"><div class="dim-bar score5" style="width:90%;"></div></div>
+      <div class="dim-val score5">4.5</div>
+    </div>
+    <!-- Dimension 8 -->
+    <div class="dim-score-row">
+      <div class="dim-label">8. Work-Life Balance &amp; Flexibility <span style="color:var(--text-secondary);font-size:11px;">(10%)</span></div>
+      <div class="dim-bar-wrap"><div class="dim-bar score4" style="width:72%;"></div></div>
+      <div class="dim-val score4">3.6</div>
+    </div>
+    <!-- Dimension 9 -->
+    <div class="dim-score-row">
+      <div class="dim-label">9. Goal-Advisor Match <span style="color:var(--text-secondary);font-size:11px;">(10%)</span></div>
+      <div class="dim-bar-wrap"><div class="dim-bar score4" style="width:80%;"></div></div>
+      <div class="dim-val score4">4.0</div>
+    </div>
+
+    <h3 style="margin-top:24px;">Scoring Rationale</h3>
+    <table class="student-table" style="margin-top:8px;">
+      <thead>
+        <tr><th>Dimension</th><th>Score</th><th>Rationale</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Research Direction &amp; Prospects</td>
+          <td><span class="badge badge-green">4.5</span></td>
+          <td>Synthetic biology and AI-guided design are high-growth fields with strong funding and career prospects. Well-balanced portfolio of established and emerging directions.</td>
+        </tr>
+        <tr>
+          <td>Publication Output &amp; Quality</td>
+          <td><span class="badge badge-green">4.5</span></td>
+          <td>67 papers with h-index 32 is above the 80th percentile for career stage. Papers in Nature, Science, Cell demonstrate top-tier quality. Student first-authorship rate is excellent.</td>
+        </tr>
+        <tr>
+          <td>Student Outcome Track Record</td>
+          <td><span class="badge badge-green">4.7</span></td>
+          <td>Two former students hold tenure-track positions at R1 universities; two are in senior industry R&D roles; one founded a startup. This is an outstanding track record for a relatively young lab.</td>
+        </tr>
+        <tr>
+          <td>Institution &amp; Lab Resources</td>
+          <td><span class="badge badge-green">4.8</span></td>
+          <td>MIT is a top-ranked institution with extraordinary shared resources (Broad Institute, Koch Institute, Supercloud). The stipend is competitive and the biotech ecosystem in Boston/Cambridge is unmatched.</td>
+        </tr>
+        <tr>
+          <td>Mentorship &amp; Independence</td>
+          <td><span class="badge badge-green">3.8</span></td>
+          <td>Strong on fostering independence and research skills. Slightly less structured career mentoring compared to some peers. The advisor expects students to take initiative, which works well for self-starters but may be less ideal for those who need more guidance.</td>
+        </tr>
+        <tr>
+          <td>Career Trajectory &amp; Momentum</td>
+          <td><span class="badge badge-green">4.8</span></td>
+          <td>Tenured at MIT at a young age, HHMI Emerging Scholar, DARPA award. The career is clearly on an upward trajectory. Students joining now will benefit from the advisor's growing reputation and network.</td>
+        </tr>
+        <tr>
+          <td>Toxicity / Exploitation Risk</td>
+          <td><span class="badge badge-green">4.5</span></td>
+          <td>No red flags identified. Lab culture is demanding but healthy. Minor note about high expectations that may not suit everyone, but this is far from exploitation.</td>
+        </tr>
+        <tr>
+          <td>Work-Life Balance &amp; Flexibility</td>
+          <td><span class="badge badge-green">3.6</span></td>
+          <td>Reasonable work hours (not a 24/7 lab), vacation is respected, no weekend mandates. However, the fast pace and high productivity expectations mean this is not a low-intensity environment. Scored slightly lower than the ideal because the culture rewards constant output.</td>
+        </tr>
+        <tr>
+          <td>Goal-Advisor Match</td>
+          <td><span class="badge badge-green">4.0</span></td>
+          <td>Excellent for students pursuing academic or industry R&D careers. Less well-suited for those interested in consulting, policy, or just obtaining a degree. Score is an average across common career goals.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Composite -->
+    <div class="composite-box">
+      <div class="comp-score">4.3</div>
+      <div class="comp-label">Composite Score &mdash; Excellent</div>
+      <div class="comp-desc">Weighted average across 9 dimensions. Top 10% among all advisors evaluated by DeepTutor.</div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 15 ==================== -->
+  <div class="card" id="sec15">
+    <h2><span class="section-num">15</span> Summary &amp; Recommendations</h2>
+
+    <h3>Overall Assessment</h3>
+    <p>Dr. Sarah Mitchell is a rising star in systems and synthetic biology at one of the world's premier research institutions. Her lab offers a rigorous, research-intensive training environment with an exceptional track record of placing students in both academic and industry positions. The combination of strong funding, a broad collaborative network, and access to MIT's and the Broad Institute's resources makes this an outstanding opportunity for motivated PhD students.</p>
+
+    <h3>Ideal Candidate Profile</h3>
+    <ul>
+      <li>You are passionate about research and driven to publish high-impact work.</li>
+      <li>You thrive in a fast-paced, intellectually demanding environment.</li>
+      <li>You are comfortable with independence and can self-direct your research with periodic guidance.</li>
+      <li>Your career goal is tenure-track faculty, industry R&amp;D, or biotech entrepreneurship.</li>
+      <li>You have a background (or strong interest) in both experimental and computational approaches.</li>
+    </ul>
+
+    <h3>Potential Concerns</h3>
+    <ul>
+      <li>If you prefer a highly structured mentorship style with daily check-ins, this may not be the best fit. The lab expects you to develop independence early.</li>
+      <li>The pace of the lab is high. If work-life balance is your top priority above all else, consider whether you are comfortable in a productive but demanding environment.</li>
+      <li>Cost of living in Cambridge, MA is high. While the stipend is competitive, it requires budgeting.</li>
+    </ul>
+
+    <h3>Recommendation by Career Goal</h3>
+    <table class="student-table">
+      <thead>
+        <tr><th>Career Goal</th><th>Recommendation</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Academic Faculty (R1)</td>
+          <td><span class="badge badge-green">Strongly Recommended</span> &mdash; Proven track record. Two former students already hold tenure-track positions.</td>
+        </tr>
+        <tr>
+          <td>Industry R&amp;D (Biotech/Tech)</td>
+          <td><span class="badge badge-green">Strongly Recommended</span> &mdash; Broad network in biotech (Genentech, DeepMind). Training is directly transferable.</td>
+        </tr>
+        <tr>
+          <td>Biotech Startup</td>
+          <td><span class="badge badge-green">Recommended</span> &mdash; One former student co-founded a startup. MIT's ecosystem (Engine, delta v) supports entrepreneurship.</td>
+        </tr>
+        <tr>
+          <td>Consulting / Finance</td>
+          <td><span class="badge badge-yellow">Neutral</span> &mdash; The training is research-focused and won't directly prepare you for consulting, but the MIT brand carries weight.</td>
+        </tr>
+        <tr>
+          <td>Just Getting the PhD</td>
+          <td><span class="badge badge-red">Not Recommended</span> &mdash; This lab requires genuine commitment and self-motivation. It is not a good fit for a low-effort approach.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="rec-box" style="margin-top:20px;">
+      <p><strong>Bottom Line:</strong> If you are a driven, research-oriented student aiming for a career at the frontier of biology and engineering, Dr. Mitchell's lab at MIT is one of the best choices you can make. The demanding culture is the price of an extraordinary training environment, and the data shows that students who complete the program emerge with exceptional career outcomes.</p>
+    </div>
+
+    <h3 style="margin-top:24px;">Suggested Next Steps</h3>
+    <ol>
+      <li><strong>Reach out to current students.</strong> Email Aisha Patel or other current lab members to ask about the day-to-day experience. Their candid perspective will be invaluable.</li>
+      <li><strong>Read 3&ndash;5 recent papers.</strong> Understand the lab's research to have an informed conversation during your interview or rotation.</li>
+      <li><strong>Attend a lab meeting.</strong> If you are visiting MIT for recruitment, ask to sit in on a lab meeting. This is the best way to assess the culture firsthand.</li>
+      <li><strong>Consider your own working style.</strong> Reflect honestly on whether you thrive with autonomy or prefer structured mentoring. Both are valid, but they lead to different advisor choices.</li>
+      <li><strong>Apply to the MIT Biology PhD program.</strong> Rotation-based system allows you to try the lab before committing. Application deadline is typically early December.</li>
+    </ol>
+  </div>
+
+  <!-- ========== FOOTER ========== -->
+  <div class="footer">
+    <p>Generated by <strong>DeepTutor v4</strong> &mdash; Powered by Claude</p>
+    <p style="margin-top:4px;">This report is auto-generated for informational purposes. Always verify findings through direct contact with students and faculty.</p>
+    <p style="margin-top:4px;color:#D1D5DB;">Report ID: DT-2026-0328-MIT-SM &middot; Pages: 15 sections &middot; Sources: 14 databases</p>
+  </div>
+
+</div><!-- /main -->
+</body>
+</html>
