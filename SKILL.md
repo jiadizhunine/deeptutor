@@ -16,11 +16,11 @@ description: >
   Also triggers on comparative requests ("帮我对比这三个导师", "compare these advisors").
 metadata:
   author: jiadizhu
-  version: "1.0"
+  version: "2.0"
   license: MIT
 ---
 
-# DeepTutor v4 — Academic Advisor Investigation System
+# DeepTutor v5 — Academic Advisor Investigation System
 
 ## Core Principle
 
@@ -60,7 +60,7 @@ If the user doesn't provide career goal or risk tolerance, proceed with a balanc
 
 ---
 
-## 9-Phase Investigation Workflow
+## 10-Phase Investigation Workflow
 
 ### Phase 1: Identity Resolution
 
@@ -214,37 +214,82 @@ Combine BOTH Chinese and international platforms, plus:
 - Dcard (Taiwan/HK student platform)
 - 小红书 and 知乎 (many HK/TW students post here)
 
+### Phase 6.5: Field Macro Trend Analysis (行业宏观趋势判断)
+
+> **方向不对，再好的导师也帮不了你。**
+
+在完成社会评价搜索后、打分之前，必须对导师所在研究领域进行宏观趋势判断。这不是简单的"hotspot or not"，而是系统性地评估这个领域对学生未来5-10年职业发展的影响。
+
+**必须回答的5个核心问题：**
+
+1. **生命周期定位**：这个领域处于什么阶段？
+   - 🌱 萌芽期（Emerging）：新技术/新概念，论文少但增长快，风险高回报高
+   - 📈 上升期（Growth）：资金涌入，招聘旺盛，竞争加剧但机会多
+   - 📊 成熟期（Mature）：方法论稳定，工业化应用，增量创新为主
+   - 📉 衰退期（Declining）：资金缩减，人才外流，被新技术替代
+   - ☠️ 夕阳期（Sunset）：几乎无新资金，从业者转行，学生就业极难
+
+2. **资金趋势**：近5年该领域的国家级基金（NSFC/NIH/ERC）资助数量和金额是增是减？有没有新的专项计划？
+
+3. **就业市场前景**：
+   - 学术界：该领域的faculty招聘岗位是否在增加？
+   - 工业界：对口企业/岗位有哪些？薪资水平？招聘趋势？
+   - 医疗/政府：是否有对口的临床或政策岗位？
+
+4. **技术颠覆风险**：该领域是否面临被AI/新技术/新方法论替代的风险？（如：传统组学分析 vs AI驱动的组学，传统药物筛选 vs AI drug discovery）
+
+5. **中国/国际差异**：同一个领域在国内和国际的发展阶段可能不同（如：某领域在国内是政策热点但国际已趋于饱和，或反之）
+
+**信息来源：**
+- 领域顶刊的发表量年度趋势（PubMed/Scopus统计）
+- 国家基金资助项目数量趋势（NSFC/NIH Reporter）
+- 行业报告和市场分析（招聘网站、行业白皮书）
+- 领域顶级会议的参会规模变化
+- 知名课题组的方向转移信号
+
+**输出格式：**
+给出明确的趋势判断标签（萌芽/上升/成熟/衰退/夕阳）+ 置信度 + 关键证据 + 对学生的具体影响。
+
 ### Phase 7: Multi-Dimensional Scoring
 
 Read `references/advisor_evaluation_framework.md` for detailed rubrics.
 
-**Chinese context — 9 dimensions:**
+**Chinese context — 11 dimensions:**
 
 | # | Dimension | Weight |
 |---|-----------|--------|
-| 1 | Research Direction & Prospects (研究方向与前景) | 10% |
-| 2 | Publication Output & Quality (发表成果与质量) | 15% |
-| 3 | Student Cultivation Track Record (学生培养实绩) | 15% |
-| 4 | Platform & Resources (平台与资源) | 15% |
-| 5 | Independence & Growth Space (独立性与成长空间) | 10% |
+| 1 | Field Macro Trend (领域宏观趋势) | 10% |
+| 2 | Publication Output & Quality (发表成果与质量) | 12% |
+| 3 | Student Cultivation Track Record (学生培养实绩) | 13% |
+| 4 | Platform & Resources (平台与资源) | 12% |
+| 5 | Independence & Growth Space (独立性与成长空间) | 8% |
 | 6 | Career Trajectory & Momentum (职业轨迹与势头) | 5% |
 | 7 | PUA/Exploitation Risk (PUA/PUSH风险) | 10% |
-| 8 | Time Freedom (时间自由度) | 10% |
-| 9 | Goal-Advisor Match (毕业目标匹配) | 10% |
+| 8 | Time Freedom (时间自由度) | 8% |
+| 9 | Goal-Advisor Match (毕业目标匹配) | 7% |
+| 10 | Advisor Sharp Critique (导师锐评) | 10% |
+| 11 | Retirement & Stability Risk (退休与稳定性风险) | 5% |
 
-**International context — 9 dimensions:**
+**International context — 11 dimensions:**
 
 | # | Dimension | Weight |
 |---|-----------|--------|
-| 1 | Research Direction & Prospects | 10% |
-| 2 | Publication Output & Quality | 15% |
-| 3 | Student Outcome Track Record | 15% |
-| 4 | Institution & Lab Resources | 15% |
-| 5 | Mentorship & Independence Balance | 10% |
+| 1 | Field Macro Trend | 10% |
+| 2 | Publication Output & Quality | 12% |
+| 3 | Student Outcome Track Record | 13% |
+| 4 | Institution & Lab Resources | 12% |
+| 5 | Mentorship & Independence Balance | 8% |
 | 6 | Career Trajectory & Momentum | 5% |
 | 7 | Toxicity / Exploitation Risk | 10% |
-| 8 | Work-Life Balance & Flexibility | 10% |
-| 9 | Goal-Advisor Match | 10% |
+| 8 | Work-Life Balance & Flexibility | 8% |
+| 9 | Goal-Advisor Match | 7% |
+| 10 | Advisor Sharp Critique | 10% |
+| 11 | Retirement & Stability Risk | 5% |
+
+**New dimensions explained:**
+- **Field Macro Trend (D1)**: Replaces old "Research Direction & Prospects" with a much deeper, structured macro trend analysis (see Phase 6.5). Not just "is it a hotspot" but WHERE in the lifecycle, WHAT the job market looks like, and WHETHER the field faces disruption.
+- **Advisor Sharp Critique (D10)**: A synthesized, honest assessment that cuts through diplomatic scoring. See Phase 9.5 for details.
+- **Retirement & Stability Risk (D11)**: Evaluates whether the advisor will still be active and funded for the full duration of the student's degree.
 
 Key difference: The Chinese "时间自由度" dimension evaluates freedom for 考公/考编/实习, which is irrelevant for international students. The international "Work-Life Balance" evaluates vacation policy, expected work hours, remote flexibility, and support for career development activities (conferences, internships, courses).
 
@@ -284,7 +329,73 @@ Run through the flag checklists in `references/advisor_evaluation_framework.md`.
 - Reasonable stipends
 - Positive online reviews from current/former students
 
-### Phase 9: Report Generation
+### Phase 9: Advisor Sharp Critique (导师锐评)
+
+> **不要让外交辞令害了学生。学生需要的不是3.8分还是4.1分的区别，而是"这个人到底能不能选"的直觉判断。**
+
+这个阶段是整个评估的灵魂。在完成所有数据收集和机械化打分后，用以下框架对导师进行一次不留情面的直觉评估。
+
+**锐评必须回答的7个问题：**
+
+1. **一句话判决**：如果你的亲弟弟/亲妹妹问你能不能选这个导师，你会说什么？（不是写给学术委员会的，是写给家人的）
+
+2. **导师的"人设"vs现实**：
+   - 导师对外展示的形象是什么？（官网简介、招生宣传、公开讲话）
+   - 数据和学生评价反映的现实是什么？
+   - 两者之间有多大差距？差距越大越危险。
+
+3. **最大的隐藏风险**：导师不会主动告诉你、但你入组后一定会遇到的问题是什么？（基于学生评价、出组率、发表模式推断）
+
+4. **最被低估的优点**：导师身上被分数系统低估的、真正有价值的特质是什么？
+
+5. **5年后预测**：根据导师的年龄、职称、资金、发表趋势、领域走向——5年后这个实验室会是什么状态？上升、稳定、还是衰退？
+
+6. **替代方案建议**：如果不选这个导师，在同一领域/同一学校，还有什么替代选择值得考虑？（基于合作者网络和同院系信息推断）
+
+7. **Deal-Breaker检查**：是否存在以下任何一个"一票否决"条件？
+   - 多条独立的PUA/toxicity投诉（不是一条可能是个人恩怨，多条就是系统性问题）
+   - 导师3年内即将退休但没有明确的接班安排
+   - 近3年完全无经费且无新论文
+   - 多名学生中途退组/延期毕业的明确证据
+   - 如果触发任何一条，无论其他维度分数多高，总评必须标注为"⚠️ 存在一票否决风险"
+
+**锐评的评分标准：**
+
+| Score | Criteria |
+|-------|---------|
+| 5 | 强烈推荐：数据和直觉都指向这是一个优秀的选择，几乎没有隐藏风险 |
+| 4 | 推荐：整体良好，有小瑕疵但不影响大局，适合大多数学生 |
+| 3 | 中性：有明显的优点也有明显的缺点，取决于学生个人情况和风险偏好 |
+| 2 | 谨慎：存在显著风险信号，只推荐给特定类型的学生（如：极度自驱、不需要指导的） |
+| 1 | 不推荐：多个红灯信号，或存在一票否决条件 |
+
+**锐评的写作风格：**
+- 说人话，不说学术套话
+- 用具体事实支撑判断，不空谈
+- 敢于给出明确的"推荐/不推荐"结论，不骑墙
+- 如果信息不足无法判断，直说"信息不足，无法给出可靠的锐评"，不要硬编
+
+### Phase 9.5: Retirement & Stability Risk Assessment
+
+评估导师在学生就读期间是否会保持稳定。
+
+**检查项：**
+- 导师年龄/出生年份（推算退休时间）
+- 是否临近退休年龄（中国：男60/女55，有延聘可能到65；国际：通常无强制退休但65+需关注）
+- Tenure status（国际）：pre-tenure PI有被deny tenure导致实验室关闭的风险
+- 经费连续性：当前经费何时到期？是否有续期迹象？
+- 是否有实验室搬迁/跳槽迹象？（关注近期的职位变动、多个affiliation）
+- 健康/精力信号：近年会议出席、论文产出是否有下降趋势
+
+| Score | Criteria |
+|-------|---------|
+| 5 | 导师40-55岁，tenure/正教授，经费充足，至少10年稳定期 |
+| 4 | 导师较年轻或中年，经费稳定，无退休/搬迁风险 |
+| 3 | 有轻微风险信号（经费即将到期、pre-tenure），但总体可控 |
+| 2 | 明显风险：导师55+岁无明确接班人，或pre-tenure且发表不够 |
+| 1 | 高风险：导师即将退休、经费中断、或有跳槽/关闭实验室迹象 |
+
+### Phase 10: Report Generation
 
 Generate a standalone HTML report following `references/report_template.md`.
 
@@ -296,7 +407,12 @@ Generate a standalone HTML report following `references/report_template.md`.
 - Include composite score prominently
 - All URLs must be clickable
 - Must be printable (hide nav in @media print)
-- Footer: "Generated by DeepTutor v4 — Powered by Claude"
+- Footer: "Generated by DeepTutor v5 — Powered by Claude"
+
+**Report structure priority change (v5):**
+- 锐评（Sharp Critique）必须出现在报告的**前3个section**，不能藏在最后
+- 行业宏观趋势必须有独立section，配趋势图表或生命周期阶段标识
+- 综合评分旁边必须标注是否触发了"一票否决"条件
 
 ---
 
