@@ -7,23 +7,46 @@ Supports both Chinese (国内) and International evaluation contexts.
 
 ## Scoring Framework (Chinese Context)
 
-### Dimension 1: 研究方向与前景 Research Direction & Prospects (10%)
+### Dimension 1: 领域宏观趋势 Field Macro Trend (10%)
 
-#### Scoring Criteria
+> **方向不对，再好的导师也帮不了你。这个维度评估的不是导师个人，而是导师所在赛道的未来。**
+
+#### 生命周期定位矩阵
+
+| 阶段 | 标识 | 发表量趋势 | 资金趋势 | 就业前景 | 对学生的意义 |
+|------|------|-----------|---------|---------|------------|
+| 萌芽期 | 🌱 | 少但年增>30% | 开始出现专项 | 不确定，高风险高回报 | 适合赌性大的学生，可能成为领域先驱 |
+| 上升期 | 📈 | 快速增长 | 大量涌入 | 供不应求 | **最佳入场时机**，竞争在加剧但机会更多 |
+| 成熟期 | 📊 | 稳定 | 稳定或微降 | 充足但竞争激烈 | 安全选择，但难以做出突破性成果 |
+| 衰退期 | 📉 | 下降 | 明显缩减 | 岗位减少 | 谨慎选择，考虑转方向的灵活性 |
+| 夕阳期 | ☠️ | 大幅下降 | 几乎无新资金 | 极度困难 | **强烈不推荐**，除非有明确的转行计划 |
+
+#### 就业市场前景评估
+
+| 方向 | 评估内容 |
+|------|---------|
+| 学术界 | 近3年该领域faculty招聘数量趋势；国内vs国际的差异 |
+| 工业界 | 对口企业/岗位清单；薪资范围；招聘趋势（增/减/稳） |
+| 医疗/政府 | 对口的临床/政策岗位；体制内招聘趋势 |
+| 转行灵活性 | 该领域训练出的技能是否可迁移到其他领域？ |
+
+#### 技术颠覆风险评估
+
+| 风险等级 | 描述 | 举例 |
+|---------|------|------|
+| 高 | 核心方法论正在被AI/新技术替代 | 传统统计遗传学 → AI基因组学 |
+| 中 | 部分工具链在更新，但核心逻辑不变 | 传统测序分析 → 长读长+AI辅助 |
+| 低 | 方法论稳定，AI是辅助而非替代 | 临床试验、动物模型 |
+
+#### Scoring
 
 | Score | Criteria |
 |-------|---------|
-| 5 | Field is a current hotspot with strong funding; high translational potential; broad career relevance |
-| 4 | Active research area with stable funding; good career prospects in both academia and industry |
-| 3 | Established field with moderate competition; adequate funding opportunities |
-| 2 | Niche or declining field; limited funding; narrow career applicability |
-| 1 | Obsolete methodology; no foreseeable funding; extremely limited career paths |
-
-#### Assessment Checklist
-- Is the field growing, stable, or shrinking? (Check publication volume trends)
-- Are there major funding programs targeting this area?
-- What careers can graduates pursue (academia, pharma, biotech, hospital, government)?
-- Is the PI opening new subfields or stuck in one narrow topic?
+| 5 | 上升期领域；资金充裕且持续增长；就业供不应求；低技术颠覆风险；中国和国际前景均好 |
+| 4 | 上升期或成熟初期；资金稳定；就业前景良好；可能有轻微的技术更新压力 |
+| 3 | 成熟期；资金和就业稳定但增量有限；竞争激烈；需要差异化定位 |
+| 2 | 衰退期或严重内卷的成熟期；资金缩减；就业岗位减少；高技术颠覆风险 |
+| 1 | 夕阳期；几乎无新资金；从业者大量转行；被新技术全面替代 |
 
 ### Dimension 2: 发表成果与质量 Publication Output & Quality (15%)
 
@@ -622,7 +645,71 @@ Supports both Chinese (国内) and International evaluation contexts.
 
 ### Score Calculation Notes
 
-- **Chinese context**: Use Chinese dimensions (Dim 1-9) with Chinese-specific benchmarks, university tiers, promotion timelines, and PUA/PUSH signals.
-- **International context**: Use International dimensions (Dim 1-9) with international benchmarks, university rankings, tenure-track timelines, and toxicity signals.
-- **Weighted composite**: Sum of (dimension score x weight) across all 9 dimensions.
+- **Chinese context**: Use Chinese dimensions (Dim 1-11) with Chinese-specific benchmarks, university tiers, promotion timelines, and PUA/PUSH signals.
+- **International context**: Use International dimensions (Dim 1-11) with international benchmarks, university rankings, tenure-track timelines, and toxicity signals.
+- **Weighted composite**: Sum of (dimension score x weight) across all 11 dimensions.
 - **Context detection**: Automatically select Chinese or International framework based on the advisor's institution country. For advisors at Chinese institutions abroad (e.g., joint programs), consider both frameworks.
+- **Deal-Breaker override**: If ANY deal-breaker condition is triggered (see Phase 9 in SKILL.md), the composite score must be capped at 2.5 regardless of other dimensions, and the report must display a prominent warning banner.
+
+---
+
+## New Dimensions (v5): Sharp Critique & Retirement Risk
+
+### Dimension 10: 导师锐评 / Advisor Sharp Critique (10%)
+
+> **这不是一个数据维度，而是一个综合直觉判断维度。它强制报告给出明确的推荐/不推荐结论，而不是躲在分数后面。**
+
+#### 评估框架（7问锐评）
+
+| 问题 | 目的 | 信息来源 |
+|------|------|---------|
+| 1. 一句话判决 | 去掉所有修辞，给出最直接的判断 | 所有维度的综合 |
+| 2. "人设"vs现实 | 识别导师对外形象与实际之间的差距 | 官网简介 vs 学生评价/发表数据 |
+| 3. 最大隐藏风险 | 导师不会告诉你但你必须知道的事 | 学生评价、出组率、横向项目比例 |
+| 4. 最被低估的优点 | 分数系统可能没有捕捉到的真正价值 | 学生去向中的异常好结果、独特资源 |
+| 5. 5年后预测 | 实验室的发展轨迹判断 | 年龄+职称+资金+发表趋势+领域走向 |
+| 6. 替代方案建议 | 给学生提供比较基准 | 同院系/同领域其他导师 |
+| 7. Deal-Breaker检查 | 是否触发一票否决 | 红灯信号列表 |
+
+#### Deal-Breaker条件（触发任何一条 → 总评上限2.5分）
+
+- [ ] 多条独立的PUA/toxicity投诉（≥2条来自不同来源）
+- [ ] 导师3年内退休且无明确接班安排
+- [ ] 近3年完全无经费且无新论文
+- [ ] 多名学生中途退组/延期毕业的明确证据（≥2名）
+- [ ] 有被撤稿或学术不端的确认记录
+
+#### Scoring
+
+| Score | Criteria |
+|-------|---------|
+| 5 | 强烈推荐：数据和直觉一致指向优秀，几乎没有隐藏风险，"人设"与现实高度一致 |
+| 4 | 推荐：整体良好，小瑕疵但不影响大局，适合大多数学生 |
+| 3 | 中性：明显优缺点并存，取决于学生个人情况和风险偏好 |
+| 2 | 谨慎：显著风险信号，只推荐给特定类型的学生 |
+| 1 | 不推荐：触发deal-breaker或多个严重红灯 |
+
+### Dimension 11: 退休与稳定性风险 / Retirement & Stability Risk (5%)
+
+> **读研3-5年，如果导师中途退休/跳槽/关闭实验室，学生的损失是灾难性的。**
+
+#### 风险因素评估
+
+| 因素 | 低风险 | 中风险 | 高风险 |
+|------|--------|--------|--------|
+| 导师年龄 | 35-50岁 | 50-58岁 | 58+岁（国内）/ 65+岁（国际） |
+| Tenure状态 | 已tenure / 正教授 | Tenure-track第3-5年 | Pre-tenure第1-2年 / 非tenure |
+| 经费到期 | 有3年以上剩余经费 | 经费1-2年内到期但有续期迹象 | 经费已断 / 1年内到期无续期 |
+| 实验室规模趋势 | 持续招生，人数稳定或增长 | 减少招生 | 不再招生或大量人员流失 |
+| 跳槽信号 | 单一affiliation，稳定 | 近期有访问/兼职 | 近期换过机构 / 多个affiliation |
+| 接班安排 | 有明确的副PI/co-advisor | 不明确 | 无接班人且即将退休 |
+
+#### Scoring
+
+| Score | Criteria |
+|-------|---------|
+| 5 | 导师40-55岁，已tenure/正教授，经费充足，至少10年稳定期 |
+| 4 | 中年或tenure-track后期（即将tenure），经费稳定，无退休/搬迁风险 |
+| 3 | 有轻微风险（经费即将到期、pre-tenure但进展良好），总体可控 |
+| 2 | 明显风险：55+岁无接班人，或pre-tenure且发表/资金不够 |
+| 1 | 高风险：即将退休、经费中断、有跳槽/关闭实验室迹象 |
