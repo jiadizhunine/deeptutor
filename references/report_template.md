@@ -6,25 +6,38 @@
 - Section headers, analysis text, recommendations — everything in one language
 - Only exception: original source quotes may remain in their original language with translation in parentheses
 
-## Report Structure (15 Sections)
+## Report Structure (18 Sections)
+
+> **结构设计原则：结论前置，细节在后。学生打开报告的前30秒必须看到最重要的信息。**
 
 Generate as a single standalone `.html` file. Use the bilingual list below as reference; render only the user's language version in the actual report:
 
-1. Basic Info / 基本信息 — name, title, institution, contact, IDs, doctoral/master supervisor status
-2. Advisor Type Classification / 导师类型分类 — academic/project/semi-hands-off/guided/fully-hands-off, with evidence
-3. Student Trajectory Analysis (Ceiling Principle) / 师兄姐去向分析（天花板法则） — student name, period, papers, current status, ceiling/floor
-4. Red/Green Flag Quick Check / 红灯绿灯速查 — checklists with status, quick verdict: safe/caution/danger
-5. Goal-Advisor Match / 毕业目标匹配矩阵 — match for user's stated goal
-6. Education & Career Timeline / 教育与职业经历 — timeline with degree, institution, advisor
-7. Research Directions / 研究方向 — theme description, phase analysis, future outlook
-8. Publication Analysis / 发表成果分析 — publications, metrics, trend, gap detection
-9. Co-Author Network / 合作者网络 — frequency table, relationships, industry collaboration analysis
-10. Funding & Grants / 经费与基金 — project list, funding trajectory
-11. Academic Metrics / 学术指标 — comparative table with peer benchmarks
-12. Department Context / 院系背景 — faculty, rankings, strengths
-13. PUA/Toxicity Risk Assessment / PUA/PUSH风险评估 — evidence, lab culture, assessment
-14. Multi-Dimensional Scoring / 多维度评分 — 9 dimensions with weights, composite score
-15. Summary & Recommendations / 总结与建议 — strengths, risks, recommendation, next steps
+**=== 第一梯队：一眼结论（前3个section，学生打开就能看到） ===**
+
+1. **Sharp Critique / 导师锐评** — 一句话判决 + 7问锐评 + deal-breaker检查 + 明确的推荐/不推荐结论。**这是整份报告最重要的section。** 用大字号、醒目配色，不能藏在角落。如果触发了一票否决条件，此处必须用红色警告banner。
+2. **Multi-Dimensional Scoring / 多维度评分** — 11维度评分表 + 权重 + 综合评分。评分旁边必须标注是否触发deal-breaker。综合评分用大字号展示，配色根据分数段自动变化。
+3. **Field Macro Trend / 行业宏观趋势** — 领域生命周期定位（萌芽/上升/成熟/衰退/夕阳）+ 就业市场前景 + 资金趋势 + 技术颠覆风险 + 对学生的具体影响。配生命周期阶段图标（emoji标识）和简明趋势指标。
+
+**=== 第二梯队：关键证据（核心判断依据） ===**
+
+4. Student Trajectory Analysis (Ceiling Principle) / 师兄姐去向分析（天花板法则） — student name, period, papers, current status, ceiling/floor
+5. Red/Green Flag Quick Check / 红灯绿灯速查 — checklists with status, quick verdict: safe/caution/danger
+6. PUA/Toxicity Risk Assessment / PUA/PUSH风险评估 — evidence, lab culture, assessment
+7. Retirement & Stability Risk / 退休与稳定性风险 — 导师年龄、退休预期、经费到期时间、接班安排、实验室稳定性评估
+
+**=== 第三梯队：详细数据（支撑性信息） ===**
+
+8. Basic Info / 基本信息 — name, title, institution, contact, IDs, doctoral/master supervisor status
+9. Advisor Type Classification / 导师类型分类 — academic/project/semi-hands-off/guided/fully-hands-off, with evidence
+10. Goal-Advisor Match / 毕业目标匹配矩阵 — match for user's stated goal
+11. Education & Career Timeline / 教育与职业经历 — timeline with degree, institution, advisor
+12. Research Directions / 研究方向 — theme description, phase analysis, future outlook
+13. Publication Analysis / 发表成果分析 — publications, metrics, trend, gap detection
+14. Co-Author Network / 合作者网络 — frequency table, relationships, industry collaboration analysis
+15. Funding & Grants / 经费与基金 — project list, funding trajectory
+16. Academic Metrics / 学术指标 — comparative table with **peer benchmarks**（必须与同院系同rank对比）
+17. Department Context / 院系背景 — faculty, rankings, strengths
+18. Summary & Next Steps / 总结与下一步行动 — key takeaways, concrete next steps for the student
 Appendix: Data Sources / 附录：数据来源 — all URLs and databases consulted
 
 ## International Adaptations

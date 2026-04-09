@@ -12,7 +12,7 @@
 
 Before committing years of your life to a graduate advisor, let AI run a deep due diligence investigation. DeepTutor automatically searches a professor's publications, student outcomes, social reputation, and lab culture, then delivers a standalone HTML report to help you make a smarter decision.
 
-![Version](https://img.shields.io/badge/version-v1.0-blue)
+![Version](https://img.shields.io/badge/version-v1.1-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Claude_Code-purple)
 
@@ -24,7 +24,7 @@ Before committing years of your life to a graduate advisor, let AI run a deep du
 
 ## Features
 
-- **9-Phase Investigation Pipeline** — Identity verification, student tracking, publication analysis, co-author network mapping, funding analysis, social reputation search, multi-dimensional scoring, red/green flag check, and report generation
+- **10-Phase Investigation Pipeline** — Identity verification, student tracking, publication analysis, co-author network mapping, funding analysis, social reputation search, field macro trend analysis, multi-dimensional scoring, sharp critique, and report generation
 - **Dual China/International Strategy** — Automatically detects the institution's region and switches search engines and evaluation criteria accordingly
   - **Chinese advisors**: Zhihu, Xiaomuchong, Baidu Scholar, Baoyan Forum, Xiaohongshu, Kaoyanba
   - **International advisors**: Reddit, RateMyProfessors, GradCafe, LinkedIn, Glassdoor
@@ -33,6 +33,9 @@ Before committing years of your life to a graduate advisor, let AI run a deep du
 - **5 Advisor Type Classifications** — Research-Focused, Grant/Project-Driven, Semi-Independent, Mentorship-Heavy, and Hands-Off
 - **The Ceiling Principle** — Student outcomes are the single most predictive signal: your ceiling equals your seniors' ceiling
 - **PUA/Exploitation Risk Assessment** — Identifies patterns of overwork, manipulation, and toxic lab culture from social platforms and student trajectories
+- **Sharp Critique (v1.1)** — 7-question deep analysis + Deal-Breaker veto mechanism, gives clear recommend/don't-recommend verdicts
+- **Field Macro Trend (v1.1)** — Lifecycle positioning (Emerging/Growth/Mature/Declining/Sunset) + job market outlook + tech disruption risk
+- **Retirement & Stability Risk (v1.1)** — Assesses whether the advisor will remain active for the student's full degree
 - **Multi-Advisor Comparison Mode** — Side-by-side comparison of multiple professors with a synthesized recommendation
 - **Standalone HTML Reports** — Single-file delivery with zero external dependencies, viewable offline
 
@@ -82,19 +85,21 @@ DeepTutor automatically detects the language and region, launches the appropriat
 
 ## Evaluation Dimensions
 
-DeepTutor scores advisors across 9 weighted dimensions (International version):
+DeepTutor scores advisors across **11 weighted dimensions** (International version):
 
 | # | Dimension | Weight | Description |
 |---|-----------|--------|-------------|
-| 1 | Research Direction & Prospects | 10% | Field momentum, interdisciplinary potential, funding landscape |
-| 2 | Publication Output & Quality | 15% | Total output, h-index, journal tier distribution, trends |
-| 3 | Student Outcome Track Record | 15% | Alumni placements, time-to-degree, student publications |
-| 4 | Institution & Lab Resources | 15% | Funding, equipment, collaborations, department ranking |
-| 5 | Mentorship & Independence Balance | 10% | Meeting frequency, project autonomy, first-author opportunities |
+| 1 | Field Macro Trend | 10% | Lifecycle positioning, funding trends, job market, tech disruption risk |
+| 2 | Publication Output & Quality | 12% | Total output, h-index, journal tier distribution, trends |
+| 3 | Student Outcome Track Record | 13% | Alumni placements, time-to-degree, student publications |
+| 4 | Institution & Lab Resources | 12% | Funding, equipment, collaborations, department ranking |
+| 5 | Mentorship & Independence Balance | 8% | Meeting frequency, project autonomy, first-author opportunities |
 | 6 | Career Trajectory & Momentum | 5% | Promotion pace, awards, growing influence |
 | 7 | Toxicity / Exploitation Risk | 10% | Online reports, attrition rate, overwork signals |
-| 8 | Work-Life Balance & Flexibility | 10% | Vacation policy, expected hours, conference and internship support |
-| 9 | Goal-Advisor Match | 10% | Alignment between advisor style and your career goals |
+| 8 | Work-Life Balance & Flexibility | 8% | Vacation policy, expected hours, conference and internship support |
+| 9 | Goal-Advisor Match | 7% | Alignment between advisor style and your career goals |
+| 10 | **Advisor Sharp Critique** | 10% | 7-question deep analysis, Deal-Breaker veto, synthesized verdict |
+| 11 | **Retirement & Stability Risk** | 5% | Age, tenure status, funding expiry, succession planning |
 
 > The Chinese version uses adapted dimensions (e.g., "时间自由度" evaluates freedom for civil service exams and internships). See [SKILL.md](./SKILL.md) for the full specification.
 
