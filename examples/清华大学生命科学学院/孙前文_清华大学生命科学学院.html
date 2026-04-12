@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepTutor v4 — 孙前文 副教授 | 清华大学生命科学学院</title>
+<style>
+  :root {
+    --amber: #D97706;
+    --amber-light: #FEF3C7;
+    --amber-dark: #92400E;
+    --green: #059669;
+    --green-bg: #D1FAE5;
+    --yellow: #D97706;
+    --yellow-bg: #FEF3C7;
+    --red: #DC2626;
+    --red-bg: #FEE2E2;
+    --bg: #F9FAFB;
+    --card: #FFFFFF;
+    --text: #111827;
+    --text-secondary: #6B7280;
+    --border: #E5E7EB;
+    --sidebar-w: 260px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: #1F2937;
+    color: #E5E7EB;
+    overflow-y: auto;
+    z-index: 100;
+    padding: 24px 0;
+    transition: transform 0.3s;
+  }
+  .sidebar-brand {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #374151;
+    margin-bottom: 12px;
+  }
+  .sidebar-brand h2 {
+    font-size: 16px;
+    color: var(--amber);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .sidebar-brand p {
+    font-size: 12px;
+    color: #9CA3AF;
+    margin-top: 2px;
+  }
+  .sidebar nav a {
+    display: block;
+    padding: 8px 20px;
+    color: #D1D5DB;
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .sidebar nav a:hover, .sidebar nav a.active {
+    background: #374151;
+    color: #FCD34D;
+    border-left-color: var(--amber);
+  }
+  .sidebar nav a .nav-num {
+    display: inline-block;
+    width: 22px;
+    color: #6B7280;
+    font-size: 11px;
+  }
+
+  /* Main content */
+  .main {
+    margin-left: var(--sidebar-w);
+    padding: 32px 40px 80px;
+    max-width: 960px;
+  }
+
+  /* Header */
+  .report-header {
+    background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+    border-radius: 16px;
+    padding: 36px 40px;
+    color: white;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-header::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: rgba(217,119,6,0.15);
+    border-radius: 50%;
+  }
+  .report-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .report-header h1 span {
+    font-weight: 400;
+    font-size: 18px;
+    color: #D1D5DB;
+    margin-left: 8px;
+  }
+  .report-header .subtitle {
+    font-size: 15px;
+    color: #D1D5DB;
+    margin-bottom: 16px;
+  }
+  .header-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .header-tag {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .header-tag.amber { background: rgba(217,119,6,0.25); color: #FCD34D; }
+  .header-tag.green { background: rgba(5,150,105,0.25); color: #6EE7B7; }
+  .header-tag.blue { background: rgba(59,130,246,0.2); color: #93C5FD; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+  }
+  .card-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--amber);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--amber);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Composite score card */
+  .composite-card {
+    background: linear-gradient(135deg, #059669 0%, #0D9488 50%, #0891B2 100%);
+    border-radius: 16px;
+    padding: 32px 40px;
+    color: white;
+    text-align: center;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(5,150,105,0.3);
+  }
+  .composite-card .label { font-size: 14px; opacity: 0.85; margin-bottom: 4px; }
+  .composite-score {
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1;
+    margin: 8px 0;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .composite-score small {
+    font-size: 28px;
+    font-weight: 400;
+    opacity: 0.8;
+  }
+  .composite-verdict {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 8px;
+    padding: 6px 24px;
+    background: rgba(255,255,255,0.2);
+    display: inline-block;
+    border-radius: 24px;
+  }
+
+  /* Score bars */
+  .score-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+  .score-label {
+    width: 180px;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .score-bar-bg {
+    flex: 1;
+    height: 22px;
+    background: #F3F4F6;
+    border-radius: 11px;
+    overflow: hidden;
+    position: relative;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 11px;
+    transition: width 0.6s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    min-width: 36px;
+  }
+  .score-bar-fill.green { background: linear-gradient(90deg, #34D399, #059669); }
+  .score-bar-fill.yellow { background: linear-gradient(90deg, #FBBF24, #D97706); }
+  .score-bar-fill.red { background: linear-gradient(90deg, #FCA5A5, #DC2626); }
+  .score-weight {
+    width: 40px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 12px 0;
+  }
+  thead th {
+    background: #1F2937;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12.5px;
+  }
+  thead th:first-child { border-radius: 8px 0 0 0; }
+  thead th:last-child { border-radius: 0 8px 0 0; }
+  tbody td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr:nth-child(even) { background: #F9FAFB; }
+  tbody tr:hover { background: #FEF3C7; }
+
+  /* Flag badges */
+  .flag { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin: 3px 2px; }
+  .flag.green { background: var(--green-bg); color: #065F46; }
+  .flag.yellow { background: var(--yellow-bg); color: #92400E; }
+  .flag.red { background: var(--red-bg); color: #991B1B; }
+
+  /* Match stars */
+  .stars { color: var(--amber); letter-spacing: 1px; }
+
+  /* Info grid */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+  }
+  .info-item {
+    display: flex;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 13.5px;
+  }
+  .info-item .lbl {
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+  .info-item a { color: #2563EB; text-decoration: none; word-break: break-all; }
+  .info-item a:hover { text-decoration: underline; }
+
+  /* Data completeness */
+  .data-completeness {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .dc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .dc-badge.full { background: #D1FAE5; color: #065F46; }
+  .dc-badge.partial { background: #FEF3C7; color: #92400E; }
+  .dc-badge.insufficient { background: #FEE2E2; color: #991B1B; }
+  .dc-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dc-dot.full { background: #059669; }
+  .dc-dot.partial { background: #D97706; }
+  .dc-dot.insufficient { background: #DC2626; }
+
+  /* CSS Bar chart */
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 180px;
+    padding: 16px 0 0;
+    border-bottom: 2px solid #E5E7EB;
+    margin-bottom: 8px;
+  }
+  .bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+  }
+  .bar-val {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .bar-rect {
+    width: 100%;
+    max-width: 48px;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, var(--amber) 0%, #F59E0B 100%);
+    transition: height 0.5s;
+    min-height: 4px;
+  }
+  .bar-year {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 24px; margin: 12px 0; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--amber);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 16px;
+    padding-left: 16px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -20px; top: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--amber);
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--amber);
+  }
+  .timeline-date {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--amber-dark);
+  }
+  .timeline-text {
+    font-size: 13.5px;
+    color: var(--text);
+  }
+
+  /* Verdict box */
+  .verdict-box {
+    background: linear-gradient(135deg, #ECFDF5, #F0FDFA);
+    border: 2px solid #6EE7B7;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .verdict-box.caution {
+    background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+    border-color: #FCD34D;
+  }
+
+  /* Pros/cons */
+  .pro-con-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .pro-box, .con-box {
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .pro-box { background: #ECFDF5; border: 1px solid #A7F3D0; }
+  .con-box { background: #FEF3C7; border: 1px solid #FDE68A; }
+  .pro-box h4 { color: #065F46; margin-bottom: 8px; }
+  .con-box h4 { color: #92400E; margin-bottom: 8px; }
+  .pro-box li, .con-box li { font-size: 13px; margin-bottom: 4px; line-height: 1.6; }
+
+  /* Step list */
+  .step-list { counter-reset: step; list-style: none; padding: 0; }
+  .step-list li {
+    counter-increment: step;
+    padding: 8px 0 8px 36px;
+    position: relative;
+    font-size: 14px;
+  }
+  .step-list li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0; top: 8px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--amber);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 32px 0 16px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  .footer strong { color: var(--amber); }
+
+  /* Section anchor offset */
+  section[id] { scroll-margin-top: 20px; }
+
+  /* Mobile */
+  @media (max-width: 860px) {
+    .sidebar { transform: translateX(-100%); }
+    .main { margin-left: 0; padding: 16px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .pro-con-grid { grid-template-columns: 1fr; }
+    .report-header { padding: 24px 20px; }
+    .report-header h1 { font-size: 22px; }
+    .composite-score { font-size: 56px; }
+    .score-label { width: 120px; font-size: 12px; }
+  }
+
+  /* Print */
+  @media print {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 16px; max-width: 100%; }
+    .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+    .report-header, .composite-card { color-adjust: exact; -webkit-print-color-adjust: exact; }
+    body { font-size: 12px; }
+    .bar-rect { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+
+  /* Scrollbar for sidebar */
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 2px; }
+
+  /* Link in tables */
+  td a { color: #2563EB; text-decoration: none; }
+  td a:hover { text-decoration: underline; }
+
+  /* Classification badge */
+  .classification-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+    border: 2px solid #3B82F6;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1E40AF;
+    margin-bottom: 16px;
+  }
+
+  /* Highlight pill */
+  .pub-pill {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #DBEAFE;
+    color: #1E40AF;
+  }
+  .pub-pill.top { background: #FEE2E2; color: #991B1B; }
+  .pub-pill.high { background: #FEF3C7; color: #92400E; }
+
+  /* Evidence list */
+  .evidence-list { list-style: none; padding: 0; }
+  .evidence-list li {
+    padding: 6px 0 6px 24px;
+    position: relative;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .evidence-list li::before {
+    content: '\25B8';
+    position: absolute;
+    left: 6px;
+    color: var(--amber);
+    font-weight: bold;
+  }
+
+  /* Network table special */
+  .network-internal td:first-child { font-weight: 600; }
+
+  /* Section description */
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    line-height: 1.7;
+  }
+
+  /* Appendix link list */
+  .source-list { list-style: none; padding: 0; counter-reset: src; }
+  .source-list li {
+    counter-increment: src;
+    padding: 6px 0;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 13px;
+  }
+  .source-list li::before {
+    content: '[' counter(src) ']';
+    font-weight: 700;
+    color: var(--amber);
+    margin-right: 8px;
+  }
+  .source-list li a { color: #2563EB; word-break: break-all; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h2>DeepTutor v4</h2>
+    <p>导师评估报告</p>
+  </div>
+  <nav>
+    <a href="#s1"><span class="nav-num">01</span> 基本信息</a>
+    <a href="#s2"><span class="nav-num">02</span> 导师类型分类</a>
+    <a href="#s3"><span class="nav-num">03</span> 师兄姐去向分析</a>
+    <a href="#s4"><span class="nav-num">04</span> 红灯绿灯速查</a>
+    <a href="#s5"><span class="nav-num">05</span> 毕业目标匹配</a>
+    <a href="#s6"><span class="nav-num">06</span> 教育与职业经历</a>
+    <a href="#s7"><span class="nav-num">07</span> 研究方向</a>
+    <a href="#s8"><span class="nav-num">08</span> 发表成果分析</a>
+    <a href="#s9"><span class="nav-num">09</span> 合作者网络</a>
+    <a href="#s10"><span class="nav-num">10</span> 经费与基金</a>
+    <a href="#s11"><span class="nav-num">11</span> 学术指标</a>
+    <a href="#s12"><span class="nav-num">12</span> 院系背景</a>
+    <a href="#s13"><span class="nav-num">13</span> PUA/PUSH风险</a>
+    <a href="#s14"><span class="nav-num">14</span> 多维度评分</a>
+    <a href="#s15"><span class="nav-num">15</span> 总结与建议</a>
+    <a href="#appendix"><span class="nav-num">A</span> 数据来源</a>
+  </nav>
+</aside>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- Report Header -->
+  <header class="report-header">
+    <h1>孙前文 <span>Qianwen Sun</span></h1>
+    <p class="subtitle">清华大学生命科学学院 植物生物学中心 &middot; 副教授 / 博导</p>
+    <div class="header-tags">
+      <span class="header-tag amber">学术型导师</span>
+      <span class="header-tag green">R-loop生物学</span>
+      <span class="header-tag blue">CLS研究员</span>
+      <span class="header-tag green">h-index: 26</span>
+    </div>
+  </header>
+
+  <!-- Composite Score -->
+  <div class="composite-card">
+    <div class="label">DeepTutor 综合评分</div>
+    <div class="composite-score">4.15 <small>/ 5.0</small></div>
+    <div class="composite-verdict">优秀导师 &mdash; 谨慎乐观</div>
+  </div>
+
+  <!-- Section 1 -->
+  <section id="s1">
+    <div class="card">
+      <h2 class="card-title"><span class="num">1</span> 基本信息</h2>
+      <div class="info-grid">
+        <div class="info-item"><span class="lbl">姓名</span><span>孙前文 (Qianwen Sun)</span></div>
+        <div class="info-item"><span class="lbl">职称</span><span>副教授 / 博导</span></div>
+        <div class="info-item"><span class="lbl">单位</span><span>清华大学生命科学学院 植物生物学中心</span></div>
+        <div class="info-item"><span class="lbl">兼任</span><span>清华-北大生命科学联合中心（CLS）研究员/PI</span></div>
+        <div class="info-item"><span class="lbl">邮箱</span><span>sunqianwen(at)mail.tsinghua.edu.cn</span></div>
+        <div class="info-item"><span class="lbl">办公室</span><span>清华大学生物技术馆4段313室</span></div>
+        <div class="info-item"><span class="lbl">实验室</span><span>309室</span></div>
+        <div class="info-item"><span class="lbl">电话</span><span>+86-10-62784002（办）；62796360（实验室）</span></div>
+        <div class="info-item"><span class="lbl">Google Scholar</span><a href="https://scholar.google.com/citations?user=ZNv_xnAAAAAJ&hl=en" target="_blank">h-index: 26, 总引用: ~3,180</a></div>
+        <div class="info-item"><span class="lbl">ORCID</span><a href="https://orcid.org/0000-0003-0111-5400" target="_blank">0000-0003-0111-5400</a></div>
+        <div class="info-item"><span class="lbl">OpenAlex</span><a href="https://openalex.org/A5075257104" target="_blank">A5075257104</a></div>
+        <div class="info-item"><span class="lbl">教师主页</span><a href="https://www.life.tsinghua.edu.cn/info/1055/1434.htm" target="_blank">清华大学教师主页</a></div>
+        <div class="info-item"><span class="lbl">CLS页面</span><a href="https://cls.tsinghua.edu.cn/PrincipalInvestigator/pi/index2570.shtml" target="_blank">CLS PI主页</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2 -->
+  <section id="s2">
+    <div class="card">
+      <h2 class="card-title"><span class="num">2</span> 导师类型分类</h2>
+      <div class="classification-badge">学术型 (Research-Focused)</div>
+      <p class="section-desc">基于发表模式、研究方向、学生培养方式等多维度分析，孙前文教授被归类为典型学术型导师。</p>
+      <ul class="evidence-list">
+        <li>研究方向高度聚焦R-loop生物学，持续深耕12年</li>
+        <li>学生多以一作发表高水平论文（Nature Plants, Nat Commun, Sci Adv, Plant Cell）</li>
+        <li>以基础研究为主，无明显横向/应用项目</li>
+        <li>博后师从国际顶尖植物表观遗传学家Caroline Dean（英国John Innes Centre）</li>
+        <li>持续稳定高质量产出，发表模式典型学术型</li>
+        <li>2025年博后招聘信息显示：为博后配备技术员，给予独立选题自由</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Section 3 -->
+  <section id="s3">
+    <div class="card">
+      <h2 class="card-title"><span class="num">3</span> 师兄姐去向分析（天花板法则）</h2>
+      <p class="section-desc">通过论文署名和基金致谢信息追踪实验室成员发展轨迹，评估培养成效。</p>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>姓名</th>
+              <th>身份</th>
+              <th>一作/重要论文</th>
+              <th>去向/现状</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>徐伟</strong> (Wei Xu)</td>
+              <td>核心成员</td>
+              <td><span class="pub-pill top">Nature Plants 2017</span> <span class="pub-pill high">Plant Cell 2020</span> (2篇一作)</td>
+              <td>19篇共同论文，具体去向未确认</td>
+            </tr>
+            <tr>
+              <td><strong>李宽</strong> (Kuan Li)</td>
+              <td>核心成员 &rarr; 独立研究者</td>
+              <td><span class="pub-pill high">Molecular Plant 2023</span> (共同通讯)</td>
+              <td>已发展为共同通讯作者，具体去向未确认</td>
+            </tr>
+            <tr>
+              <td><strong>周金聪</strong> (Jincong Zhou)</td>
+              <td>博后 (CLS fellowship)</td>
+              <td><span class="pub-pill top">Science Advances 2023</span> (一作)</td>
+              <td>获独立NSFC青年基金 (32100428)，仍在清华</td>
+            </tr>
+            <tr>
+              <td><strong>张伟峰</strong> (Weifeng Zhang)</td>
+              <td>博后 (CLS fellowship)</td>
+              <td><span class="pub-pill top">Nature Plants 2024</span> + <span class="pub-pill top">Nat Commun 2024</span> (2篇一作)</td>
+              <td>获独立NSFC面上项目 (32070651)，仍在清华</td>
+            </tr>
+            <tr>
+              <td><strong>刘坤鹏</strong> (Kunpeng Liu)</td>
+              <td>博后 (CLS fellowship)</td>
+              <td><span class="pub-pill high">Plant Cell 2021</span> (一作)</td>
+              <td>本科华中农大，博士复旦，获独立NSFC (31971333)</td>
+            </tr>
+            <tr>
+              <td><strong>姚瑶</strong> (Yao Yao)</td>
+              <td>博士生</td>
+              <td><span class="pub-pill top">Nature Plants 2025</span> (共同一作)</td>
+              <td>在读（2025年发表）</td>
+            </tr>
+            <tr>
+              <td><strong>王文杰</strong> (Wenjie Wang)</td>
+              <td>博后 (CLS fellowship)</td>
+              <td><span class="pub-pill high">Plant Cell 2026</span> + <span class="pub-pill">NAR 2021</span> (2篇一作)</td>
+              <td>在实验室</td>
+            </tr>
+            <tr>
+              <td><strong>成玲玲</strong> (Lingling Cheng)</td>
+              <td>博士生/博后</td>
+              <td><span class="pub-pill">PLOS Biology 2021</span> (一作), Nature Plants 2024 (共同作者)</td>
+              <td>具体去向未确认</td>
+            </tr>
+            <tr>
+              <td><strong>杨卓</strong> (Zhuo Yang)</td>
+              <td>早期博士生</td>
+              <td><span class="pub-pill high">Plant Cell 2017</span> (一作)</td>
+              <td>具体去向未确认</td>
+            </tr>
+            <tr>
+              <td><strong>李琴</strong> (Qin Li)</td>
+              <td>博士生</td>
+              <td><span class="pub-pill top">Nat Commun 2023</span> (一作)</td>
+              <td>具体去向未确认</td>
+            </tr>
+            <tr>
+              <td><strong>李帅</strong> (Shuai Li)</td>
+              <td>博士生</td>
+              <td>多篇共同作者</td>
+              <td>具体去向未确认</td>
+            </tr>
+            <tr>
+              <td><strong>Sarfraz Shafiq</strong></td>
+              <td>博后 (CLS fellowship)</td>
+              <td>多篇共同作者</td>
+              <td>国际博后</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <h4 style="margin-bottom: 10px; color: var(--amber-dark);">天花板评估</h4>
+        <div class="pro-con-grid">
+          <div class="pro-box">
+            <h4>亮点</h4>
+            <ul>
+              <li>多名博后获独立NSFC基金（周金聪、张伟峰、刘坤鹏），培养了具有独立申请能力的研究者</li>
+              <li>李宽发展为共同通讯作者，实验室能培养独立PI</li>
+              <li>学生一作发表极突出：Nature Plants 3篇、Nat Commun 2篇、Sci Adv 1篇、Plant Cell 4篇、PLOS Biology 1篇、NAR 1篇</li>
+            </ul>
+          </div>
+          <div class="con-box">
+            <h4>不足</h4>
+            <ul>
+              <li>早期成员（徐伟、杨卓等）的具体毕业去向信息不足</li>
+              <li>社交平台无相关讨论，无法获取学生主观评价</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4 -->
+  <section id="s4">
+    <div class="card">
+      <h2 class="card-title"><span class="num">4</span> 红灯绿灯速查</h2>
+
+      <h4 style="color: var(--green); margin-bottom: 10px;">绿灯信号</h4>
+      <div style="margin-bottom: 20px;">
+        <span class="flag green">多名学生一作顶刊（Nature Plants, Nat Commun, Sci Adv, Plant Cell等）</span>
+        <span class="flag green">海外经历（英国John Innes Centre博后5年，师从Caroline Dean FRS）</span>
+        <span class="flag green">近期晋升（2022年助理教授 &rarr; 副教授）</span>
+        <span class="flag green">持续稳定产出，近5年无发表gap，产出加速</span>
+        <span class="flag green">顶级平台（清华Top2 + CLS联合中心）</span>
+        <span class="flag green">前沿方向（R-loop是当前热门方向）</span>
+        <span class="flag green">经费充裕（多项NSFC + 科技部重点研发 + CLS持续资助）</span>
+        <span class="flag green">博后获独立基金（3名博后获独立NSFC）</span>
+        <span class="flag green">确认为博导，可招博士生</span>
+        <span class="flag green">招聘信息显示给予博后独立选题自由和技术支持</span>
+      </div>
+
+      <h4 style="color: var(--red); margin-bottom: 10px;">红灯信号</h4>
+      <div style="margin-bottom: 20px;">
+        <p style="font-size: 14px; color: var(--green); font-weight: 600; padding: 8px 0;">未发现任何红灯信号</p>
+        <div style="font-size: 13px; color: var(--text-secondary); padding-left: 12px;">
+          <p>- 近2年无学生一作论文 &rarr; 不适用（2024-2026有多篇）</p>
+          <p>- 近2年导师无论文发表 &rarr; 不适用（产出旺盛）</p>
+          <p>- 经费中断 &rarr; 不适用（多源持续资助）</p>
+          <p>- 网上PUA投诉 &rarr; 未发现</p>
+          <p>- 学生中途退出 &rarr; 未发现</p>
+        </div>
+      </div>
+
+      <h4 style="color: var(--yellow); margin-bottom: 10px;">黄灯信号</h4>
+      <div style="margin-bottom: 12px;">
+        <span class="flag yellow">早期成员具体毕业去向不明（徐伟、杨卓、成玲玲等）</span>
+        <span class="flag yellow">社交平台无评价（知乎、小木虫均无讨论），无法确认实验室文化</span>
+        <span class="flag yellow">2014年入职 &rarr; 2022年才升副教授（8年），未获杰青</span>
+        <span class="flag yellow">实验室工作节奏、组会频率不明</span>
+      </div>
+
+      <div class="verdict-box caution" style="margin-top: 16px;">
+        <p style="font-size: 16px; font-weight: 700; color: #92400E;">综合判断：谨慎乐观 (Cautiously Positive)</p>
+        <p style="font-size: 13.5px; margin-top: 4px; color: #78350F;">学术实力顶尖，多项客观指标优秀，但软性信息不足。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5 -->
+  <section id="s5">
+    <div class="card">
+      <h2 class="card-title"><span class="num">5</span> 毕业目标匹配矩阵</h2>
+      <p class="section-desc">用户未指定职业目标，以下为通用匹配矩阵参考。</p>
+      <table>
+        <thead>
+          <tr>
+            <th>目标</th>
+            <th>匹配度</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>读博深造/学术路线</strong></td>
+            <td><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></td>
+            <td>学术型导师，顶刊产出，CLS平台，非常适合</td>
+          </tr>
+          <tr>
+            <td>考公/考编</td>
+            <td><span class="stars">&#9733;&#9733;</span></td>
+            <td>学术型实验室通常较busy，时间自由度存疑</td>
+          </tr>
+          <tr>
+            <td>进大厂</td>
+            <td><span class="stars">&#9733;&#9733;</span></td>
+            <td>纯基础研究方向，与工业界距离较远</td>
+          </tr>
+          <tr>
+            <td>药企/CRO</td>
+            <td><span class="stars">&#9733;&#9733;</span></td>
+            <td>植物R-loop方向与药企关联弱</td>
+          </tr>
+          <tr>
+            <td>纯拿学位</td>
+            <td><span class="stars">&#9733;&#9733;</span></td>
+            <td>学术型实验室通常毕业要求较高</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section 6 -->
+  <section id="s6">
+    <div class="card">
+      <h2 class="card-title"><span class="num">6</span> 教育与职业经历</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">2000 &ndash; 2004</div>
+          <div class="timeline-text"><strong>学士</strong>，华中农业大学 生命科学学院</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2004 &ndash; 2009</div>
+          <div class="timeline-text"><strong>博士</strong>，华中农业大学 生命科学学院（合作导师推测为周道秀教授，基于早期合作发表）</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2009 &ndash; 2014</div>
+          <div class="timeline-text"><strong>博士后</strong>，John Innes Centre, Norwich, UK（导师：Caroline Dean FRS，研究：FLC/COOLAIR/春化作用中的R-loop调控）</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2014 &ndash; 2021</div>
+          <div class="timeline-text"><strong>助理教授/研究员</strong>，清华大学生命科学学院 &amp; CLS</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2022 &ndash; 至今</div>
+          <div class="timeline-text"><strong>副教授/博导</strong>，清华大学生命科学学院 &amp; CLS</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7 -->
+  <section id="s7">
+    <div class="card">
+      <h2 class="card-title"><span class="num">7</span> 研究方向</h2>
+      <div class="classification-badge" style="font-size: 16px;">R-loop生物学与基因组调控</div>
+      <p class="section-desc">
+        R-loop是由RNA-DNA杂合链和被置换的单链DNA组成的三链核酸结构，在基因表达调控、基因组稳定性维护、表观遗传调控中发挥关键作用。孙前文实验室是国际植物R-loop研究的先驱和领军者。
+      </p>
+
+      <h4 style="margin-bottom: 12px; color: var(--amber-dark);">研究阶段演进</h4>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 1 &mdash; 奠基期 (博后, 2009-2014)</div>
+          <div class="timeline-text">在Caroline Dean实验室发现R-loop调控FLC/COOLAIR长非编码RNA表达（Science 2013, 352次引用）</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 2 &mdash; 建组期 (2014-2017)</div>
+          <div class="timeline-text">独立后首次证明R-loop是拟南芥基因组普遍特征（Nature Plants 2017, 237次引用），开发ssDRIP-seq技术</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 3 &mdash; 拓展期 (2018-2021)</div>
+          <div class="timeline-text">拓展到叶绿体/线粒体基因组维护、m6A修饰与R-loop（Cell Research 2019, 192次引用）、动物系统</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Phase 4 &mdash; 深化创新期 (2022-至今)</div>
+          <div class="timeline-text">发现新型染色质状态"Transcription Resistive"（Nature Plants 2025），构建R-loopAtlas（Molecular Plant 2023），开发mDRIP-seq / ULI-ssDRIP-seq / DEtail-seq</div>
+        </div>
+      </div>
+
+      <h4 style="margin: 16px 0 8px; color: var(--amber-dark);">当前研究重点</h4>
+      <ol style="padding-left: 20px; font-size: 14px; line-height: 1.8;">
+        <li>新型染色质状态 Transcription Resistive 的形成与调控机制</li>
+        <li>半自主细胞器的发育和发生机制</li>
+      </ol>
+
+      <div class="verdict-box" style="margin-top: 16px;">
+        <p style="font-size: 14px;"><strong>前景评估：</strong>R-loop领域持续快速增长，实验室在技术创新和资源建设方面国际领先。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 8 -->
+  <section id="s8">
+    <div class="card">
+      <h2 class="card-title"><span class="num">8</span> 发表成果分析</h2>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+        <div style="background: #EFF6FF; border-radius: 10px; padding: 16px; text-align: center;">
+          <div style="font-size: 28px; font-weight: 800; color: #1E40AF;">26</div>
+          <div style="font-size: 12px; color: #3B82F6;">h-index</div>
+        </div>
+        <div style="background: #ECFDF5; border-radius: 10px; padding: 16px; text-align: center;">
+          <div style="font-size: 28px; font-weight: 800; color: #065F46;">~3,180</div>
+          <div style="font-size: 12px; color: #059669;">总引用</div>
+        </div>
+        <div style="background: #FEF3C7; border-radius: 10px; padding: 16px; text-align: center;">
+          <div style="font-size: 28px; font-weight: 800; color: #92400E;">42+</div>
+          <div style="font-size: 12px; color: #D97706;">PubMed确认论文</div>
+        </div>
+      </div>
+
+      <h4 style="margin-bottom: 8px; color: var(--amber-dark);">年度产出趋势（清华署名）</h4>
+      <div class="bar-chart">
+        <div class="bar-col">
+          <div class="bar-val">2</div>
+          <div class="bar-rect" style="height: 26%;"></div>
+          <div class="bar-year">2017</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-val">2</div>
+          <div class="bar-rect" style="height: 26%;"></div>
+          <div class="bar-year">2018</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-val">3</div>
+          <div class="bar-rect" style="height: 39%;"></div>
+          <div class="bar-year">2019</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-val">4</div>
+          <div class="bar-rect" style="height: 52%;"></div>
+          <div class="bar-year">2020</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-val">6</div>
+          <div class="bar-rect" style="height: 78%;"></div>
+          <div class="bar-year">2021</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-val">5</div>
+          <div class="bar-rect" style="height: 65%;"></div>
+          <div class="bar-year">2022</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-val">7</div>
+          <div class="bar-rect" style="height: 91%;"></div>
+          <div class="bar-year">2023</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-val">5</div>
+          <div class="bar-rect" style="height: 65%;"></div>
+          <div class="bar-year">2024</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-val">4</div>
+          <div class="bar-rect" style="height: 52%;"></div>
+          <div class="bar-year">2025</div>
+        </div>
+        <div class="bar-col">
+          <div class="bar-val">1</div>
+          <div class="bar-rect" style="height: 13%;"></div>
+          <div class="bar-year">2026</div>
+        </div>
+      </div>
+      <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 20px;">* 2025年数据截至3月，2026年截至4月</p>
+
+      <h4 style="margin-bottom: 8px; color: var(--amber-dark);">期刊分布（清华通讯/共通讯论文）</h4>
+      <table>
+        <thead>
+          <tr><th>期刊</th><th>篇数</th><th>年份</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Nature Plants</strong></td><td>4</td><td>2017, 2022, 2024, 2025</td></tr>
+          <tr><td><strong>Nature Communications</strong></td><td>4</td><td>2022, 2023, 2024</td></tr>
+          <tr><td><strong>Science Advances</strong></td><td>4</td><td>2019, 2020, 2021, 2023</td></tr>
+          <tr><td><strong>The Plant Cell</strong></td><td>5</td><td>2017, 2020, 2021&times;2, 2026</td></tr>
+          <tr><td>Cell Research</td><td>2</td><td>2018, 2019</td></tr>
+          <tr><td>Nucleic Acids Research</td><td>2</td><td>2021, 2023</td></tr>
+          <tr><td>PLOS Biology</td><td>1</td><td>2021</td></tr>
+          <tr><td>Genome Research</td><td>1</td><td>2021</td></tr>
+          <tr><td>Molecular Plant</td><td>1</td><td>2023</td></tr>
+          <tr><td>Cell Reports</td><td>2</td><td>2020, 2023</td></tr>
+          <tr><td>Sci China Life Sci</td><td>1</td><td>2023</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="margin: 20px 0 8px; color: var(--amber-dark);">早期高被引（JIC博后期间）</h4>
+      <table>
+        <thead>
+          <tr><th>论文</th><th>引用数</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Science 2013</td><td><strong>352</strong></td></tr>
+          <tr><td>PNAS 2014</td><td><strong>403</strong></td></tr>
+          <tr><td>Molecular Cell 2014</td><td><strong>234</strong></td></tr>
+        </tbody>
+      </table>
+
+      <div class="verdict-box" style="margin-top: 16px;">
+        <p style="font-size: 14px;"><strong>基准比较：</strong>副教授基准h-index为8-15，孙前文h-index 26已达教授/杰青水平。无任何发表gap，2014年建组以来持续高产且加速。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 9 -->
+  <section id="s9">
+    <div class="card">
+      <h2 class="card-title"><span class="num">9</span> 合作者网络</h2>
+
+      <h4 style="margin-bottom: 8px; color: var(--amber-dark);">实验室内部</h4>
+      <table class="network-internal">
+        <thead>
+          <tr><th>合作者</th><th>共同论文</th><th>身份</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>徐伟 (Wei Xu)</td><td>19篇</td><td>核心成员</td></tr>
+          <tr><td>李宽 (Kuan Li)</td><td>19篇</td><td>核心成员 &rarr; 共同通讯</td></tr>
+          <tr><td>周金聪 (Jincong Zhou)</td><td>11篇</td><td>博后</td></tr>
+          <tr><td>李琴 (Qin Li)</td><td>11篇</td><td>博士生</td></tr>
+          <tr><td>刘坤鹏 (Kunpeng Liu)</td><td>8篇</td><td>博后</td></tr>
+          <tr><td>成玲玲 (Lingling Cheng)</td><td>7篇</td><td>博士生/博后</td></tr>
+          <tr><td>杨卓 (Zhuo Yang)</td><td>7篇</td><td>早期博士生</td></tr>
+          <tr><td>李帅 (Shuai Li)</td><td>6篇</td><td>博士生</td></tr>
+          <tr><td>张伟峰 (Weifeng Zhang)</td><td>6篇</td><td>博后</td></tr>
+          <tr><td>王文杰 (Wenjie Wang)</td><td>5篇</td><td>博后</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="margin: 20px 0 8px; color: var(--amber-dark);">校外合作</h4>
+      <table>
+        <thead>
+          <tr><th>合作者</th><th>单位</th><th>论文数</th><th>关系</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Caroline Dean</strong></td><td>John Innes Centre, UK</td><td>4篇</td><td>博后导师（FRS）</td></tr>
+          <tr><td><strong>周道秀</strong> (Dao-Xiu Zhou)</td><td>华中农业大学/巴黎萨克雷大学</td><td>5篇</td><td>博士导师</td></tr>
+          <tr><td><strong>李海涛</strong> (Haitao Li)</td><td>清华大学医学院</td><td>4篇</td><td>校内合作（结构）</td></tr>
+          <tr><td><strong>孟安明</strong> (Anming Meng)</td><td>清华大学生命学院</td><td>3篇</td><td>校内合作（发育）</td></tr>
+          <tr><td><strong>李丕龙</strong> (Pilong Li)</td><td>清华大学生命学院</td><td>Nature Plants 2024</td><td>校内合作（相分离）</td></tr>
+          <tr><td><strong>陈春来</strong> (Chunlai Chen)</td><td>清华大学生命学院</td><td>Nature Plants 2024</td><td>校内合作（单分子）</td></tr>
+        </tbody>
+      </table>
+
+      <div class="verdict-box" style="margin-top: 16px;">
+        <p style="font-size: 14px;"><strong>网络评估：</strong>合作网络健康。保持与博后导师和博士导师的学术联系，有清华校内跨学科合作（结构生物学、单分子技术、相分离），有国际合作。以学术合作为主。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 10 -->
+  <section id="s10">
+    <div class="card">
+      <h2 class="card-title"><span class="num">10</span> 经费与基金</h2>
+      <p class="section-desc">从论文致谢信息提取确认的基金项目。</p>
+      <table>
+        <thead>
+          <tr><th>项目编号</th><th>类型</th><th>来源</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>31822028</td><td>疑似优秀青年科学基金（优青）</td><td>NSFC</td><td>2018年获批，出现在2021-2025所有主要论文中</td></tr>
+          <tr><td>31571322</td><td>面上项目</td><td>NSFC</td><td>2015年获批</td></tr>
+          <tr><td>91740105</td><td>重大研究计划（培育）</td><td>NSFC</td><td>2017年获批</td></tr>
+          <tr><td>91940306</td><td>重大研究计划（培育）</td><td>NSFC</td><td>2019年获批</td></tr>
+          <tr><td>32261133529</td><td>国际合作项目</td><td>NSFC</td><td>2022年获批</td></tr>
+          <tr><td>2016YFA0500800</td><td>国家重点研发计划</td><td>科技部</td><td>2016年获批</td></tr>
+          <tr><td>&mdash;</td><td>机构资助</td><td>CLS联合中心</td><td>持续性科研经费和博后资助</td></tr>
+        </tbody>
+      </table>
+
+      <div class="verdict-box" style="margin-top: 16px;">
+        <p style="font-size: 14px;"><strong>经费评估：</strong>经费来源多元化（NSFC面上+优青+重大研究计划+科技部+CLS），非常充裕。无经费中断信号。CLS提供额外博后薪资和运行费用。疑似获得2018年优青（基金号31822028符合优青编号规律）。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 11 -->
+  <section id="s11">
+    <div class="card">
+      <h2 class="card-title"><span class="num">11</span> 学术指标</h2>
+      <table>
+        <thead>
+          <tr><th>指标</th><th>孙前文</th><th>副教授基准</th><th>教授/杰青基准</th><th>评估</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>h-index</strong></td>
+            <td><strong style="color: var(--green);">26</strong></td>
+            <td>8-15</td>
+            <td>25-50</td>
+            <td><span class="flag green">已达教授水平</span></td>
+          </tr>
+          <tr>
+            <td><strong>总引用</strong></td>
+            <td><strong style="color: var(--green);">~3,180</strong></td>
+            <td>500-1,500</td>
+            <td>3,000+</td>
+            <td><span class="flag green">已达杰青水平</span></td>
+          </tr>
+          <tr>
+            <td><strong>顶刊论文数</strong></td>
+            <td><strong style="color: var(--green);">12+篇</strong></td>
+            <td>2-5篇</td>
+            <td>10-30篇</td>
+            <td><span class="flag green">远超副教授基准</span></td>
+          </tr>
+          <tr>
+            <td><strong>年均产出(近5年)</strong></td>
+            <td><strong style="color: var(--green);">5-6篇</strong></td>
+            <td>2-3篇</td>
+            <td>3-5篇</td>
+            <td><span class="flag green">远超基准</span></td>
+          </tr>
+          <tr>
+            <td><strong>Science/Cell级</strong></td>
+            <td>1篇(博后期间)</td>
+            <td>少有</td>
+            <td>不定</td>
+            <td><span class="flag green">有顶级期刊经验</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section 12 -->
+  <section id="s12">
+    <div class="card">
+      <h2 class="card-title"><span class="num">12</span> 院系背景</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="background: #F0FDFA; border-radius: 10px; padding: 16px; border: 1px solid #99F6E4;">
+          <h4 style="color: #0D9488; margin-bottom: 6px;">清华大学</h4>
+          <p style="font-size: 13px;">C9联盟，中国Top 2，985/双一流</p>
+        </div>
+        <div style="background: #EFF6FF; border-radius: 10px; padding: 16px; border: 1px solid #BFDBFE;">
+          <h4 style="color: #2563EB; margin-bottom: 6px;">生命科学学院</h4>
+          <p style="font-size: 13px;">国内顶级生命科学教育和研究机构</p>
+        </div>
+        <div style="background: #ECFDF5; border-radius: 10px; padding: 16px; border: 1px solid #A7F3D0;">
+          <h4 style="color: #059669; margin-bottom: 6px;">植物生物学中心</h4>
+          <p style="font-size: 13px;">清华在植物分子生物学有很强积淀</p>
+        </div>
+        <div style="background: #FEF3C7; border-radius: 10px; padding: 16px; border: 1px solid #FDE68A;">
+          <h4 style="color: #D97706; margin-bottom: 6px;">清华-北大生命科学联合中心 (CLS)</h4>
+          <p style="font-size: 13px;">由北京市政府资助，聚集两校优秀PI，提供优厚科研条件。入选CLS是对PI独立研究能力的高度认可。资助包括：科研启动经费、运行费、博后fellowship。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 13 -->
+  <section id="s13">
+    <div class="card">
+      <h2 class="card-title"><span class="num">13</span> PUA/PUSH风险评估</h2>
+
+      <div style="display: inline-block; background: linear-gradient(135deg, #FEF3C7, #FFFBEB); border: 2px solid #FCD34D; border-radius: 10px; padding: 12px 24px; margin-bottom: 16px;">
+        <span style="font-size: 24px; font-weight: 800; color: #92400E;">3.5</span>
+        <span style="font-size: 14px; color: #92400E;"> / 5.0 &mdash; 偏正面，但软性数据不完整</span>
+      </div>
+
+      <h4 style="color: var(--green); margin: 16px 0 8px;">正面间接证据</h4>
+      <ul class="evidence-list">
+        <li>学生一作发表记录优秀，表明学生有独立做研究和发表的机会</li>
+        <li>多名博后获得独立NSFC基金（周金聪、张伟峰、刘坤鹏），说明导师支持成员独立发展</li>
+        <li>李宽成长为共同通讯作者，说明导师愿意培养独立性</li>
+        <li>2025年博后招聘明确提出"给予足够个人发展空间"、"独立选题自由"</li>
+        <li>实验室规模适中（约6-10人活跃成员）</li>
+        <li>有国际博后（Sarfraz Shafiq），说明实验室有国际化氛围</li>
+        <li>未发现中途退出/转导师信号</li>
+      </ul>
+
+      <h4 style="color: var(--yellow); margin: 16px 0 8px;">数据不足项</h4>
+      <ul class="evidence-list">
+        <li>知乎、小木虫无相关讨论</li>
+        <li>组会频率、考勤制度不明</li>
+        <li>具体实习政策不明</li>
+        <li>毕业具体要求不明</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Section 14 -->
+  <section id="s14">
+    <div class="card">
+      <h2 class="card-title"><span class="num">14</span> 多维度评分</h2>
+
+      <div style="margin-bottom: 24px;">
+        <div class="score-row">
+          <div class="score-label">研究方向与前景</div>
+          <div class="score-bar-bg"><div class="score-bar-fill green" style="width: 90%;">4.5</div></div>
+          <div class="score-weight">10%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">发表成果与质量</div>
+          <div class="score-bar-bg"><div class="score-bar-fill green" style="width: 100%;">5.0</div></div>
+          <div class="score-weight">15%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">学生培养实绩</div>
+          <div class="score-bar-bg"><div class="score-bar-fill green" style="width: 90%;">4.5</div></div>
+          <div class="score-weight">15%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">平台与资源</div>
+          <div class="score-bar-bg"><div class="score-bar-fill green" style="width: 100%;">5.0</div></div>
+          <div class="score-weight">15%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">独立性与成长空间</div>
+          <div class="score-bar-bg"><div class="score-bar-fill green" style="width: 80%;">4.0</div></div>
+          <div class="score-weight">10%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">职业轨迹与势头</div>
+          <div class="score-bar-bg"><div class="score-bar-fill yellow" style="width: 70%;">3.5</div></div>
+          <div class="score-weight">5%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">PUA/PUSH风险</div>
+          <div class="score-bar-bg"><div class="score-bar-fill yellow" style="width: 70%;">3.5</div></div>
+          <div class="score-weight">10%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">时间自由度</div>
+          <div class="score-bar-bg"><div class="score-bar-fill red" style="width: 60%;">3.0</div></div>
+          <div class="score-weight">10%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">毕业目标匹配</div>
+          <div class="score-bar-bg"><div class="score-bar-fill red" style="width: 60%;">3.0</div></div>
+          <div class="score-weight">10%</div>
+        </div>
+      </div>
+
+      <h4 style="margin-bottom: 8px; color: var(--amber-dark);">评分明细</h4>
+      <table>
+        <thead>
+          <tr><th>#</th><th>维度</th><th>权重</th><th>得分</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>研究方向与前景</td><td>10%</td><td>4.5</td><td>R-loop热门方向，持续获资助，偏基础但产业转化有限</td></tr>
+          <tr><td>2</td><td>发表成果与质量</td><td>15%</td><td>5.0</td><td>h-index 26远超基准，多篇顶刊，持续加速，无gap</td></tr>
+          <tr><td>3</td><td>学生培养实绩</td><td>15%</td><td>4.5</td><td>多名学生一作顶刊，3名博后获独立基金，1人升共同通讯。扣0.5分因早期成员去向不明</td></tr>
+          <tr><td>4</td><td>平台与资源</td><td>15%</td><td>5.0</td><td>清华Top2 + CLS联合中心，顶级平台</td></tr>
+          <tr><td>5</td><td>独立性与成长空间</td><td>10%</td><td>4.0</td><td>实验室规模适中，学生能发一作，博后有独立选题权，但具体指导风格不明</td></tr>
+          <tr><td>6</td><td>职业轨迹与势头</td><td>5%</td><td>3.5</td><td>2022年升副教授正常，疑似获优青，尚无杰青，学术指标已达教授水平但职称晋升偏慢</td></tr>
+          <tr><td>7</td><td>PUA/PUSH风险</td><td>10%</td><td>3.5</td><td>无负面信号，间接证据正面，但数据不完整</td></tr>
+          <tr><td>8</td><td>时间自由度</td><td>10%</td><td>3.0</td><td>无数据，学术型实验室通常中等，默认分</td></tr>
+          <tr><td>9</td><td>毕业目标匹配</td><td>10%</td><td>3.0</td><td>用户未指定目标，中性分</td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 16px; padding: 12px 16px; background: #F3F4F6; border-radius: 8px; font-size: 13px; color: var(--text-secondary); font-family: monospace;">
+        4.5&times;0.10 + 5.0&times;0.15 + 4.5&times;0.15 + 5.0&times;0.15 + 4.0&times;0.10 + 3.5&times;0.05 + 3.5&times;0.10 + 3.0&times;0.10 + 3.0&times;0.10 = <strong style="color: var(--text); font-size: 15px;">4.15</strong>
+      </div>
+
+      <h4 style="margin: 20px 0 8px; color: var(--amber-dark);">数据完整度指示器</h4>
+      <div class="data-completeness">
+        <span class="dc-badge full"><span class="dc-dot full"></span> 研究方向</span>
+        <span class="dc-badge full"><span class="dc-dot full"></span> 发表成果</span>
+        <span class="dc-badge full"><span class="dc-dot full"></span> 平台资源</span>
+        <span class="dc-badge full"><span class="dc-dot full"></span> 经费基金</span>
+        <span class="dc-badge full"><span class="dc-dot full"></span> 合作网络</span>
+        <span class="dc-badge partial"><span class="dc-dot partial"></span> 学生培养</span>
+        <span class="dc-badge partial"><span class="dc-dot partial"></span> 独立性</span>
+        <span class="dc-badge partial"><span class="dc-dot partial"></span> 职业轨迹</span>
+        <span class="dc-badge partial"><span class="dc-dot partial"></span> PUA风险</span>
+        <span class="dc-badge insufficient"><span class="dc-dot insufficient"></span> 时间自由度</span>
+        <span class="dc-badge insufficient"><span class="dc-dot insufficient"></span> 毕业目标</span>
+      </div>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--text-secondary);">
+        <span class="dc-dot full" style="vertical-align: middle;"></span> 数据充分 &nbsp;&nbsp;
+        <span class="dc-dot partial" style="vertical-align: middle;"></span> 部分数据 &nbsp;&nbsp;
+        <span class="dc-dot insufficient" style="vertical-align: middle;"></span> 数据不足
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 15 -->
+  <section id="s15">
+    <div class="card">
+      <h2 class="card-title"><span class="num">15</span> 总结与建议</h2>
+
+      <div class="pro-con-grid">
+        <div class="pro-box">
+          <h4>优势</h4>
+          <ol style="padding-left: 16px;">
+            <li>学术产出极为突出，h-index和发表质量远超同级别基准，已达教授/杰青水平</li>
+            <li>国际植物R-loop领域领军人物，研究方向前沿且聚焦</li>
+            <li>平台资源顶级（清华+CLS双重支持）</li>
+            <li>学生培养成效显著：多名学生一作顶刊，多名博后获独立基金</li>
+            <li>学术血统优秀：师从Caroline Dean（FRS），Science发文的博后背景</li>
+            <li>技术创新能力强：开发多种R-loop检测新技术和数据库</li>
+            <li>经费充裕多元，无中断</li>
+          </ol>
+        </div>
+        <div class="con-box">
+          <h4>风险/需关注</h4>
+          <ol style="padding-left: 16px;">
+            <li>早期学生具体毕业去向信息不足，"天花板"高度无法完全确认</li>
+            <li>2014入职 &rarr; 2022年升副教授，职称晋升节奏不算快（可能受清华评审体系影响）</li>
+            <li>研究方向偏基础植物学，对非学术目标学生帮助有限</li>
+            <li>社交平台无评价，无法评估实验室日常文化</li>
+            <li>尚未获杰青（但学术指标已达标）</li>
+          </ol>
+        </div>
+      </div>
+
+      <h4 style="margin: 20px 0 8px; color: var(--amber-dark);">目标建议</h4>
+      <table>
+        <thead>
+          <tr><th>目标类型</th><th>建议</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>学术深造目标</strong></td><td><span class="flag green">强烈推荐</span> 学术产出和平台资源一流</td></tr>
+          <tr><td><strong>进一步调查</strong></td><td>联系在读学生了解实验室文化和工作节奏</td></tr>
+          <tr><td><strong>确认事项</strong></td><td>博士招生名额和具体毕业要求</td></tr>
+          <tr><td><strong>非学术目标</strong></td><td><span class="flag yellow">需评估</span> 时间自由度</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="margin: 20px 0 8px; color: var(--amber-dark);">下一步行动</h4>
+      <ol class="step-list">
+        <li>联系实验室在读学生或毕业生</li>
+        <li>确认博士招生计划和名额</li>
+        <li>了解毕业具体要求（几篇文章，什么水平）</li>
+        <li>参加组会感受氛围</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Appendix -->
+  <section id="appendix">
+    <div class="card">
+      <h2 class="card-title"><span class="num">A</span> 数据来源</h2>
+      <ol class="source-list">
+        <li>清华大学教师主页: <a href="https://www.life.tsinghua.edu.cn/info/1055/1434.htm" target="_blank">https://www.life.tsinghua.edu.cn/info/1055/1434.htm</a></li>
+        <li>Google Scholar: <a href="https://scholar.google.com/citations?user=ZNv_xnAAAAAJ&hl=en" target="_blank">https://scholar.google.com/citations?user=ZNv_xnAAAAAJ&hl=en</a></li>
+        <li>OpenAlex: <a href="https://openalex.org/A5075257104" target="_blank">https://openalex.org/A5075257104</a></li>
+        <li>PubMed: <a href="https://pubmed.ncbi.nlm.nih.gov/?term=%22Qianwen+Sun%22+Tsinghua" target="_blank">https://pubmed.ncbi.nlm.nih.gov/?term="Qianwen+Sun"+Tsinghua</a></li>
+        <li>ORCID: <a href="https://orcid.org/0000-0003-0111-5400" target="_blank">https://orcid.org/0000-0003-0111-5400</a></li>
+        <li>CLS PI Page: <a href="https://cls.tsinghua.edu.cn/PrincipalInvestigator/pi/index2570.shtml" target="_blank">https://cls.tsinghua.edu.cn/PrincipalInvestigator/pi/index2570.shtml</a></li>
+        <li>ResearchGate: <a href="https://www.researchgate.net/scientific-contributions/Qianwen-Sun-2107793624" target="_blank">https://www.researchgate.net/scientific-contributions/Qianwen-Sun-2107793624</a></li>
+        <li>THURID: <a href="https://thurid.lib.tsinghua.edu.cn/scholar/655731" target="_blank">https://thurid.lib.tsinghua.edu.cn/scholar/655731</a></li>
+        <li>博后招聘: <a href="https://www.gaoxiaojob.com/announcement/detail/306100.html" target="_blank">https://www.gaoxiaojob.com/announcement/detail/306100.html</a></li>
+        <li>PubMed论文致谢（基金信息来源）</li>
+        <li>Plantae Author Profile (刘坤鹏): <a href="https://plantae.org/kunpeng-liu-the-plant-cell-author-profile/" target="_blank">https://plantae.org/kunpeng-liu-the-plant-cell-author-profile/</a></li>
+        <li>2025 Nature Plants: <a href="https://pubmed.ncbi.nlm.nih.gov/40164787/" target="_blank">https://pubmed.ncbi.nlm.nih.gov/40164787/</a></li>
+        <li>2024 Nature Plants: <a href="https://pubmed.ncbi.nlm.nih.gov/39014153/" target="_blank">https://pubmed.ncbi.nlm.nih.gov/39014153/</a></li>
+        <li>2023 Science Advances: PMC10421056</li>
+        <li>2021 Plant Cell: PMC8566210</li>
+        <li>2021 PLOS Biology: PMC8330923</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Generated by <strong>DeepTutor v4</strong> &mdash; Powered by Claude</p>
+    <p style="margin-top: 4px;">报告生成日期：2026-04-01 &middot; 数据可能随时间变化，请以最新信息为准</p>
+  </footer>
+
+</div>
+
+</body>
+</html>

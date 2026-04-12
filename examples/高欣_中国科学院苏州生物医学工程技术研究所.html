@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeepTutor Report: 高欣 — 中国科学院苏州生物医学工程技术研究所</title>
+  <style>
+    :root {
+      --bg: #F9FAFB; --card: #FFFFFF; --accent: #D97706;
+      --text: #1F2937; --muted: #6B7280; --green: #059669;
+      --yellow: #D97706; --red: #DC2626; --radius: 12px;
+      --blue: #2563EB; --light-green: #D1FAE5; --light-yellow: #FEF3C7;
+      --light-red: #FEE2E2; --light-blue: #DBEAFE;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed; left: 0; top: 0; width: 250px; height: 100vh;
+      overflow-y: auto; background: var(--card); border-right: 1px solid #E5E7EB;
+      padding: 1rem; z-index: 100;
+    }
+    .sidebar h2 { font-size: 0.85rem; color: var(--accent); margin-bottom: 0.5rem; letter-spacing: 0.05em; text-transform: uppercase; }
+    .sidebar .score-hero { text-align: center; padding: 1rem 0; margin-bottom: 1rem; border-bottom: 1px solid #E5E7EB; }
+    .sidebar .score-hero .big-score { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+    .sidebar .score-hero .score-label { font-size: 0.75rem; color: var(--muted); }
+    .sidebar ul { list-style: none; }
+    .sidebar li { margin-bottom: 2px; }
+    .sidebar li a {
+      display: block; padding: 6px 10px; border-radius: 6px; font-size: 0.82rem;
+      color: var(--text); transition: background 0.15s;
+    }
+    .sidebar li a:hover { background: #F3F4F6; text-decoration: none; }
+
+    /* Main */
+    .main { margin-left: 270px; padding: 2rem; max-width: 920px; }
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 1.5rem 2rem; margin-bottom: 1.5rem;
+    }
+    .card h2 { font-size: 1.25rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent); }
+    .card h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; color: var(--accent); }
+
+    /* Badges */
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; margin: 2px; }
+    .badge-green { background: var(--light-green); color: var(--green); }
+    .badge-yellow { background: var(--light-yellow); color: var(--yellow); }
+    .badge-red { background: var(--light-red); color: var(--red); }
+    .badge-blue { background: var(--light-blue); color: var(--blue); }
+    .badge-gray { background: #F3F4F6; color: var(--muted); }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.88rem; }
+    th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #E5E7EB; }
+    th { background: #F9FAFB; font-weight: 600; font-size: 0.82rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    tr:hover { background: #FAFBFC; }
+
+    /* Progress bars for scoring */
+    .score-row { display: flex; align-items: center; margin-bottom: 10px; }
+    .score-row .dim-name { width: 200px; font-size: 0.88rem; font-weight: 500; }
+    .score-row .dim-weight { width: 50px; font-size: 0.75rem; color: var(--muted); text-align: center; }
+    .score-row .bar-wrap { flex: 1; height: 22px; background: #F3F4F6; border-radius: 11px; overflow: hidden; margin: 0 10px; }
+    .score-row .bar { height: 100%; border-radius: 11px; transition: width 0.5s; }
+    .score-row .dim-score { width: 40px; font-weight: 700; text-align: center; }
+    .bar-green { background: linear-gradient(90deg, #34D399, #059669); }
+    .bar-yellow { background: linear-gradient(90deg, #FBBF24, #D97706); }
+    .bar-red { background: linear-gradient(90deg, #F87171, #DC2626); }
+
+    /* Flags */
+    .flag-list { list-style: none; }
+    .flag-list li { padding: 6px 0; font-size: 0.88rem; display: flex; align-items: flex-start; gap: 8px; }
+    .flag-icon { font-size: 1rem; flex-shrink: 0; }
+
+    /* Timeline */
+    .timeline { position: relative; padding-left: 24px; }
+    .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #E5E7EB; }
+    .timeline-item { position: relative; margin-bottom: 16px; }
+    .timeline-item::before { content: ''; position: absolute; left: -20px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--card); }
+    .timeline-item .tl-date { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+    .timeline-item .tl-text { font-size: 0.88rem; }
+
+    /* Composite score hero */
+    .composite-hero {
+      text-align: center; padding: 2rem; margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #FEF3C7, #FDE68A); border-radius: var(--radius);
+    }
+    .composite-hero .big { font-size: 3.5rem; font-weight: 800; color: var(--accent); }
+    .composite-hero .label { font-size: 1rem; color: #92400E; margin-top: 4px; }
+    .composite-hero .interp { font-size: 0.9rem; color: #78350F; margin-top: 8px; }
+
+    /* Info grid */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+    .info-grid .info-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    .info-grid .info-value { font-size: 0.92rem; font-weight: 500; margin-bottom: 8px; }
+
+    /* Pub trend mini chart (CSS only) */
+    .pub-bars { display: flex; align-items: flex-end; gap: 3px; height: 80px; margin: 1rem 0; }
+    .pub-bar { flex: 1; background: var(--accent); border-radius: 3px 3px 0 0; min-width: 16px; position: relative; }
+    .pub-bar .pub-label { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; color: var(--muted); white-space: nowrap; }
+    .pub-bar .pub-count { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-size: 0.65rem; font-weight: 600; color: var(--text); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 1rem; }
+      .info-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .card { box-shadow: none; break-inside: avoid; border: 1px solid #E5E7EB; }
+      .composite-hero { background: #FEF3C7 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+
+    footer { text-align: center; padding: 2rem 0; color: var(--muted); font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar">
+  <div class="score-hero">
+    <div class="big-score">3.6</div>
+    <div class="score-label">综合评分 / 5.0</div>
+  </div>
+  <h2>导航</h2>
+  <ul>
+    <li><a href="#sec1">1. 基本信息</a></li>
+    <li><a href="#sec2">2. 导师类型分类</a></li>
+    <li><a href="#sec3">3. 师兄姐去向分析</a></li>
+    <li><a href="#sec4">4. 红灯绿灯速查</a></li>
+    <li><a href="#sec5">5. 毕业目标匹配</a></li>
+    <li><a href="#sec6">6. 教育与职业经历</a></li>
+    <li><a href="#sec7">7. 研究方向</a></li>
+    <li><a href="#sec8">8. 发表成果分析</a></li>
+    <li><a href="#sec9">9. 合作者网络</a></li>
+    <li><a href="#sec10">10. 经费与基金</a></li>
+    <li><a href="#sec11">11. 学术指标</a></li>
+    <li><a href="#sec12">12. 院系背景</a></li>
+    <li><a href="#sec13">13. PUA/PUSH风险评估</a></li>
+    <li><a href="#sec14">14. 多维度评分</a></li>
+    <li><a href="#sec15">15. 总结与建议</a></li>
+    <li><a href="#appendix">附录：数据来源</a></li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+  <h1 style="font-size:1.8rem; margin-bottom:0.3rem;">导师调查报告：高欣</h1>
+  <p style="color:var(--muted); margin-bottom:1.5rem;">中国科学院苏州生物医学工程技术研究所 · 医学影像研究室</p>
+
+  <!-- Section 1: Basic Info -->
+  <div class="card" id="sec1">
+    <h2>1. 基本信息</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-label">姓名</div>
+        <div class="info-value">高欣（Xin Gao）</div>
+      </div>
+      <div>
+        <div class="info-label">职称</div>
+        <div class="info-value">二级研究员（正高级） <span class="badge badge-blue">博导</span></div>
+      </div>
+      <div>
+        <div class="info-label">单位</div>
+        <div class="info-value">中国科学院苏州生物医学工程技术研究所（SIBET）</div>
+      </div>
+      <div>
+        <div class="info-label">部门</div>
+        <div class="info-value">医学影像研究室</div>
+      </div>
+      <div>
+        <div class="info-label">博导单位</div>
+        <div class="info-value">中国科学技术大学；上海创智学院（兼职）</div>
+      </div>
+      <div>
+        <div class="info-label">邮箱</div>
+        <div class="info-value"><a href="mailto:gaox@sibet.ac.cn">gaox@sibet.ac.cn</a></div>
+      </div>
+      <div>
+        <div class="info-label">ORCID</div>
+        <div class="info-value"><a href="https://orcid.org/0000-0001-9906-0596" target="_blank">0000-0001-9906-0596</a></div>
+      </div>
+      <div>
+        <div class="info-label">团队规模</div>
+        <div class="info-value">约20人</div>
+      </div>
+      <div>
+        <div class="info-label">电话</div>
+        <div class="info-value">0512-69588089</div>
+      </div>
+      <div>
+        <div class="info-label">地址</div>
+        <div class="info-value">苏州市高新区科技城科灵路88号</div>
+      </div>
+    </div>
+    <h3>学术兼职</h3>
+    <ul style="font-size:0.88rem; padding-left:1.2rem;">
+      <li>中国仪器仪表学会医疗仪器分会理事</li>
+      <li>国家药监局器械中心创新医疗器械特别审查专家</li>
+      <li>中国生物医学工程学会青年委员会副秘书长</li>
+      <li>《图学学报》编委</li>
+    </ul>
+  </div>
+
+  <!-- Section 2: Advisor Type -->
+  <div class="card" id="sec2">
+    <h2>2. 导师类型分类</h2>
+    <table>
+      <tr>
+        <th>类型</th>
+        <th>匹配度</th>
+        <th>证据</th>
+      </tr>
+      <tr>
+        <td><strong>学术型</strong></td>
+        <td><span class="badge badge-green">主要类型</span></td>
+        <td>持续高产出（PubMed 71篇，总计150+篇），在Medical Image Analysis、EClinicalMedicine等顶刊发表；多个研究方向并行推进</td>
+      </tr>
+      <tr>
+        <td><strong>项目型</strong></td>
+        <td><span class="badge badge-yellow">次要特征</span></td>
+        <td>主持国家重点研发计划、拥有22项国内发明专利+1项美国专利，有明显的工程转化倾向；"泰山产业领军人才"称号也表明产业导向</td>
+      </tr>
+      <tr>
+        <td>半放养型</td>
+        <td><span class="badge badge-gray">可能</span></td>
+        <td>团队约20人、多个临床合作方向，PI可能无法对每位学生进行密集指导</td>
+      </tr>
+    </table>
+    <p style="font-size:0.88rem; margin-top:1rem; color:var(--muted);">
+      <strong>综合判断：</strong>学术型为主、项目型为辅。高欣团队以发表高水平论文为主要目标，同时有较强的工程转化能力（专利、器械审查专家身份）。团队规模中等偏大（~20人），可能存在一定程度的"半放养"特征——学生需要具备一定自主性。
+    </p>
+  </div>
+
+  <!-- Section 3: Student Trajectories -->
+  <div class="card" id="sec3">
+    <h2>3. 师兄姐去向分析（天花板法则）</h2>
+    <p style="font-size:0.88rem; color:var(--red); margin-bottom:1rem;">
+      ⚠️ <strong>数据不足警告：</strong>未找到独立课题组网站的"毕业生去向"页面，UCAS导师页面（people.ucas.ac.cn/~0013397）已失效。以下信息仅基于论文合作者分析推断，无法确认具体去向。
+    </p>
+
+    <h3>可识别的团队成员（基于论文共同作者频率）</h3>
+    <table>
+      <tr><th>姓名</th><th>推断身份</th><th>活跃时段</th><th>代表性一作论文</th><th>当前去向</th></tr>
+      <tr>
+        <td>夏威</td><td>核心骨干/副研</td><td>2017-2026</td>
+        <td>出现频率最高，几乎参与所有论文</td><td><span class="badge badge-gray">未知</span></td>
+      </tr>
+      <tr>
+        <td>简俊明</td><td>博士生/博后</td><td>2020-2024</td>
+        <td>卵巢肿瘤系列论文第一作者（JMRI、AI in Medicine）</td><td><span class="badge badge-gray">未知</span></td>
+      </tr>
+      <tr>
+        <td>张佳怡</td><td>博士生</td><td>2020-2024</td>
+        <td>胃癌化疗预测（EClinicalMedicine, IF~10）第一作者</td><td><span class="badge badge-gray">未知</span></td>
+      </tr>
+      <tr>
+        <td>赵星宇</td><td>博士生</td><td>2019-2021</td>
+        <td>肺癌淋巴结转移预测（European Radiology, IF~4.7）</td><td><span class="badge badge-gray">未知</span></td>
+      </tr>
+      <tr>
+        <td>施伟</td><td>博士生</td><td>2021-2025</td>
+        <td>脑转移空间分布研究、乳腺癌相关</td><td><span class="badge badge-gray">未知</span></td>
+      </tr>
+      <tr>
+        <td>石力挺</td><td>博士生</td><td>2022-2026</td>
+        <td>神经病理诊断（Brain Pathology, IF~6.2）、ADHD（Communications Medicine）</td><td><span class="badge badge-gray">未知</span></td>
+      </tr>
+      <tr>
+        <td>白洪林</td><td>博士生</td><td>2020-2022</td>
+        <td>前列腺癌影像组学（JMRI）</td><td><span class="badge badge-gray">未知</span></td>
+      </tr>
+      <tr>
+        <td>高逸帆</td><td>博士生（新）</td><td>2024-2026</td>
+        <td>DeSAM (MICCAI 2024)、SafeClick (MICCAI 2025)</td><td>在读</td>
+      </tr>
+      <tr>
+        <td>刘洋川</td><td>研究生</td><td>2018-2020</td>
+        <td>锥束CT重建相关论文</td><td><span class="badge badge-gray">未知</span></td>
+      </tr>
+    </table>
+
+    <h3>天花板评估</h3>
+    <table>
+      <tr><th>指标</th><th>评估</th></tr>
+      <tr>
+        <td>学生一作论文质量</td>
+        <td><span class="badge badge-green">良好</span> 多名学生以一作发表在European Radiology (IF 4.7)、EClinicalMedicine (IF 10)、Brain Pathology (IF 6.2)、JMRI (IF 3.5)、MICCAI等高水平期刊/会议</td>
+      </tr>
+      <tr>
+        <td>毕业生去向</td>
+        <td><span class="badge badge-yellow">数据不足</span> 无法追踪任何已毕业学生的具体去向，这是本报告最大的信息盲区</td>
+      </tr>
+      <tr>
+        <td>毕业周期</td>
+        <td><span class="badge badge-gray">未知</span> 缺少学位论文数据库的信息</td>
+      </tr>
+      <tr>
+        <td>天花板判断</td>
+        <td><span class="badge badge-yellow">中等偏上，但有不确定性</span> 学生发表质量不错，但去向不明意味着天花板无法准确评估</td>
+      </tr>
+    </table>
+    <p style="font-size:0.85rem; color:var(--muted); margin-top:0.8rem;">
+      <strong>建议：</strong>如有意向加入该课题组，强烈建议直接联系在读学生或已毕业的师兄姐，了解真实的毕业去向和实验室氛围。可通过课题组论文中的一作姓名在LinkedIn、微信等平台搜索。
+    </p>
+  </div>
+
+  <!-- Section 4: Red/Green Flags -->
+  <div class="card" id="sec4">
+    <h2>4. 红灯绿灯速查</h2>
+
+    <h3>🟢 绿灯信号</h3>
+    <ul class="flag-list">
+      <li><span class="flag-icon">✅</span> 多名学生以一作发表高水平SCI论文（EClinicalMedicine、European Radiology、Brain Pathology、MICCAI）</li>
+      <li><span class="flag-icon">✅</span> 近年持续产出，无发表空白期（2013-2026年每年均有论文）</li>
+      <li><span class="flag-icon">✅</span> 持续获得国家级基金资助（5项NSFC + 国家重点研发计划）</li>
+      <li><span class="flag-icon">✅</span> 近期获多项人才称号（2021年333工程二层次、2023年泰山产业领军人才）</li>
+      <li><span class="flag-icon">✅</span> 有海外经历（日本岐阜大学讲师、美国休斯顿Methodist博后、爱荷华大学博后）</li>
+      <li><span class="flag-icon">✅</span> 博导身份且持续招生（中国科学技术大学博导）</li>
+      <li><span class="flag-icon">✅</span> 获中科大首届科教融合学院<strong>优秀导师奖</strong>（2021），学生获国家奖学金、中科院院长奖</li>
+      <li><span class="flag-icon">✅</span> 国际合作活跃（与美国Wisconsin大学Perry Pickhardt教授等有长期合作）</li>
+      <li><span class="flag-icon">✅</span> 成果转化落地：骨密度分析系统已获医疗器械注册证，实现进口替代</li>
+      <li><span class="flag-icon">✅</span> 研究方向（AI医学影像）正处于学科热点期，就业前景广阔</li>
+      <li><span class="flag-icon">✅</span> 有工程转化能力（22项国内专利+1项美国专利，NMPA器械审评专家）</li>
+    </ul>
+
+    <h3 style="margin-top:1.2rem;">🔴 红灯信号</h3>
+    <ul class="flag-list">
+      <li><span class="flag-icon">⚠️</span> <span style="color:var(--yellow);">黄灯：</span>毕业生去向完全不可追踪（无独立课题组网站毕业生页面、UCAS导师页面失效）</li>
+      <li><span class="flag-icon">⚠️</span> <span style="color:var(--yellow);">黄灯：</span>未找到Google Scholar、ResearchGate个人主页（学术可见度略低）</li>
+      <li><span class="flag-icon">⚠️</span> <span style="color:var(--yellow);">黄灯：</span>团队约20人，存在指导精力分散的可能</li>
+    </ul>
+
+    <h3 style="margin-top:1.2rem;">速判</h3>
+    <div style="display:inline-block; padding:8px 20px; border-radius:8px; background:var(--light-yellow); font-weight:600; color:#92400E;">
+      ⚡ 谨慎乐观 — 学术产出优秀，但学生去向信息缺失需进一步核实
+    </div>
+  </div>
+
+  <!-- Section 5: Goal-Advisor Match -->
+  <div class="card" id="sec5">
+    <h2>5. 毕业目标匹配矩阵</h2>
+    <p style="font-size:0.88rem; color:var(--muted); margin-bottom:1rem;">
+      未获得用户明确的毕业目标，以下为各目标的适配度分析：
+    </p>
+    <table>
+      <tr><th>毕业目标</th><th>匹配度</th><th>分析</th></tr>
+      <tr>
+        <td>读博深造 / 学术路线</td>
+        <td><span class="badge badge-green">★★★★☆</span></td>
+        <td>学术产出强，有高水平论文发表平台，MICCAI/顶级医学影像期刊均有覆盖。CAS研究所的学术氛围较好。</td>
+      </tr>
+      <tr>
+        <td>进AI医疗/大厂</td>
+        <td><span class="badge badge-green">★★★★☆</span></td>
+        <td>AI + 医学影像方向对口，有深度学习、影像组学等技术积累。需确认是否允许实习。</td>
+      </tr>
+      <tr>
+        <td>药企/器械公司</td>
+        <td><span class="badge badge-green">★★★★★</span></td>
+        <td>最佳匹配。22项专利+NMPA审评专家身份+泰山产业领军人才，产学研转化能力强。</td>
+      </tr>
+      <tr>
+        <td>进医院</td>
+        <td><span class="badge badge-yellow">★★★☆☆</span></td>
+        <td>有大量临床合作（肿瘤医院、放射科），但CAS研究所本身不是医学院/附属医院，临床资源为间接获取。</td>
+      </tr>
+      <tr>
+        <td>考公/考编</td>
+        <td><span class="badge badge-yellow">★★☆☆☆</span></td>
+        <td>学术型为主的导师，可能对学生有较高的科研产出期望。时间自由度未知。</td>
+      </tr>
+      <tr>
+        <td>纯拿学位</td>
+        <td><span class="badge badge-red">★★☆☆☆</span></td>
+        <td>高产出团队，毕业要求可能较高。不适合无科研动力的学生。</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Section 6: Education & Career Timeline -->
+  <div class="card" id="sec6">
+    <h2>6. 教育与职业经历</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-date">2001 — 2004</div>
+        <div class="tl-text"><strong>浙江大学</strong> · 生物医学工程与仪器科学学院 · 博士</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-date">2004 — 2006</div>
+        <div class="tl-text"><strong>首都医科大学</strong> · 生物医学工程学院 · 讲师</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-date">2006 — 2008</div>
+        <div class="tl-text"><strong>日本岐阜大学</strong> · 讲师（海外经历）</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-date">2008 — 2009</div>
+        <div class="tl-text"><strong>Houston Methodist Research Institute</strong> · 德州医学中心 · 博士后</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-date">2009 — 2010</div>
+        <div class="tl-text"><strong>University of Iowa Healthcare</strong> · 放射科 · 博士后</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-date">2010 — 至今</div>
+        <div class="tl-text"><strong>中国科学院苏州生物医学工程技术研究所</strong> · PI / 二级研究员 · 医学影像研究室</div>
+      </div>
+    </div>
+    <p style="font-size:0.85rem; color:var(--muted); margin-top:1rem;">
+      职业轨迹评价：博士毕业后经历了完整的国际化训练（日本2年+美国2年），2010年回国加入新成立的SIBET（2012年正式运行），从建所初期即参与，属于研究所核心创始成员之一。晋升至二级研究员（正高最高档），职业发展势头良好。
+    </p>
+  </div>
+
+  <!-- Section 7: Research Directions -->
+  <div class="card" id="sec7">
+    <h2>7. 研究方向</h2>
+
+    <h3>方向一：基于智能影像计算的精准医疗</h3>
+    <p style="font-size:0.88rem;">
+      核心方向。利用临床大数据与AI进行患病风险预测、辅助诊断、预后预测。覆盖影像组学（Radiomics）、病理组学（Pathomics）、基因组学（Genomics）三大维度。应用场景涵盖：
+    </p>
+    <ul style="font-size:0.85rem; padding-left:1.2rem; margin:0.5rem 0;">
+      <li>胃癌新辅助化疗疗效预测（EClinicalMedicine, 被引165次）</li>
+      <li>直肠癌淋巴结检测（EBioMedicine封面, 被引95次）</li>
+      <li>肺腺癌淋巴结转移预测（European Radiology, 被引188次）</li>
+      <li>卵巢肿瘤分类（JMRI多篇）</li>
+      <li>宫颈病变无创筛查（Int J Medical Informatics）</li>
+      <li>神经病理快速诊断（Brain Pathology）</li>
+    </ul>
+    <span class="badge badge-green">热点方向</span> <span class="badge badge-blue">高发表产出</span>
+
+    <h3>方向二：手术导航及机器人</h3>
+    <p style="font-size:0.88rem;">
+      融合术前/术中医学影像进行空间定位，辅助微创诊疗。包括电磁导航支气管镜、腹腔镜器械追踪等。
+    </p>
+    <span class="badge badge-yellow">工程应用型</span> <span class="badge badge-blue">专利密集</span>
+
+    <h3>方向三：低剂量锥束CT成像</h3>
+    <p style="font-size:0.88rem;">
+      基于平板探测器的锥束CT成像优化，降低辐射剂量。早期研究方向，近年论文较少。
+    </p>
+    <span class="badge badge-gray">早期方向</span>
+
+    <h3>前景展望</h3>
+    <p style="font-size:0.88rem;">
+      AI医学影像是当前生物医学工程领域最热门的方向之一，国家层面有大量专项支持。近年团队开始在MICCAI（计算机视觉/医学影像顶会）上发表论文，表明正在向计算机科学顶级学术圈扩展。研究方向前景<strong>非常好</strong>。
+    </p>
+  </div>
+
+  <!-- Section 8: Publication Analysis -->
+  <div class="card" id="sec8">
+    <h2>8. 发表成果分析</h2>
+
+    <h3>总量指标</h3>
+    <table>
+      <tr><td>总论文数（官网自述）</td><td><strong>150+ 篇</strong></td></tr>
+      <tr><td>第一/通讯作者SCI论文</td><td><strong>70 篇</strong></td></tr>
+      <tr><td>PubMed可检索（SIBET关联）</td><td><strong>71 篇</strong></td></tr>
+      <tr><td>授权发明专利</td><td><strong>22项国内 + 1项美国</strong></td></tr>
+      <tr><td>估计H-index</td><td><strong>25-35</strong>（基于OpenAlex数据推算）</td></tr>
+    </table>
+
+    <h3>年度发表趋势</h3>
+    <div class="pub-bars">
+      <div class="pub-bar" style="height:8%"><span class="pub-count">1</span><span class="pub-label">'13</span></div>
+      <div class="pub-bar" style="height:15%"><span class="pub-count">2</span><span class="pub-label">'14</span></div>
+      <div class="pub-bar" style="height:38%"><span class="pub-count">5</span><span class="pub-label">'15</span></div>
+      <div class="pub-bar" style="height:5%;background:#E5E7EB"><span class="pub-count">0*</span><span class="pub-label">'16</span></div>
+      <div class="pub-bar" style="height:23%"><span class="pub-count">3</span><span class="pub-label">'17</span></div>
+      <div class="pub-bar" style="height:54%"><span class="pub-count">7</span><span class="pub-label">'18</span></div>
+      <div class="pub-bar" style="height:31%"><span class="pub-count">4</span><span class="pub-label">'19</span></div>
+      <div class="pub-bar" style="height:69%"><span class="pub-count">9</span><span class="pub-label">'20</span></div>
+      <div class="pub-bar" style="height:62%"><span class="pub-count">8</span><span class="pub-label">'21</span></div>
+      <div class="pub-bar" style="height:85%"><span class="pub-count">11</span><span class="pub-label">'22</span></div>
+      <div class="pub-bar" style="height:54%"><span class="pub-count">7</span><span class="pub-label">'23</span></div>
+      <div class="pub-bar" style="height:38%"><span class="pub-count">5</span><span class="pub-label">'24</span></div>
+      <div class="pub-bar" style="height:62%"><span class="pub-count">8</span><span class="pub-label">'25</span></div>
+      <div class="pub-bar" style="height:15%"><span class="pub-count">2</span><span class="pub-label">'26</span></div>
+    </div>
+    <p style="font-size:0.75rem; color:var(--muted);">*2016年PubMed未收录，OpenAlex有3篇非PubMed论文。2026年数据截至调查日。</p>
+
+    <h3>作者位置分布（PubMed 71篇）</h3>
+    <table>
+      <tr><th>位置</th><th>篇数</th><th>比例</th></tr>
+      <tr><td>通讯/末位作者</td><td>~38篇</td><td>~54%</td></tr>
+      <tr><td>中间作者</td><td>~32篇</td><td>~45%</td></tr>
+      <tr><td>第一作者</td><td>~1篇</td><td>~1%</td></tr>
+    </table>
+
+    <h3>高被引论文 TOP 10</h3>
+    <table>
+      <tr><th>被引</th><th>论文</th><th>期刊</th><th>年份</th></tr>
+      <tr><td><strong>188</strong></td><td>Peritumoral radiomics for lymph node metastasis in T1 lung adenocarcinoma</td><td>European Radiology</td><td>2019</td></tr>
+      <tr><td><strong>166</strong></td><td>Preoperative radiomic signature for rectal cancer biological characteristics</td><td>European Radiology</td><td>2018</td></tr>
+      <tr><td><strong>165</strong></td><td>CT-based deep learning radiomics nomogram for gastric cancer chemotherapy response</td><td>EClinicalMedicine</td><td>2022</td></tr>
+      <tr><td><strong>95</strong></td><td>Deep learning-based lymph node detection for rectal cancer (multicentre)</td><td>EBioMedicine</td><td>2020</td></tr>
+      <tr><td><strong>79</strong></td><td>MSFCN for osteosarcoma segmentation</td><td>CMPB</td><td>2017</td></tr>
+      <tr><td><strong>79</strong></td><td>MR radiomics for ovarian cancer type differentiation</td><td>European Radiology</td><td>2020</td></tr>
+      <tr><td><strong>76</strong></td><td>Cross-modal 3D deep learning for lung adenocarcinoma lymph node prediction</td><td>Lung Cancer</td><td>2020</td></tr>
+      <tr><td><strong>68</strong></td><td>MRI radiomics for prostate cancer assessment</td><td>Cancer Imaging</td><td>2021</td></tr>
+      <tr><td><strong>63</strong></td><td>Radiomic prediction of microvascular invasion in HCC</td><td>Frontiers Oncol</td><td>2020</td></tr>
+      <tr><td><strong>62</strong></td><td>Radiomics for TACE outcome prediction in HCC</td><td>JMRI</td><td>2020</td></tr>
+    </table>
+
+    <h3>期刊分布（主要发文期刊）</h3>
+    <table>
+      <tr><th>期刊</th><th>篇数</th><th>IF</th><th>层级</th></tr>
+      <tr><td>JMRI</td><td>7</td><td>~3.5</td><td><span class="badge badge-yellow">Good</span></td></tr>
+      <tr><td>European Radiology</td><td>5</td><td>~4.7</td><td><span class="badge badge-yellow">Good</span></td></tr>
+      <tr><td>生物医学工程学杂志</td><td>5</td><td>—</td><td><span class="badge badge-gray">中文核心</span></td></tr>
+      <tr><td>Computerized Medical Imaging and Graphics</td><td>3</td><td>~5.7</td><td><span class="badge badge-green">High</span></td></tr>
+      <tr><td>EClinicalMedicine (Lancet)</td><td>1</td><td>~10.0</td><td><span class="badge badge-green">Top</span></td></tr>
+      <tr><td>EBioMedicine (Lancet)</td><td>1</td><td>~10.8</td><td><span class="badge badge-green">Top</span></td></tr>
+      <tr><td>Radiology: AI</td><td>1</td><td>~13.2</td><td><span class="badge badge-green">Top</span></td></tr>
+      <tr><td>Medical Image Analysis</td><td>1</td><td>~10.7</td><td><span class="badge badge-green">Top</span></td></tr>
+      <tr><td>Communications Medicine (Nature)</td><td>1</td><td>~6.3</td><td><span class="badge badge-green">High</span></td></tr>
+      <tr><td>Brain Pathology</td><td>1</td><td>~6.2</td><td><span class="badge badge-green">High</span></td></tr>
+    </table>
+
+    <h3>发表特征总结</h3>
+    <p style="font-size:0.88rem;">
+      <strong>优势：</strong>持续高产（年均5-11篇PubMed论文），有EClinicalMedicine (IF 10)、EBioMedicine (IF 10.8)、Radiology:AI (IF 13.2) 等顶刊。2024-2026年开始在MICCAI发表，学术影响力在上升期。<br>
+      <strong>特点：</strong>约54%论文为通讯作者，表明团队核心产出能力强。大量多中心临床合作论文中以中间作者参与，说明合作网络广泛。<br>
+      <strong>发表空白：</strong>无明显空白期。2016年PubMed无记录，但OpenAlex显示当年有其他论文。
+    </p>
+  </div>
+
+  <!-- Section 9: Co-Author Network -->
+  <div class="card" id="sec9">
+    <h2>9. 合作者网络</h2>
+
+    <h3>团队内部核心成员（SIBET）</h3>
+    <table>
+      <tr><th>姓名</th><th>角色推断</th><th>合作论文数</th><th>主要方向</th></tr>
+      <tr><td>夏威</td><td>核心骨干</td><td>极高（几乎所有）</td><td>全方向参与</td></tr>
+      <tr><td>张睿</td><td>高频合作者</td><td>高</td><td>影像组学</td></tr>
+      <tr><td>简俊明</td><td>博士生/博后</td><td>中高</td><td>卵巢肿瘤</td></tr>
+      <tr><td>张佳怡</td><td>博士生</td><td>中高</td><td>胃癌、黑色素瘤</td></tr>
+      <tr><td>赵星宇</td><td>博士生</td><td>中</td><td>肺癌</td></tr>
+      <tr><td>石力挺</td><td>博士生</td><td>中</td><td>神经病理、ADHD</td></tr>
+      <tr><td>高逸帆</td><td>博士生（新）</td><td>中</td><td>MICCAI、分割模型</td></tr>
+    </table>
+
+    <h3>主要外部临床合作者</h3>
+    <table>
+      <tr><th>姓名</th><th>单位</th><th>合作方向</th></tr>
+      <tr><td>Perry J. Pickhardt</td><td>美国Wisconsin大学</td><td>卵巢肿瘤、直肠癌（国际合作）</td></tr>
+      <tr><td>崔艳芬</td><td>山西省肿瘤医院</td><td>胃癌影像组学</td></tr>
+      <tr><td>杨晓棠</td><td>山西省肿瘤医院</td><td>肺癌、脑转移</td></tr>
+      <tr><td>谢培义</td><td>广东省人民医院</td><td>直肠癌MRI</td></tr>
+      <tr><td>李永爱</td><td>（待确认）</td><td>卵巢肿瘤</td></tr>
+    </table>
+
+    <p style="font-size:0.88rem; margin-top:1rem;">
+      <strong>网络特征：</strong>合作网络广泛，涵盖国内多家三甲医院和国际合作。临床数据来源丰富，是团队能产出多中心研究的重要基础。学生有机会接触到真实临床场景。
+    </p>
+  </div>
+
+  <!-- Section 10: Funding -->
+  <div class="card" id="sec10">
+    <h2>10. 经费与基金</h2>
+
+    <h3>国家级项目</h3>
+    <table>
+      <tr><th>项目</th><th>编号</th><th>类型</th></tr>
+      <tr><td>国家重点研发计划</td><td>2022YFC2408400</td><td><span class="badge badge-green">国家级重大</span></td></tr>
+      <tr><td>国家自然科学基金</td><td>82372052</td><td><span class="badge badge-blue">面上/重点</span></td></tr>
+      <tr><td>国家自然科学基金</td><td>81871439</td><td><span class="badge badge-blue">面上</span></td></tr>
+      <tr><td>国家自然科学基金</td><td>81571772</td><td><span class="badge badge-blue">面上</span></td></tr>
+      <tr><td>国家自然科学基金</td><td>81371640</td><td><span class="badge badge-blue">面上</span></td></tr>
+      <tr><td>国家自然科学基金</td><td>81000651</td><td><span class="badge badge-blue">青年基金</span></td></tr>
+      <tr><td>国家重大科研装备研制项目（课题）</td><td>ZDYZ2013-1</td><td><span class="badge badge-green">国家级重大</span></td></tr>
+    </table>
+
+    <h3>省部级及其他项目</h3>
+    <p style="font-size:0.88rem;">
+      据官网披露，共主持<strong>21项纵向科研项目</strong>，其中国家级7项、省部级9项、其他5项。具体省部级项目名称未公开。
+    </p>
+
+    <h3>经费评估</h3>
+    <table>
+      <tr><td>经费连续性</td><td><span class="badge badge-green">优秀</span> 从2010年建所至今持续获资助，NSFC从青年→面上→重点逐级提升</td></tr>
+      <tr><td>经费增长趋势</td><td><span class="badge badge-green">上升</span> 2022年获国家重点研发计划，代表经费能力的新台阶</td></tr>
+      <tr><td>经费多元性</td><td><span class="badge badge-green">良好</span> NSFC + 科技部 + 省部级 + 产业项目</td></tr>
+    </table>
+  </div>
+
+  <!-- Section 11: Academic Metrics -->
+  <div class="card" id="sec11">
+    <h2>11. 学术指标（同行基准对比）</h2>
+    <table>
+      <tr><th>指标</th><th>高欣</th><th>同级别基准（正高/研究员）</th><th>评价</th></tr>
+      <tr><td>总论文数</td><td>150+</td><td>40-80篇</td><td><span class="badge badge-green">远超基准</span></td></tr>
+      <tr><td>一作/通讯SCI</td><td>70篇</td><td>15-40篇</td><td><span class="badge badge-green">远超基准</span></td></tr>
+      <tr><td>估计H-index</td><td>25-35</td><td>15-30</td><td><span class="badge badge-green">超出基准</span></td></tr>
+      <tr><td>顶刊论文(IF>10)</td><td>5篇</td><td>2-5篇</td><td><span class="badge badge-green">达标/偏高</span></td></tr>
+      <tr><td>NSFC项目数</td><td>5项</td><td>2-4项</td><td><span class="badge badge-green">超出基准</span></td></tr>
+      <tr><td>专利数</td><td>23项</td><td>5-15项</td><td><span class="badge badge-green">远超基准</span></td></tr>
+      <tr><td>人才称号</td><td>省级多项，无杰青/优青</td><td>优青为里程碑</td><td><span class="badge badge-yellow">有提升空间</span></td></tr>
+    </table>
+    <p style="font-size:0.85rem; color:var(--muted); margin-top:0.8rem;">
+      注：未获杰青/优青可能与研究所平台（非高校）和名额分配有关，不代表学术水平不足。其省级人才称号（333工程二层次、泰山产业领军人才）在非高校系统中属于较高层次。
+    </p>
+  </div>
+
+  <!-- Section 12: Department Context -->
+  <div class="card" id="sec12">
+    <h2>12. 院系背景</h2>
+
+    <h3>中国科学院苏州生物医学工程技术研究所（SIBET）</h3>
+    <table>
+      <tr><td>成立时间</td><td>2008年筹建，2012年正式运行</td></tr>
+      <tr><td>性质</td><td>中国科学院直属研究所</td></tr>
+      <tr><td>定位</td><td>面向生物医学工程前沿，聚焦医疗器械核心技术</td></tr>
+      <tr><td>地点</td><td>苏州市高新区科技城</td></tr>
+      <tr><td>研究生培养</td><td>依托中国科学技术大学招生</td></tr>
+    </table>
+
+    <h3>平台优劣势分析</h3>
+    <table>
+      <tr><th>维度</th><th>评价</th></tr>
+      <tr>
+        <td>学术声望</td>
+        <td><span class="badge badge-yellow">中等偏上</span> CAS研究所有品牌背书，但SIBET成立较晚（2012年），不如老牌CAS所知名</td>
+      </tr>
+      <tr>
+        <td>研究设施</td>
+        <td><span class="badge badge-green">较好</span> 作为医疗器械研发机构，具备完整的工程化设备和临床测试平台</td>
+      </tr>
+      <tr>
+        <td>学位授予</td>
+        <td><span class="badge badge-blue">中国科学技术大学</span> 毕业证和学位证由USTC颁发，985高校学位含金量高</td>
+      </tr>
+      <tr>
+        <td>地理位置</td>
+        <td><span class="badge badge-green">优秀</span> 苏州长三角核心区，生物医药产业集群（BioBAY），就业机会丰富</td>
+      </tr>
+      <tr>
+        <td>生活成本</td>
+        <td><span class="badge badge-yellow">中等</span> 苏州生活成本低于上海/北京，但高于二三线城市</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Section 13: PUA/PUSH Risk -->
+  <div class="card" id="sec13">
+    <h2>13. PUA/PUSH风险评估</h2>
+
+    <p style="font-size:0.88rem; color:var(--yellow); margin-bottom:1rem;">
+      ⚠️ <strong>数据受限：</strong>未在知乎、小木虫、小红书等平台找到关于该导师的学生评价。以下评估基于间接信号。
+    </p>
+
+    <table>
+      <tr><th>信号</th><th>状态</th><th>说明</th></tr>
+      <tr>
+        <td>知乎/小木虫投诉</td>
+        <td><span class="badge badge-green">无负面</span></td>
+        <td>知乎上被提及为"做手术导航研究，发了很多论文"的老师；多个导师评价平台（MySupervisor/SAFC/小木虫）均未发现负面评价</td>
+      </tr>
+      <tr>
+        <td>学生中途退出记录</td>
+        <td><span class="badge badge-gray">未发现</span></td>
+        <td>论文合作者序列未见明显异常</td>
+      </tr>
+      <tr>
+        <td>横向项目占比</td>
+        <td><span class="badge badge-yellow">需关注</span></td>
+        <td>有产业合作和专利，但具体横向项目对学生的影响未知</td>
+      </tr>
+      <tr>
+        <td>学生一作论文</td>
+        <td><span class="badge badge-green">正面信号</span></td>
+        <td>多名学生以一作发表在高影响力期刊，说明导师愿意给学生署名机会</td>
+      </tr>
+      <tr>
+        <td>毕业时间</td>
+        <td><span class="badge badge-gray">未知</span></td>
+        <td>缺少CNKI学位论文数据</td>
+      </tr>
+      <tr>
+        <td>导师奖项</td>
+        <td><span class="badge badge-green">正面信号</span></td>
+        <td>获中科大首届科教融合学院优秀导师奖（2021）；学生获国家奖学金、中科院院长奖</td>
+      </tr>
+      <tr>
+        <td>实验室新闻/采访</td>
+        <td><span class="badge badge-green">正面</span></td>
+        <td>Bio-Integration期刊专访（2023）；MedicalXpress国际学术媒体报道（2023）</td>
+      </tr>
+    </table>
+
+    <h3>综合判断</h3>
+    <div style="display:inline-block; padding:8px 20px; border-radius:8px; background:var(--light-green); font-weight:600; color:var(--green);">
+      ✅ 低风险 — 多项正面信号，无任何负面信号
+    </div>
+    <p style="font-size:0.85rem; color:var(--muted); margin-top:0.8rem;">
+      正面信号：获中科大优秀导师奖、学生获国家奖学金和院长奖、学生能在高影响力期刊发表一作论文、导师有国际经历和视野、课题方向前沿、知乎及多个导师评价平台无负面评价。但团队约20人可能意味着导师精力有限，部分学生可能获得较少的直接指导。
+    </p>
+  </div>
+
+  <!-- Section 14: Multi-Dimensional Scoring -->
+  <div class="card" id="sec14">
+    <h2>14. 多维度评分</h2>
+
+    <div class="composite-hero">
+      <div class="big">3.6</div>
+      <div class="label">综合加权评分</div>
+      <div class="interp">良好 — 学术产出优秀、导师风评积极，学生去向数据不足略拉低评分</div>
+    </div>
+
+    <div class="score-row">
+      <div class="dim-name">研究方向与前景</div>
+      <div class="dim-weight">10%</div>
+      <div class="bar-wrap"><div class="bar bar-green" style="width:90%"></div></div>
+      <div class="dim-score" style="color:var(--green)">4.5</div>
+    </div>
+    <div class="score-row">
+      <div class="dim-name">发表成果与质量</div>
+      <div class="dim-weight">15%</div>
+      <div class="bar-wrap"><div class="bar bar-green" style="width:80%"></div></div>
+      <div class="dim-score" style="color:var(--green)">4.0</div>
+    </div>
+    <div class="score-row">
+      <div class="dim-name">学生培养实绩</div>
+      <div class="dim-weight">15%</div>
+      <div class="bar-wrap"><div class="bar bar-yellow" style="width:60%"></div></div>
+      <div class="dim-score" style="color:var(--yellow)">3.0</div>
+    </div>
+    <div class="score-row">
+      <div class="dim-name">平台与资源</div>
+      <div class="dim-weight">15%</div>
+      <div class="bar-wrap"><div class="bar bar-yellow" style="width:70%"></div></div>
+      <div class="dim-score" style="color:var(--yellow)">3.5</div>
+    </div>
+    <div class="score-row">
+      <div class="dim-name">独立性与成长空间</div>
+      <div class="dim-weight">10%</div>
+      <div class="bar-wrap"><div class="bar bar-yellow" style="width:70%"></div></div>
+      <div class="dim-score" style="color:var(--yellow)">3.5</div>
+    </div>
+    <div class="score-row">
+      <div class="dim-name">职业轨迹与势头</div>
+      <div class="dim-weight">5%</div>
+      <div class="bar-wrap"><div class="bar bar-green" style="width:80%"></div></div>
+      <div class="dim-score" style="color:var(--green)">4.0</div>
+    </div>
+    <div class="score-row">
+      <div class="dim-name">PUA/PUSH风险</div>
+      <div class="dim-weight">10%</div>
+      <div class="bar-wrap"><div class="bar bar-green" style="width:80%"></div></div>
+      <div class="dim-score" style="color:var(--green)">4.0</div>
+    </div>
+    <div class="score-row">
+      <div class="dim-name">时间自由度</div>
+      <div class="dim-weight">10%</div>
+      <div class="bar-wrap"><div class="bar bar-yellow" style="width:60%"></div></div>
+      <div class="dim-score" style="color:var(--yellow)">3.0</div>
+    </div>
+    <div class="score-row">
+      <div class="dim-name">毕业目标匹配</div>
+      <div class="dim-weight">10%</div>
+      <div class="bar-wrap"><div class="bar bar-yellow" style="width:60%"></div></div>
+      <div class="dim-score" style="color:var(--yellow)">3.0</div>
+    </div>
+
+    <h3 style="margin-top:1.5rem;">评分说明</h3>
+    <table>
+      <tr><th>维度</th><th>分数</th><th>理由</th></tr>
+      <tr><td>研究方向与前景</td><td>4.5</td><td>AI医学影像为当前热点，国家大力支持，就业前景广阔</td></tr>
+      <tr><td>发表成果与质量</td><td>4.0</td><td>H-index 25-35，有5篇IF>10论文，年均产出稳定且增长，超过同级别基准</td></tr>
+      <tr><td>学生培养实绩</td><td>3.0</td><td>学生一作论文质量好，但毕业生去向完全不可追踪，天花板无法评估</td></tr>
+      <tr><td>平台与资源</td><td>3.5</td><td>CAS研究所品牌+USTC学位+苏州产业集群，但所建成时间短、非传统名所</td></tr>
+      <tr><td>独立性与成长空间</td><td>3.5</td><td>团队~20人属中等偏大，多方向可选择；但具体指导密度未知</td></tr>
+      <tr><td>职业轨迹与势头</td><td>4.0</td><td>博士后→二级研究员快速晋升，多项省级人才称号，近年MICCAI突破</td></tr>
+      <tr><td>PUA/PUSH风险</td><td>4.0</td><td>获中科大优秀导师奖、学生获国家奖学金和院长奖、知乎及多平台无负面评价；整体呈现低风险</td></tr>
+      <tr><td>时间自由度</td><td>3.0</td><td>无相关数据，给予中性评分</td></tr>
+      <tr><td>毕业目标匹配</td><td>3.0</td><td>未获用户目标信息，给予中性评分</td></tr>
+    </table>
+  </div>
+
+  <!-- Section 15: Summary & Recommendations -->
+  <div class="card" id="sec15">
+    <h2>15. 总结与建议</h2>
+
+    <h3>核心优势</h3>
+    <ul style="font-size:0.88rem; padding-left:1.2rem;">
+      <li><strong>学术产出强劲：</strong>150+篇论文，5篇IF>10，持续增长趋势，MICCAI新突破</li>
+      <li><strong>方向前景极好：</strong>AI医学影像处于学科爆发期，就业市场需求旺盛</li>
+      <li><strong>经费充裕稳定：</strong>国家重点研发计划+5项NSFC，21项纵向项目</li>
+      <li><strong>国际视野：</strong>日本+美国博后经历，与Wisconsin大学等有长期国际合作</li>
+      <li><strong>产学研转化：</strong>23项专利+NMPA审评专家，器械/药企方向就业有优势</li>
+      <li><strong>学位含金量：</strong>毕业拿中国科学技术大学（985/C9）学位</li>
+    </ul>
+
+    <h3>主要风险</h3>
+    <ul style="font-size:0.88rem; padding-left:1.2rem;">
+      <li><strong>学生去向不明：</strong>这是最大的不确定性。无法评估"天花板"——即师兄姐毕业后能到达的高度</li>
+      <li><strong>团队规模较大：</strong>~20人可能导致导师指导精力分散</li>
+      <li><strong>无杰青/优青：</strong>在人才帽子竞争中尚未获得最顶级认定（但可能与CAS所名额有关）</li>
+      <li><strong>研究所较新：</strong>SIBET 2012年才正式运行，行业积淀和校友网络不如老牌机构</li>
+    </ul>
+
+    <h3>建议行动</h3>
+    <ol style="font-size:0.88rem; padding-left:1.2rem;">
+      <li><strong>联系在读学生：</strong>通过论文一作姓名（如石力挺、高逸帆、施伟等近年活跃成员）在微信/邮件联系，了解实验室真实氛围、毕业要求、时间自由度</li>
+      <li><strong>追踪毕业生去向：</strong>联系疑似已毕业成员（如赵星宇、白洪林等2019-2022年活跃但近年消失的作者），了解其当前就业情况</li>
+      <li><strong>明确自身目标：</strong>如目标是进器械/AI医疗企业，该导师匹配度极高；如目标是纯学术或考公，需进一步评估时间自由度</li>
+      <li><strong>实地访问：</strong>苏州高新区科技城距上海仅1小时高铁，建议实地参观实验室和面谈</li>
+    </ol>
+
+    <h3>适合人群</h3>
+    <p style="font-size:0.88rem;">
+      <span class="badge badge-green">最适合</span> 志向进入AI医疗/医疗器械行业、有较强自主性、对深度学习+医学影像交叉方向感兴趣的学生。<br>
+      <span class="badge badge-yellow">需慎重</span> 需要导师高密度指导的学生、以纯学术为唯一目标且追求顶级人才头衔平台的学生。
+    </p>
+  </div>
+
+  <!-- Appendix -->
+  <div class="card" id="appendix">
+    <h2>附录：数据来源</h2>
+    <table>
+      <tr><th>来源</th><th>链接</th></tr>
+      <tr><td>SIBET官方主页（中文）</td><td><a href="https://sibet.cas.cn/sourcedb/zw/yjdw/yjy/201306/t20130621_3879548.html" target="_blank">sibet.cas.cn</a></td></tr>
+      <tr><td>SIBET官方主页（英文）</td><td><a href="http://english.sibet.cas.cn/en_sourcedb_sibet/zjrc/202311/t20231102_535201.html" target="_blank">english.sibet.cas.cn</a></td></tr>
+      <tr><td>ORCID</td><td><a href="https://orcid.org/0000-0001-9906-0596" target="_blank">orcid.org/0000-0001-9906-0596</a></td></tr>
+      <tr><td>X-MOL</td><td><a href="https://www.x-mol.com/university/faculty/280639" target="_blank">x-mol.com</a></td></tr>
+      <tr><td>科研之友 ScholarMate</td><td><a href="https://www.scholarmate.com/P/vInu6b" target="_blank">scholarmate.com</a></td></tr>
+      <tr><td>PubMed检索</td><td><a href="https://pubmed.ncbi.nlm.nih.gov/?term=Gao+Xin%5BAuthor%5D+AND+Suzhou+Institute+of+Biomedical+Engineering%5BAffiliation%5D" target="_blank">PubMed (71 results)</a></td></tr>
+      <tr><td>OpenAlex作者页面</td><td><a href="https://openalex.org/A5074960174" target="_blank">openalex.org/A5074960174</a></td></tr>
+      <tr><td>OpenAlex SIBET机构页面</td><td><a href="https://openalex.org/I4210092817" target="_blank">openalex.org/I4210092817</a></td></tr>
+      <tr><td>Bio-Integration专访(2023)</td><td><a href="https://bio-integration.org/10-15212-bioi-2023-0011/" target="_blank">bio-integration.org</a></td></tr>
+      <tr><td>ResearchGate专访PDF</td><td><a href="https://www.researchgate.net/publication/375838778" target="_blank">researchgate.net</a></td></tr>
+      <tr><td>生物通新闻：胃癌化疗预测</td><td><a href="https://m.ebiotrade.com/newsf/2022-6/20220629065333774.htm" target="_blank">ebiotrade.com</a></td></tr>
+      <tr><td>生物通新闻：脑转移空间分布</td><td><a href="https://www.ebiotrade.com/newsf/2022-12/20221222064847240.htm" target="_blank">ebiotrade.com</a></td></tr>
+      <tr><td>SIBET新闻：微创诊疗</td><td><a href="http://www.sibet.cas.cn/xwdt2020/cmsm_169615/202102/t20210207_5890577.html" target="_blank">sibet.cas.cn</a></td></tr>
+      <tr><td>MedicalXpress：神经病理AI诊断</td><td><a href="https://medicalxpress.com/news/2023-05-intelligent-rapid-diagnosis-method-neuropathology.html" target="_blank">medicalxpress.com</a></td></tr>
+    </table>
+  </div>
+
+  <footer>
+    Generated by DeepTutor v4 — Powered by Claude<br>
+    报告生成日期：2026-03-28
+  </footer>
+
+</div>
+</body>
+</html>

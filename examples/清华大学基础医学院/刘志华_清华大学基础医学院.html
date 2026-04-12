@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepTutor v1.1 | 刘志华 - 清华大学基础医学院</title>
+<style>
+  :root {
+    --bg: #F9FAFB; --card: #FFFFFF; --accent: #D97706;
+    --text: #1F2937; --muted: #6B7280; --green: #059669;
+    --yellow: #D97706; --red: #DC2626; --radius: 12px;
+    --blue: #2563EB; --light-green: #D1FAE5; --light-yellow: #FEF3C7;
+    --light-red: #FEE2E2; --light-blue: #DBEAFE;
+    --sidebar-w: 260px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.75;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
+    background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+    color: #CBD5E1; overflow-y: auto; z-index: 100;
+    padding: 28px 0 40px; display: flex; flex-direction: column;
+  }
+  .sidebar-logo { text-align: center; font-size: 20px; font-weight: 700; color: #F8FAFC; letter-spacing: 1px; margin-bottom: 6px; }
+  .sidebar-logo span { color: var(--accent); }
+  .sidebar-sub { text-align: center; font-size: 11px; color: #64748B; margin-bottom: 24px; }
+  .sidebar nav { flex: 1; }
+  .sidebar nav a {
+    display: block; padding: 9px 24px; font-size: 13px; color: #94A3B8;
+    border-left: 3px solid transparent; transition: all .2s;
+  }
+  .sidebar nav a:hover { color: #F8FAFC; background: rgba(255,255,255,.06); border-left-color: var(--accent); }
+  .sidebar-score {
+    text-align: center; margin: 24px 20px 0; padding: 18px 12px;
+    background: linear-gradient(135deg, rgba(217,119,6,.2), rgba(37,99,235,.15));
+    border-radius: var(--radius);
+  }
+  .sidebar-score .big { font-size: 44px; font-weight: 800; color: #F8FAFC; line-height: 1; }
+  .sidebar-score .label { font-size: 12px; color: #94A3B8; margin-top: 6px; }
+
+  /* Main */
+  .main { margin-left: var(--sidebar-w); padding: 36px 48px 80px; max-width: 980px; }
+  .section { margin-bottom: 44px; scroll-margin-top: 24px; }
+  .section-title { font-size: 22px; font-weight: 700; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #E5E7EB; display: flex; align-items: center; gap: 10px; }
+  .section-title .icon { font-size: 20px; }
+
+  /* Cards */
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,.06); padding: 24px; margin-bottom: 16px; }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card-grid .card { margin-bottom: 0; }
+
+  /* Info table */
+  .info-table { width: 100%; border-collapse: collapse; }
+  .info-table td { padding: 9px 12px; border-bottom: 1px solid #F3F4F6; font-size: 14px; }
+  .info-table td:first-child { font-weight: 600; width: 140px; white-space: nowrap; color: var(--muted); font-size: 13px; }
+
+  /* Badges */
+  .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin: 3px 4px 3px 0; }
+  .badge-green { background: var(--light-green); color: var(--green); }
+  .badge-red { background: var(--light-red); color: var(--red); }
+  .badge-yellow { background: var(--light-yellow); color: var(--yellow); }
+  .badge-blue { background: var(--light-blue); color: var(--blue); }
+  .badge-grey { background: #F3F4F6; color: var(--muted); }
+
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 6px; font-size: 12px; background: #F3F4F6; color: var(--muted); margin: 2px 4px 2px 0; }
+  .anno { font-size: 11px; border-radius: 4px; padding: 1px 6px; margin-left: 4px; vertical-align: middle; }
+  .anno-fact { background: var(--light-blue); color: var(--blue); }
+  .anno-infer { background: var(--light-yellow); color: var(--yellow); }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before { content: ''; position: absolute; left: 11px; top: 4px; bottom: 4px; width: 2px; background: #E5E7EB; }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-dot { position: absolute; left: -32px; top: 4px; width: 20px; height: 20px; border-radius: 50%; background: var(--card); border: 3px solid var(--blue); z-index: 1; }
+  .tl-dot.accent { border-color: var(--accent); }
+  .tl-dot.green { border-color: var(--green); }
+  .tl-year { font-size: 13px; font-weight: 700; color: var(--blue); }
+  .tl-year.accent { color: var(--accent); }
+  .tl-year.green { color: var(--green); }
+  .tl-title { font-weight: 600; font-size: 15px; }
+  .tl-desc { font-size: 13px; color: var(--muted); }
+
+  /* Progress bar */
+  .score-row { margin-bottom: 14px; }
+  .score-row .label-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .score-row .label-row .dim { font-weight: 600; }
+  .score-row .label-row .val { color: var(--accent); font-weight: 700; }
+  .bar-bg { height: 10px; border-radius: 5px; background: #E5E7EB; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--blue), var(--accent)); transition: width .6s ease; }
+
+  /* Styled table */
+  .styled-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .styled-table th { text-align: left; padding: 10px 12px; background: #F8FAFC; border-bottom: 2px solid #E5E7EB; font-weight: 600; font-size: 13px; color: var(--muted); }
+  .styled-table td { padding: 10px 12px; border-bottom: 1px solid #F3F4F6; vertical-align: top; }
+  .styled-table tr:hover { background: #FAFBFC; }
+
+  /* Highlight card */
+  .highlight-card { border-left: 4px solid var(--accent); padding: 16px 20px; background: linear-gradient(135deg, #FFFBEB, #FFF7ED); border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 16px; }
+  .highlight-card .hl-title { font-weight: 700; color: var(--accent); margin-bottom: 6px; font-size: 15px; }
+
+  .danger-card { border-left: 4px solid var(--red); background: linear-gradient(135deg, #FEF2F2, #FFF1F2); padding: 16px 20px; border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 16px; }
+  .danger-card .hl-title { font-weight: 700; color: var(--red); margin-bottom: 6px; font-size: 15px; }
+
+  .good-card { border-left: 4px solid var(--green); background: linear-gradient(135deg, #F0FDF4, #ECFDF5); padding: 16px 20px; border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 16px; }
+  .good-card .hl-title { font-weight: 700; color: var(--green); margin-bottom: 6px; font-size: 15px; }
+
+  /* Match matrix */
+  .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .matrix-cell { background: var(--card); border-radius: var(--radius); padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .matrix-cell .emoji { font-size: 28px; margin-bottom: 6px; }
+  .matrix-cell .m-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .matrix-cell .m-desc { font-size: 12px; color: var(--muted); }
+  .match-high { border: 2px solid var(--green); }
+  .match-medium { border: 2px solid var(--yellow); }
+  .match-low { border: 2px solid var(--red); }
+
+  /* Hero */
+  .hero { background: linear-gradient(135deg, #1E293B, #0F172A); color: #F8FAFC; border-radius: var(--radius); padding: 36px 40px; margin-bottom: 36px; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; right: -60px; top: -60px; width: 240px; height: 240px; border-radius: 50%; background: rgba(217,119,6,.12); }
+  .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+  .hero .sub { color: #94A3B8; font-size: 15px; }
+  .hero .score-inline { display: inline-flex; align-items: baseline; gap: 8px; margin-top: 16px; padding: 10px 20px; background: rgba(217,119,6,.15); border-radius: 8px; }
+  .hero .score-inline .num { font-size: 36px; font-weight: 800; color: var(--accent); }
+  .hero .score-inline .out { font-size: 16px; color: #94A3B8; }
+
+  /* Publication list */
+  .pub-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F3F4F6; }
+  .pub-item:last-child { border-bottom: none; }
+  .pub-title { font-weight: 600; font-size: 14px; }
+  .pub-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .pub-journal { font-weight: 600; color: var(--blue); }
+  .pub-star { color: var(--accent); font-weight: 700; }
+
+  /* Sharp critique banner */
+  .critique-banner { background: linear-gradient(135deg, #FEF3C7, #FDE68A); border: 2px solid #F59E0B; border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; }
+  .critique-banner .verdict { font-size: 20px; font-weight: 800; color: #92400E; margin-bottom: 8px; }
+  .critique-banner .body { font-size: 15px; color: #78350F; line-height: 1.8; }
+
+  .q-box { background: #F9FAFB; border-left: 3px solid var(--accent); padding: 14px 18px; margin-bottom: 12px; border-radius: 0 6px 6px 0; }
+  .q-box .q-title { font-weight: 700; font-size: 14px; color: var(--accent); margin-bottom: 6px; }
+  .q-box .q-body { font-size: 14px; color: var(--text); }
+
+  /* Life cycle stage */
+  .lifecycle { display: flex; justify-content: space-between; align-items: center; margin: 16px 0; }
+  .lc-stage { flex: 1; text-align: center; padding: 12px 6px; font-size: 12px; color: var(--muted); border-bottom: 3px solid #E5E7EB; position: relative; }
+  .lc-stage.active { color: var(--accent); font-weight: 700; border-bottom-color: var(--accent); }
+  .lc-stage .emo { font-size: 24px; display: block; margin-bottom: 4px; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 32px 0; color: var(--muted); font-size: 12px; border-top: 1px solid #E5E7EB; margin-top: 40px; }
+
+  @media print {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; max-width: 100%; }
+    .card { box-shadow: none; border: 1px solid #E5E7EB; break-inside: avoid; }
+  }
+  @media (max-width: 860px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .matrix-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">Deep<span>Tutor</span> v1.1</div>
+  <div class="sidebar-sub">Graduate Advisor Intelligence</div>
+  <nav>
+    <a href="#sec-critique">1. 导师锐评</a>
+    <a href="#sec-scores">2. 多维度评分</a>
+    <a href="#sec-trend">3. 行业宏观趋势</a>
+    <a href="#sec-ceiling">4. 学生去向(天花板)</a>
+    <a href="#sec-flags">5. 红灯绿灯速查</a>
+    <a href="#sec-pua">6. PUA/PUSH风险</a>
+    <a href="#sec-retire">7. 退休与稳定性</a>
+    <a href="#sec-basic">8. 基本信息</a>
+    <a href="#sec-type">9. 导师类型</a>
+    <a href="#sec-match">10. 目标匹配</a>
+    <a href="#sec-timeline">11. 教育与经历</a>
+    <a href="#sec-research">12. 研究方向</a>
+    <a href="#sec-pubs">13. 发表分析</a>
+    <a href="#sec-collab">14. 合作者网络</a>
+    <a href="#sec-fund">15. 经费基金</a>
+    <a href="#sec-metrics">16. 学术指标</a>
+    <a href="#sec-dept">17. 院系背景</a>
+    <a href="#sec-summary">18. 总结与建议</a>
+    <a href="#sec-sources">附录：数据来源</a>
+  </nav>
+  <div class="sidebar-score">
+    <div class="big">3.3</div>
+    <div class="label">综合评分 / 5.0</div>
+  </div>
+</aside>
+
+<div class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>刘志华 (Zhihua Liu)</h1>
+    <div class="sub">清华大学基础医学院 · 免疫学研究所 · 副教授 · 博士生导师</div>
+    <div class="score-inline">
+      <span class="num">3.3</span>
+      <span class="out">/ 5.0 综合评分</span>
+    </div>
+    <div style="margin-top:14px; font-size:13px; color:#94A3B8;">
+      <span class="badge badge-green">青千 + 优青</span>
+      <span class="badge badge-blue">哈佛PhD + NIH博后</span>
+      <span class="badge badge-yellow">副教授14年未升</span>
+      <span class="badge badge-grey">学生去向盲区</span>
+    </div>
+  </div>
+
+  <!-- ============ 1. 导师锐评 ============ -->
+  <div class="section" id="sec-critique">
+    <div class="section-title"><span class="icon">🎯</span> 1. 导师锐评（Sharp Critique）</div>
+
+    <div class="critique-banner">
+      <div class="verdict">一句话判决：海归高平台、方向扎实，但独立PI后势头趋缓、学生出路成谜——适合想做经典肠道免疫学、不着急冲顶刊的稳健型学生。</div>
+      <div class="body">
+        刘志华的简历几乎是"完美海归"模板：北大本科 + 哈佛医学院博士 + NIH六年博后 + 中科院青千 + 国自然优青 + 清华副教授。研究方向（肠道菌群与Paneth细胞/宿主互作）扎实，Nature Immunology 2011/2015两度封面故事是真正的硬通货。但是从生物物理所跳到清华已经过了5年，<b>独立通讯的顶刊频率明显下降</b>、近年论文以多机构合作为主，加上2024年收到同行对LRRK2结果的质疑并发表Reply，这些信号合起来说明她目前处于一个"平台升级但势头趋稳"的阶段。更关键的是——<b>公开渠道找不到一个明确的已毕业博士生去向</b>，这对任何想用"师兄姐法则"判断天花板的学生来说都是红色警示。
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="q-box">
+        <div class="q-title">Q1. 如果是我亲妹妹问能不能选</div>
+        <div class="q-body">我会说："她的平台、履历、方向本身没有任何硬伤，做肠道菌-宿主互作是一个技术门槛不低但训练完整的方向，你能同时接触微生物学、免疫学、代谢学、甚至神经科学。但有两件事必须做足功课——① 她14年副教授没升正教授，这在清华医学院这种高流动环境里说明竞争激烈或产出节奏偏慢；② 你必须亲自联系她在读学生，因为这个组的毕业生目前在做什么，互联网上几乎查不到任何信息。不是说一定坏，但你没法预测自己5年后长什么样。"</div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q2. 对外人设 vs 实际数据的差距</div>
+        <div class="q-body"><b>人设：</b>北大-哈佛-NIH三件套、青千+优青、Nature Immunology两度封面故事、清华免疫所女PI代表。<br>
+        <b>实际：</b>以上都是事实，但需要补充几点——①两次NI封面是2011（NIH博后时期）和2015（中科院生物物理所早期），<b>都不是清华时期的工作</b>；②回生物物理所之后的独立通讯顶刊主要是Cell Research 2019、EMBO J 2014这几篇，近5年第一/通讯作者的超一线期刊（Nature/Cell/Nat子刊）数量有限，更多是合作论文和Science China系列；③2024年NI Reply的出现说明之前的LRRK2-lysozyme结果受到了同行质疑，这本身不是学术不端但确实是一个"需要知道"的信号。<b>整体差距：人设是"冉冉升起的青千女PI"，实际是"进入稳定期的中年海归副教授"。</b></div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q3. 最大的隐藏风险</div>
+        <div class="q-body"><b>风险一：学生去向数据完全空白。</b>通过Google / LinkedIn / 高校faculty页面 / 知乎 / 小木虫 / mysupervisor等所有公开渠道，<b>找不到任何一位明确毕业于刘志华组的博士生的当前位置</b>。这不能证明学生混得不好，但它直接让"天花板法则"失效，学生无法预判自己5年后的出路。<br><br>
+        <b>风险二：2024 Nature Immunology Reply事件。</b>她在2024年发表了一篇Reply（s41590-024-01968-w），回应其他团队对"LRRK2 is required for lysozyme expression in Paneth cells"的质疑。科学本身可能是非对错问题，但对一个考虑加入的学生来说，这是一个"核心结果曾被质疑"的信号，值得关注，不宜忽视。</div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q4. 最被低估的优点</div>
+        <div class="q-body"><b>跨系统训练价值。</b>刘志华实验室的四条研究方向覆盖了<b>肠道上皮（Paneth细胞）- 胰岛beta细胞（菌群-胰岛轴）- 神经退行性疾病（菌群-脑轴）- 肾上腺髓质（新方向）</b>四个器官系统，这在国内单个lab里非常罕见。学生在读博期间接触多个器官系统的工作经验，对博士后时期灵活转换方向是巨大加分项——这个横向宽度被它"只是个肠道菌实验室"的标签严重低估。</div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q5. 5年后预测（2031年）</div>
+        <div class="q-body">刘志华届时约54岁，在清华晋升正教授的"倒计时窗口"。情境预测：<br>
+        <b>乐观剧本：</b>在2026-2028之间冲一次顶刊 + 获得国自然重点项目 + 完成正教授晋升，实验室从6人稳步扩到8-10人。<br>
+        <b>中性剧本（概率最高）：</b>稳定在副教授，实验室保持5-8人规模，每年1-2篇Cell Research / Cell Mol Immunol / iScience级别产出，继续做多机构合作。<br>
+        <b>悲观剧本：</b>若连续两个国自然面上未获批 + 2-3年无通讯顶刊，会面临清华"非升即走"压力。<br>
+        对2026级直博生来说，你的毕业节点（约2031年）正好撞上她的正教授冲刺期，<b>你的论文质量直接关系到她能否升职</b>，这对你是压力也是机会。<span class="anno anno-infer">推断</span></div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q6. 替代方案建议</div>
+        <div class="q-body">如果担心刘志华的学生去向盲区或势头问题，可以在同一清华免疫所考虑更年轻、势头更猛的PI：<b>朱可可</b>（同一大楼，神经免疫-菌群方向，和刘志华有天然互补性，且作为更年轻的PI更有动力push学生）是最直接的对比目标。其他备选：中科院生物物理研究所（刘志华前东家）同方向PI、北大生科院朱健、上海科技大学免疫微生态组等。建议至少对比2-3位同方向PI再决定。<span class="anno anno-infer">推断</span></div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q7. Deal-Breaker 检查</div>
+        <div class="q-body">
+          <ul style="padding-left:18px;">
+            <li>✅ <b>无独立PUA/toxicity投诉</b>（知乎/小木虫/保研论坛/mysupervisor均未检索到负面评价）</li>
+            <li>✅ <b>近3年有经费有论文</b>（2024年多篇合作论文，NSFC支持持续）</li>
+            <li>❌ <b>学生去向数据完全空白</b>——<b>这是最大的黄灯</b>，学生必须通过面谈环节亲自核实</li>
+            <li>⚠️ <b>2024 NI Reply事件</b>——核心结果曾被质疑，学生应自行评估对课题选择的影响</li>
+            <li>⚠️ <b>副教授14年未升</b>——势头观察指标，不构成硬否决但需警觉</li>
+          </ul>
+          <div style="margin-top:10px; padding:10px; background:#FFFBEB; border-radius:6px; font-size:13px;">
+            <b>结论：未触发硬性一票否决，但有3个"黄灯"需要学生亲自核实，建议谨慎。</b>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:20px; padding:16px; background:#F3F4F6; border-radius:8px;">
+        <div style="font-size:13px; color:var(--muted); margin-bottom:6px;">锐评评分</div>
+        <div style="font-size:32px; font-weight:800; color:var(--accent);">3.0 / 5</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">平台强但势头平，学生信息盲区大 — 适合稳健型 + 能自查 + 不执迷顶刊的学生</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 2. 多维度评分 ============ -->
+  <div class="section" id="sec-scores">
+    <div class="section-title"><span class="icon">📊</span> 2. 多维度评分（11维度）</div>
+
+    <div class="card">
+      <div style="display:flex; align-items:center; gap:24px; margin-bottom:20px; padding:16px; background:linear-gradient(135deg, #FFFBEB, #FFF7ED); border-radius:8px;">
+        <div style="flex-shrink:0;">
+          <div style="font-size:52px; font-weight:800; color:var(--accent); line-height:1;">3.3</div>
+          <div style="font-size:12px; color:var(--muted); text-align:center;">/ 5.0 加权综合</div>
+        </div>
+        <div style="flex:1; font-size:14px; color:var(--text);">
+          <div style="font-weight:700; margin-bottom:4px;">综合判断：中性偏谨慎 · 适合能独立自查的稳健型学生</div>
+          <div style="color:var(--muted); font-size:13px;">优势：平台 + 履历 + 方向扎实 + 跨系统训练 + 无toxicity<br>
+          风险：势头趋缓 + 学生去向盲区 + NI Reply事件 + 副教授年限偏长</div>
+          <div style="margin-top:6px;">
+            <span class="badge badge-green">未触发一票否决</span>
+            <span class="badge badge-yellow">3项黄灯警示</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">1. 行业宏观趋势 (10%)</span><span class="val">3.5 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:70%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">肠道菌群领域成熟期，温和增长但2022后增速放缓；AI+组学正在重塑方法论</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">2. 发表成果与质量 (12%)</span><span class="val">3.5 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:70%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">NI 2015封面故事是硬通货；清华时期独立通讯顶刊减少，以合作论文为主</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">3. 学生培养实绩 (13%)</span><span class="val">2.5 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:50%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">毕业生去向公开信息严重缺失；无法用天花板法则验证培养实绩</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">4. 平台与资源 (12%)</span><span class="val">5.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">清华基础医学院 + 免疫学研究所，国内顶级平台</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">5. 独立性与成长空间 (8%)</span><span class="val">3.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:60%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">四条研究方向给学生留足自由度，但具体指导密度未知</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">6. 职业轨迹与势头 (5%)</span><span class="val">2.5 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:50%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">独立PI 14年仍为副教授；2020后顶刊频率减少，势头平缓</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">7. PUA/剥削风险 (10%)</span><span class="val">3.5 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:70%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">无负面报道但也无正面reviews；女PI在海外训练背景偏西式管理</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">8. 时间自由度 (8%)</span><span class="val">3.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:60%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">信息不足，需要联系在读学生核实</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">9. 毕业目标匹配 (7%)</span><span class="val">N/A</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:50%; background:#D1D5DB;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">用户未提供具体职业目标；按学术路线假设约3.5，按工业界约2.5</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">10. 导师锐评 (10%)</span><span class="val">3.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:60%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">平台强但势头平 + 学生去向盲区 — 属"谨慎推荐"档</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">11. 退休与稳定性风险 (5%)</span><span class="val">4.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:80%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">约49岁正值稳定期，退休风险极低；学生毕业时她约54岁</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ 3. 行业宏观趋势 ============ -->
+  <div class="section" id="sec-trend">
+    <div class="section-title"><span class="icon">🌐</span> 3. 行业宏观趋势（Field Macro Trend）</div>
+
+    <div class="card">
+      <div style="font-weight:700; font-size:16px; margin-bottom:12px;">领域定位：肠道菌群-宿主互作（成熟期，温和增长）</div>
+
+      <div class="lifecycle">
+        <div class="lc-stage"><span class="emo">🌱</span>萌芽期</div>
+        <div class="lc-stage"><span class="emo">📈</span>上升期</div>
+        <div class="lc-stage active"><span class="emo">📊</span>成熟期<br>（主流）</div>
+        <div class="lc-stage"><span class="emo">📉</span>衰退期</div>
+        <div class="lc-stage"><span class="emo">☠️</span>夕阳期</div>
+      </div>
+
+      <div style="font-size:13px; color:var(--muted); text-align:center; margin-bottom:18px;">
+        肠道菌群研究 = 成熟期（2014-2021黄金期已过，仍在温和增长）<br>
+        菌群-多器官轴（脑/胰岛/肾上腺）= 成熟期中的细分上升方向
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 资金趋势：充足但不再爆发</div>
+        <p style="font-size:14px;">NSFC对肠道菌群研究仍持续高强度投入，特别是与代谢、神经、肿瘤交叉的方向。但与2014-2020年的爆发式增长相比，<b>2022年后增长明显放缓</b>，单一的16S/宏基因组路径的经费竞争力下降。需要结合多组学、机制研究（如刘志华实验室的Paneth细胞/lysozyme方向）才能持续获资。</p>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 就业市场前景：混合信号</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li><b>学术界：</b>国内高校仍有肠道菌群PI岗位需求，但竞争加剧。单纯做菌群描述性研究已很难拿到offer，必须有机制深度或转化价值。刘志华方向（Paneth细胞、lysozyme、菌群-胰岛）偏机制学，训练扎实，<b>对学术路径有帮助</b>。</li>
+          <li><b>工业界：</b>微生态/合生元/益生菌相关岗位在上升（华大基因、君联、智飞、慕恩生物等），需要的是偏转化/产品的技术；学术型深度机制训练价值中等。</li>
+          <li><b>医疗界：</b>FMT相关研究和微生态治疗正在临床化，但岗位非常少。</li>
+        </ul>
+      </div>
+
+      <div class="danger-card">
+        <div class="hl-title">🔴 技术颠覆风险：中-高</div>
+        <p style="font-size:14px;">AI+微生物组、单细胞+空间组学、合成微生物学正在重塑这个领域。传统的16S/宏基因组+小鼠表型+机制验证路径虽然仍有价值，但竞争力下降。<b>刘志华实验室是否在主动引入AI/空间组学等新技术，是衡量其5年后竞争力的关键指标</b>——这一点从公开资料看不到明确信号。</p>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">🔍 中国/国际差异</div>
+        <p style="font-size:14px;">国内肠道菌群领域热度仍然很高，中国科学院、清华、北大、上海交大医学院都有多个强组。国际方面，Cell/Nature层面的菌群研究已进入 sophisticated multi-omics + 深度机制 + 功能性单菌阶段（如Jeffrey Gordon组、Eric Pamer组、Hiroshi Ohno组），国内要跟上需要更大量的前沿设备和跨学科合作。刘志华实验室<b>属于国内第二梯队偏上</b>，技术路线稳健但缺乏明显的突破性创新。<span class="anno anno-infer">推断</span></p>
+      </div>
+
+      <div style="margin-top:16px; padding:14px; background:#F3F4F6; border-radius:8px; font-size:14px;">
+        <b>对学生的具体影响：</b>
+        <ul style="padding-left:18px; margin-top:6px;">
+          <li>✅ 想做机制免疫学 + 菌群互作，训练扎实，方向匹配度高</li>
+          <li>⚠️ 想进工业界做微生态产品，训练方向偏基础机制，需自行补转化经验</li>
+          <li>⚠️ 想做AI+菌群交叉方向，可能需要自己主导引入新技术栈</li>
+          <li>❌ 想做临床微生态/FMT相关工作，实验室与临床对接较少</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 4. 学生去向（天花板法则）============ -->
+  <div class="section" id="sec-ceiling">
+    <div class="section-title"><span class="icon">🎓</span> 4. 学生去向分析（天花板法则）</div>
+
+    <div class="card">
+      <div class="danger-card">
+        <div class="hl-title">🔴 严重警示：学生毕业去向公开数据完全空白</div>
+        <p style="font-size:14px;"><b>这是本报告最重要的一条警示。</b>通过Google / LinkedIn / 高校faculty页面 / 知乎 / 小木虫 / mysupervisor / 研究机构成员页等所有公开渠道，<b>无法追踪到任何一位已毕业博士生的明确当前位置</b>——既没有成为其他高校助理教授的记录，也没有工业界关键职位的轨迹。这不能证明"毕业生混得不好"，但它意味着<b>学生完全无法用"师兄姐法则"预判自己5年后的出路</b>。对于选组决定来说，这属于"信息严重不足"级别的黄灯，<b>学生必须在面谈时亲自向刘老师索要毕业生名单并逐一核实</b>。</p>
+      </div>
+
+      <div style="font-weight:700; margin-bottom:10px;">当前在读/近期成员（基于实验室成员名单）：</div>
+      <table class="styled-table">
+        <thead>
+          <tr><th>成员</th><th>身份</th><th>研究方向</th><th>可联系价值</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Yabo Zhao</td>
+            <td>博士后</td>
+            <td>IBD上皮维持与菌群互作</td>
+            <td><span class="badge badge-green">高 - 博后视角</span></td>
+          </tr>
+          <tr>
+            <td>Kemeng Dong</td>
+            <td>博士生</td>
+            <td>肠道菌群与免疫应答</td>
+            <td><span class="badge badge-green">高 - 在读体验</span></td>
+          </tr>
+          <tr>
+            <td>Xingchen Liu</td>
+            <td>博士生</td>
+            <td>菌群与神经退行性疾病</td>
+            <td><span class="badge badge-green">高 - 菌群-脑轴方向</span></td>
+          </tr>
+          <tr>
+            <td>Shukun Lv</td>
+            <td>博士生</td>
+            <td>肠道稳态与菌群-癌症</td>
+            <td><span class="badge badge-green">高 - 新方向</span></td>
+          </tr>
+          <tr>
+            <td>Wei Wan</td>
+            <td>博士生</td>
+            <td>抗体产生与免疫应答</td>
+            <td><span class="badge badge-blue">中 - 偏经典免疫</span></td>
+          </tr>
+          <tr>
+            <td>Haonan Yu</td>
+            <td>博士生</td>
+            <td>IBD易感基因</td>
+            <td><span class="badge badge-blue">中 - 遗传学方向</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:14px; padding:12px; background:#F3F4F6; border-radius:8px; font-size:13px;">
+        <b>实验室规模总览：</b>1博后 + 5博士生 = <b>共6人</b>，属中等偏小规模。这对学生是优点（PI个人指导时间更多）也可能是警示（反映招生吸引力或经费规模）。
+      </div>
+
+      <div class="danger-card" style="margin-top:16px;">
+        <div class="hl-title">🔴 天花板无法验证</div>
+        <p style="font-size:14px;">刘志华2012年开始独立PI至今已14年，理论上应该有至少5-8批博士生毕业。但公开渠道<b>一个都查不到</b>。可能的原因：① 毕业生主要去了工业界且未留下公开profile；② 毕业生进入海外博士后阶段未更新中文互联网;③ 实际毕业生数量较少。<b>但无论哪种原因，对一个准直博生而言都是"情报失效"</b>——你无法确定这个实验室真正带出来的学生能走多远。</p>
+      </div>
+
+      <div style="margin-top:12px; padding:14px; background:#F9FAFB; border-radius:8px; font-size:14px;">
+        <b>天花板评级：</b>
+        <span class="badge badge-red">信息严重不足</span>
+        <br><br>
+        <b>学生必须主动做的事：</b>
+        <ol style="padding-left:22px; margin-top:6px;">
+          <li><b>面试时直接问刘老师</b>："过去10年毕业的博士生和博士后现在分别在哪里？"记下名字后去LinkedIn/高校官网逐一验证</li>
+          <li><b>通过邮件联系当前在读6位成员</b>（实验室页面提供邮箱），匿名询问实验室氛围、指导密度、毕业预期</li>
+          <li><b>查询清华基础医学院/CLS过去5-10年博士学位论文答辩名单</b>，按"导师：刘志华"筛选，核实真实毕业人数</li>
+          <li><b>对比朱可可等同所年轻PI的毕业生去向</b>，做横向参照</li>
+          <li>如果以上都无法获取有效信息，<b>这本身就是一个决策信号</b>——建议谨慎</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 5. 红灯绿灯速查 ============ -->
+  <div class="section" id="sec-flags">
+    <div class="section-title"><span class="icon">🚦</span> 5. 红灯绿灯速查</div>
+    <div class="card-grid">
+      <div class="card" style="border-top:3px solid var(--green);">
+        <div style="font-weight:700; color:var(--green); margin-bottom:10px;">🟢 绿灯（优势）</div>
+        <ul style="font-size:14px; padding-left:18px; color:var(--text);">
+          <li>清华基础医学院/免疫所副教授 + 博士生导师身份明确</li>
+          <li>北大 + 哈佛PhD + NIH博后，履历无硬伤</li>
+          <li>青千（2012）+ 优青（2015）双基金，青年基金期间表现优秀</li>
+          <li>Nature Immunology 2011 / 2015 两度封面故事，学术声誉硬核</li>
+          <li>2013 中科院-诺和诺德"长城教授"奖、2018 CBIS青年研究者奖</li>
+          <li>研究方向横跨肠道-胰岛-脑-肾上腺四个系统，跨系统训练价值高</li>
+          <li>49岁正值稳定期，退休风险极低</li>
+          <li>无任何PUA/toxicity/学术不端公开投诉</li>
+          <li>与北京协和张烜、梁乃新、中科大殷实等长期合作，合作网络广</li>
+          <li>作为女性PI在免疫学领域具有一定代表性</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:3px solid var(--red);">
+        <div style="font-weight:700; color:var(--red); margin-bottom:10px;">🔴 红灯 / 黄灯（风险）</div>
+        <ul style="font-size:14px; padding-left:18px; color:var(--text);">
+          <li><b>学生毕业去向公开数据完全空白</b>——最大的红灯</li>
+          <li>独立PI 14年仍为副教授，正教授晋升节奏偏慢</li>
+          <li>2020清华入职后独立通讯顶刊（Nature/Cell/Nat子刊）数量有限</li>
+          <li>近年论文以多机构合作为主，独立工作减少</li>
+          <li><b>2024 NI Reply事件</b>——LRRK2-lysozyme核心结果曾被同行质疑</li>
+          <li>实验室规模中等偏小（6人），可能反映招生吸引力或经费规模</li>
+          <li>方向涉及多个器官系统，学生可能面临方向分散的风险</li>
+          <li>未发现明确的国自然杰青/基石研究员/重大项目记录</li>
+          <li>公开渠道无任何针对刘志华的正面或负面评价</li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:14px; padding:14px; background:#FEF3C7; border-radius:8px; font-weight:700; color:#92400E;">
+      🚦 快速判决：Caution（谨慎推荐）— 平台过硬但势头偏平 + 学生信息盲区 → 学生必须亲自验证3项黄灯
+    </div>
+  </div>
+
+  <!-- ============ 6. PUA/PUSH风险 ============ -->
+  <div class="section" id="sec-pua">
+    <div class="section-title"><span class="icon">⚠️</span> 6. PUA / PUSH 风险评估</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>知乎公开评价</td><td>未检索到针对刘志华的具体评价帖 <span class="anno anno-fact">事实</span></td></tr>
+        <tr><td>小木虫/考研帮</td><td>未检索到明确的正面或负面讨论 <span class="anno anno-fact">事实</span></td></tr>
+        <tr><td>保研论坛/bbs</td><td>未检索到相关讨论 <span class="anno anno-fact">事实</span></td></tr>
+        <tr><td>mysupervisor导师评价网</td><td>未收录或无有效评价 <span class="anno anno-fact">事实</span></td></tr>
+        <tr><td>学术不端/撤稿</td><td>Retraction Watch未检索到记录 <span class="anno anno-fact">事实</span></td></tr>
+        <tr><td>学生中途退组迹象</td><td>无公开证据，也无法证伪</td></tr>
+        <tr><td>延期毕业迹象</td><td>无公开数据</td></tr>
+        <tr><td>学术质疑事件</td><td>2024 Nature Immunology Reply（LRRK2-lysozyme） <span class="anno anno-fact">已确认</span></td></tr>
+      </table>
+
+      <div class="good-card" style="margin-top:16px;">
+        <div class="hl-title">✅ 结构性正向信号</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li>哈佛PhD + NIH博后 6年训练背景，属偏西式管理风格</li>
+          <li>女性PI在免疫学领域相对更注重学生welfare（统计规律，非硬证据）</li>
+          <li>论文致谢中学生作为一作的结构符合国际惯例</li>
+          <li>无任何公开的toxicity/PUA信号</li>
+          <li>研究方向多元化，学生有一定的主动选择权</li>
+        </ul>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 需要警惕的中性信号</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li><b>"无任何评价"本身是一个信号</b>——在一个学生活跃的教育生态中，刘志华几乎查不到任何discussion，可能反映：① 学生群体本身人数少；② 师生互动少，没有"吐槽"也没有"安利"的土壤</li>
+          <li>副教授14年未晋升——如果背后是竞争压力，这种压力可能会通过push的形式传导到学生身上</li>
+          <li>2024 NI Reply事件意味着实验室曾陷入过学术争议，学生需要了解当时的具体情形和对组内氛围的影响</li>
+          <li>信息透明度偏低（清华免疫所官网更新不频繁），学生做尽调成本高</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:14px; padding:14px; background:#F3F4F6; border-radius:8px; font-size:14px;">
+        <b>PUA风险评级：</b><span class="badge badge-yellow">未知/待验证</span>
+        <br><span style="color:var(--muted); font-size:13px;">基于公开信息 — 未发现任何明确的负面或正面评价。"信息不足"本身就是一个需要学生主动补齐验证的黄灯。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 7. 退休与稳定性 ============ -->
+  <div class="section" id="sec-retire">
+    <div class="section-title"><span class="icon">⏰</span> 7. 退休与稳定性风险</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>预估年龄</td><td>约49岁（1995年北大入学推算，约1977年生） <span class="anno anno-infer">推断</span></td></tr>
+        <tr><td>职称</td><td>清华大学副教授（Associate Professor，博士生导师）</td></tr>
+        <tr><td>清华常规退休年龄</td><td>女性副教授55岁，可申请延长至60岁；如晋升正教授后与男性一致</td></tr>
+        <tr><td>当前经费状态</td><td>活跃（2024多篇合作论文致谢NSFC支持）</td></tr>
+        <tr><td>实验室搬迁迹象</td><td>无（2020清华入职后稳定）</td></tr>
+        <tr><td>健康/出席状态</td><td>无公开异常信号</td></tr>
+      </table>
+
+      <div class="good-card" style="margin-top:16px;">
+        <div class="hl-title">✅ 退休风险：极低</div>
+        <p style="font-size:14px;">刘志华约49岁，距离女性副教授法定退休年龄（55岁）尚有6年。即便维持副教授身份，学生2026入学、2031毕业时她约54岁，<b>博士培养全程不会触及退休问题</b>。这是本报告中少数明确属于"绿灯"的维度。</p>
+      </div>
+
+      <div class="highlight-card" style="margin-top:16px;">
+        <div class="hl-title">📅 时间线预测（2026年入学直博生）</div>
+        <table class="styled-table" style="margin-top:8px;">
+          <thead><tr><th>时间</th><th>学生</th><th>刘志华（预估）</th><th>风险状态</th></tr></thead>
+          <tbody>
+            <tr><td>2026年秋</td><td>入学，1年级</td><td>约49岁，正常招生</td><td><span class="badge badge-green">安全</span></td></tr>
+            <tr><td>2028年</td><td>3年级，课题定型</td><td>约51岁，正教授冲刺期前期</td><td><span class="badge badge-green">安全</span></td></tr>
+            <tr><td>2029-2030年</td><td>4-5年级，主要实验</td><td>约52-53岁，正教授冲刺或停留</td><td><span class="badge badge-yellow">学生论文压力</span></td></tr>
+            <tr><td>2031年</td><td>6年级，写作+答辩</td><td>约54岁</td><td><span class="badge badge-green">正常毕业</span></td></tr>
+            <tr><td>2031年后</td><td>博士毕业，找博后/工作</td><td>约54岁，仍活跃</td><td><span class="badge badge-green">推荐信有效期充足</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 注意：压力来自"正教授冲刺"而非"退休"</div>
+        <p style="font-size:14px;">虽然退休风险低，但2028-2031这个时间窗口正好是刘志华冲刺正教授的关键期。<b>如果她清华"非升即走"合同到期，你的论文产出会直接影响她的评价</b>，这可能转化为中后期较大的push压力。这对学生既是压力也是机会——高产出可以加速你自己的毕业和毕业论文质量。</p>
+      </div>
+
+      <div style="text-align:center; margin-top:14px; padding:14px; background:#F0FDF4; border-radius:8px;">
+        <b>退休稳定性评分：</b><span style="font-size:24px; font-weight:800; color:var(--green);">4.0 / 5</span>
+        <br><span style="font-size:13px; color:var(--muted);">稳定期PI，退休/健康风险极低；唯一的稳定性风险来自正教授晋升压力传导</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 8. 基本信息 ============ -->
+  <div class="section" id="sec-basic">
+    <div class="section-title"><span class="icon">👤</span> 8. 基本信息</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>姓名</td><td>刘志华 (Zhihua Liu), Ph.D.</td></tr>
+        <tr><td>性别</td><td>女</td></tr>
+        <tr><td>职称</td><td>清华大学基础医学院 / 医学院 <b>副教授、博士生导师</b></td></tr>
+        <tr><td>兼任</td><td>清华大学免疫学研究所 课题组长</td></tr>
+        <tr><td>所属学科</td><td>免疫学 / 微生物学 / 肠道菌群-宿主互作</td></tr>
+        <tr><td>办公室</td><td>清华大学 <b>郑裕彤医学楼 D213</b></td></tr>
+        <tr><td>邮箱</td><td><a href="mailto:zhihualiu@mail.tsinghua.edu.cn">zhihualiu@mail.tsinghua.edu.cn</a></td></tr>
+        <tr><td>预估年龄</td><td>约49岁（1977年生） <span class="anno anno-infer">推断</span></td></tr>
+        <tr><td>官方主页</td><td>
+          <a href="https://www.bms.tsinghua.edu.cn/info/1350/1427.htm" target="_blank">清华基础医学院页面</a> ·
+          <a href="https://www.med.tsinghua.edu.cn/info/1072/2125.htm" target="_blank">清华医学院页面</a> ·
+          <a href="http://www.iitu.tsinghua.edu.cn/ZhihuaLiu/list.htm" target="_blank">免疫所实验室主页</a>
+        </td></tr>
+        <tr><td>第三方档案</td><td>
+          <a href="https://www.chinagut.cn/zhiku/person/5768dc572dc6438ca85d79896d9520a0" target="_blank">热心肠智库 - 刘志华</a>
+        </td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============ 9. 导师类型 ============ -->
+  <div class="section" id="sec-type">
+    <div class="section-title"><span class="icon">🎯</span> 9. 导师类型分类</div>
+    <div class="card-grid">
+      <div class="card" style="border-left: 4px solid var(--accent);">
+        <div style="font-weight:700; margin-bottom:8px; color:var(--accent); font-size:16px;">学术型 × 中等放养型（偏西式）</div>
+        <p style="font-size:14px; color:var(--text); line-height:1.7;">刘志华典型的"海归中青年女PI + 学术科研型 + 偏西式管理"。哈佛+NIH的训练背景使她倾向于给学生较多自主空间；但实验室规模中等偏小（6人），理论上PI有能力提供较多个人指导。具体指导密度需向在读学生确认。研究方向多元化（四条线），说明她愿意让学生探索不同领域。</p>
+        <div style="margin-top:10px;">
+          <span class="badge badge-blue">学术型</span>
+          <span class="badge badge-yellow">中等放养</span>
+          <span class="badge badge-green">西式管理</span>
+          <span class="badge badge-blue">多方向</span>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">判断依据</div>
+        <ul style="font-size:13px; padding-left:18px; color:var(--muted);">
+          <li>研究方向4条主线（肠道菌/胰岛轴/脑轴/肾上腺），说明PI给各方向留了自由度</li>
+          <li>一作主要是学生，符合学术圈通行惯例</li>
+          <li>实验室规模6人，属中等偏小，PI精力相对集中</li>
+          <li>哈佛PhD + NIH博后6年海外训练，偏西式思维</li>
+          <li>近年论文多机构合作，说明她倾向于搭建外部网络</li>
+          <li>作为女性PI，一般而言更注重学生个人发展（统计规律）</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-card">
+      <div class="hl-title">💡 适合这种风格的学生</div>
+      <p style="font-size:14px;">有一定自驱力、对肠道菌-免疫-代谢跨领域感兴趣、能接受"中等强度指导+中等强度push"的学生。不适合：需要PI手把手每天追进度、或者想完全躺平的学生。考虑到她副教授14年未晋升的背景，<b>中后期push强度可能会随正教授冲刺而升高</b>，这是学生应当事先心理准备的。</p>
+    </div>
+  </div>
+
+  <!-- ============ 10. 毕业目标匹配 ============ -->
+  <div class="section" id="sec-match">
+    <div class="section-title"><span class="icon">🎯</span> 10. 毕业目标匹配矩阵</div>
+    <div class="card">
+      <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">⚠️ 用户未提供具体职业目标，以下按常见直博生目标分类评估。</p>
+      <div class="matrix-grid">
+        <div class="matrix-cell match-medium">
+          <div class="emoji">🎓</div>
+          <div class="m-title">学术界 (基础免疫/菌群)</div>
+          <div class="m-desc">中高匹配<br>方向对口，但天花板需验证</div>
+        </div>
+        <div class="matrix-cell match-medium">
+          <div class="emoji">🧬</div>
+          <div class="m-title">学术界 (多器官代谢)</div>
+          <div class="m-desc">中高匹配<br>跨系统训练有价值</div>
+        </div>
+        <div class="matrix-cell match-medium">
+          <div class="emoji">💼</div>
+          <div class="m-title">博后→教职</div>
+          <div class="m-desc">中匹配<br>方向通用，但推荐信影响力待评</div>
+        </div>
+        <div class="matrix-cell match-medium">
+          <div class="emoji">🏭</div>
+          <div class="m-title">工业界 (微生态/益生菌)</div>
+          <div class="m-desc">中匹配<br>方向贴近但训练偏机制</div>
+        </div>
+        <div class="matrix-cell match-low">
+          <div class="emoji">🏥</div>
+          <div class="m-title">医院 / 临床</div>
+          <div class="m-desc">低匹配<br>基础研究为主</div>
+        </div>
+        <div class="matrix-cell match-low">
+          <div class="emoji">🏛️</div>
+          <div class="m-title">体制内 / 选调</div>
+          <div class="m-desc">低匹配<br>方向和时间弹性均不支持</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 11. 教育与经历 ============ -->
+  <div class="section" id="sec-timeline">
+    <div class="section-title"><span class="icon">🗓️</span> 11. 教育与职业时间线</div>
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">1995 – 1999</div>
+          <div class="tl-title">北京大学生命科学学院 · 学士</div>
+          <div class="tl-desc">国内顶尖生命科学本科训练</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">1999 – 2005</div>
+          <div class="tl-title">哈佛大学医学院 · 博士</div>
+          <div class="tl-desc">生化与分子药理学方向；Nature Genetics 2001、Developmental Cell 2007等工作</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2006 – 2011</div>
+          <div class="tl-title">美国国立卫生院 NIH · 博士后</div>
+          <div class="tl-desc">6年博后训练；Nature 2010、PNAS 2009、<b>Nature Immunology 2011封面故事</b></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2012</div>
+          <div class="tl-title">中组部"青年千人计划"入选</div>
+          <div class="tl-desc">国家海外高层次人才引进计划</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">2012 – 2019/2020</div>
+          <div class="tl-title">中国科学院生物物理研究所 · 研究员</div>
+          <div class="tl-desc">独立PI起步；<b>Nature Immunology 2015封面故事</b>、Cell Research 2019、EMBO J 2014</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2013</div>
+          <div class="tl-title">中国科学院-诺和诺德"长城教授"奖</div>
+          <div class="tl-desc">青年学者奖项</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2015</div>
+          <div class="tl-title">国家自然科学基金优秀青年科学基金</div>
+          <div class="tl-desc">优青，青年学者标志性基金</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2018</div>
+          <div class="tl-title">CBIS/Science China-Life Sciences 青年研究者奖</div>
+          <div class="tl-desc">华生物学家奖</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">2020 – 至今</div>
+          <div class="tl-title">清华大学医学院 / 基础医学院 · 副教授</div>
+          <div class="tl-desc">2020年加入清华免疫学研究所，办公室郑裕彤医学楼D213</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-card">
+      <div class="hl-title">📊 职业轨迹观察</div>
+      <p style="font-size:14px;">刘志华的轨迹显示一个清晰的"青年期高速+独立后平稳"模式：2012-2015三年内完成青千+NI封面+优青+长城奖四重跳跃；但从2015到2026的11年间，在顶刊和重大奖项上没有明显新的跃迁，<b>势头从"爆发"转为"稳定"</b>。副教授14年未晋升正教授可能是这个轨迹的直接反映。<span class="anno anno-infer">推断</span></p>
+    </div>
+  </div>
+
+  <!-- ============ 12. 研究方向 ============ -->
+  <div class="section" id="sec-research">
+    <div class="section-title"><span class="icon">🧬</span> 12. 研究方向</div>
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px;">研究主线（实验室官方描述）</div>
+      <p style="font-size:14px; color:var(--text); line-height:1.8;">
+        刘志华实验室研究方向为<b>共生微生物与宿主互作的分子机制</b>。核心问题是：肠道菌群如何通过分子信号影响宿主的免疫、代谢、神经等多个系统？实验室的特色是<b>从Paneth细胞（肠道内分泌细胞）和肠道lysozyme出发</b>，追踪菌群-宿主代谢物的传递路径，并拓展到胰岛、大脑、肾上腺等多个器官轴。
+      </p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">🦠 方向1: 肠道菌-Paneth细胞/上皮互作</div>
+        <ul style="font-size:13px; padding-left:18px; color:var(--muted);">
+          <li><b>Paneth细胞cargo sorting</b> — NI 2015封面故事：共生菌指导Paneth细胞选择性cargo分拣</li>
+          <li><b>肠道lysozyme与菌群调控</b> — 2024 PMC论文：肠道lysozyme1缺陷改变菌群构成，NAD+分泌的Qing110菌</li>
+          <li><b>HPS1 与 Paneth cells</b> — Frontiers in Immunology 2020</li>
+          <li><b>LRRK2与Paneth细胞lysozyme表达</b> — 2024 NI Reply事件涉及的核心结果</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">🍬 方向2: 菌群-胰岛beta细胞（菌群-胰岛轴）</div>
+        <ul style="font-size:13px; padding-left:18px; color:var(--muted);">
+          <li><b>Cell Research 2019</b>：肠道lysozyme从菌中释放Nod1配体，指导胰岛beta细胞的胰岛素运输</li>
+          <li>建立"肠道菌-代谢物-胰岛"轴的分子机制</li>
+          <li>与糖尿病等代谢疾病机制联动</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">🧠 方向3: 菌群-神经退行性疾病（菌群-脑轴）</div>
+        <ul style="font-size:13px; padding-left:18px; color:var(--muted);">
+          <li>博士生Xingchen Liu负责</li>
+          <li>探索肠道菌群变化与神经退行性疾病发生发展的关联</li>
+          <li>与LRRK2（帕金森病相关基因）的交叉方向</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">⚡ 方向4: 菌群-肾上腺髓质轴（新方向）</div>
+        <ul style="font-size:13px; padding-left:18px; color:var(--muted);">
+          <li>急性应激下肾上腺素分泌的菌群调控</li>
+          <li>新拓展方向，体现实验室的方向多元化</li>
+          <li>对跨学科学生有独特价值</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="highlight-card">
+      <div class="hl-title">🎯 技术特色与独特价值</div>
+      <p style="font-size:14px;">实验室核心技术栈包括 <b>无菌/悉生小鼠模型 + Paneth细胞体外培养 + 菌群宏基因组 + 代谢组 + 免疫学表型鉴定 + 分子机制验证</b>。技术本身属于肠道菌群领域的标准组合，<b>特色不在技术本身而在"肠道-多器官轴"的系统整合视角</b>——这在国内单个实验室中相对稀缺。对于想做"经典机制型"肠道菌研究的学生来说，这是一个训练完整的入门平台。</p>
+    </div>
+
+    <div class="highlight-card">
+      <div class="hl-title">⚠️ 技术栈更新信号不明显</div>
+      <p style="font-size:14px;">从公开论文看，实验室<b>没有明显引入AI/机器学习、空间组学、单细胞组学等新兴技术</b>的迹象。这在2026年的肠道菌群领域是一个竞争力信号——可能意味着5年后的技术栈会显得"传统"，影响顶刊竞争力和学生博后阶段的技术可迁移性。<span class="anno anno-infer">推断</span></p>
+    </div>
+  </div>
+
+  <!-- ============ 13. 发表分析 ============ -->
+  <div class="section" id="sec-pubs">
+    <div class="section-title"><span class="icon">📚</span> 13. 发表成果分析</div>
+
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px;">代表论文</div>
+      <div style="font-size:13px; color:var(--muted); margin-bottom:14px;">★★★ = 学术生涯标志性工作 · ★★ = 独立PI代表作 · ★ = 近期重要产出</div>
+
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★★</span> Commensal bacteria direct selective cargo sorting to promote symbiosis</div>
+        <div class="pub-meta">Liu Z, et al. <span class="pub-journal">Nature Immunology</span> 2015;16(9):918-26. <span class="anno anno-fact">封面故事 · 生物物理所时期最高水位</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★★</span> Nature Immunology 2011 (NIH博后时期)</div>
+        <div class="pub-meta">Liu Z, et al. <span class="pub-journal">Nature Immunology</span> 2011. <span class="anno anno-fact">封面故事 · NIH博后共一</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★</span> Intestinal Lysozyme Liberates Nod1 Ligands From Microbes to Direct Insulin Trafficking in Pancreatic Beta Cells</div>
+        <div class="pub-meta">Liu Z, et al. <span class="pub-journal">Cell Research</span> 2019;29(7):516-532. <span class="anno anno-fact">独立通讯 · 菌群-胰岛轴开山作</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★</span> EMBO Journal 2014</div>
+        <div class="pub-meta">Liu Z, et al. <span class="pub-journal">EMBO Journal</span> 2014. <span class="anno anno-fact">生物物理所早期独立通讯</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★</span> Cell Research 2012</div>
+        <div class="pub-meta">Liu Z, et al. <span class="pub-journal">Cell Research</span> 2012.</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">The Journal of Immunology 2017</div>
+        <div class="pub-meta">Liu Z, et al. <span class="pub-journal">J Immunol</span> 2017.</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">HPS1 and Paneth cells</div>
+        <div class="pub-meta">Liu Z, et al. <span class="pub-journal">Frontiers in Immunology</span> 2020.</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">Science China Life Sciences 2021, 2022</div>
+        <div class="pub-meta">Liu Z, et al. <span class="pub-journal">Science China Life Sciences</span> 2021/2022.</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">Cell & Molecular Immunology 2022</div>
+        <div class="pub-meta">Liu Z, et al. <span class="pub-journal">Cell & Molecular Immunology</span> 2022.</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">iScience 2021</div>
+        <div class="pub-meta">Liu Z, et al. <span class="pub-journal">iScience</span> 2021.</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★</span> 2024 Nature Immunology Reply: LRRK2 is not required for lysozyme expression in Paneth cells</div>
+        <div class="pub-meta">Liu Z et al. <span class="pub-journal">Nature Immunology</span> 2024 (Reply). <span class="anno anno-fact"><a href="https://www.nature.com/articles/s41590-024-01968-w" target="_blank">DOI</a> · 学术回应</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★</span> Intestinal lysozyme1 deficiency alters microbiota (Qing110菌 NAD+分泌)</div>
+        <div class="pub-meta">Liu Z, et al. 2024. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10949482/" target="_blank">PMC10949482</a></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★</span> 与北京协和医院胸外科梁乃新合作 - 呼吸道菌群与肺癌发展</div>
+        <div class="pub-meta">2024. <span class="anno anno-fact">合作论文 · 跨机构</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★</span> 与中国科大殷实、安徽医大合作 - 膳食纤维通过调节肠道菌群改善酒精肝</div>
+        <div class="pub-meta">2024. <span class="anno anno-fact">合作论文 · 跨机构</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">2022 高纤维饮食与类风湿性关节炎（与协和张烜合作）</div>
+        <div class="pub-meta">2022. <span class="anno anno-fact">合作论文</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">2022 SCARB2基因缺陷相关疾病的肠道机制（与黄超兰团队合作）</div>
+        <div class="pub-meta">2022. <span class="anno anno-fact">合作论文</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">博士时期：Developmental Cell 2007 / Nature Genetics 2001</div>
+        <div class="pub-meta">哈佛PhD时期，非通讯。<span class="anno anno-fact">早期训练成果</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">博后时期：Nature 2010 / PNAS 2009</div>
+        <div class="pub-meta">NIH博后时期，非通讯。<span class="anno anno-fact">早期训练成果</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:10px;">📈 发表趋势观察</div>
+      <ul style="font-size:14px; padding-left:18px; color:var(--text); line-height:1.8;">
+        <li><b>2001-2011 (博士+博后)</b>：Nature Genetics 2001 + Developmental Cell 2007 + PNAS 2009 + Nature 2010 + Nature Immunology 2011 — 哈佛+NIH时期的高质量训练成果</li>
+        <li><b>2012-2019 (中科院生物物理所独立PI期)</b>：NI 2015封面 + EMBO J 2014 + Cell Research 2019 + J Immunol 2017 — <b>独立PI的高光期</b></li>
+        <li><b>2020-2024 (清华副教授期)</b>：Cell Res / Cell Mol Immunol / Science China / iScience / Front Immunol — 期刊梯度整体下移；2024年NI Reply事件</li>
+        <li><b>近2年</b>：合作论文占比明显上升，与多家机构（协和、中科大、安徽医大、协和张烜、中科院黄超兰）联合发表</li>
+      </ul>
+      <div class="highlight-card" style="margin-top:12px;">
+        <div class="hl-title">🔍 发表空档验证</div>
+        <p style="font-size:13px;">通过PubMed交叉验证，2020-2024期间没有完全断更，每年都有论文产出，但<b>独立通讯的顶刊（Nature/Cell/NI/Cell子刊）频率明显下降</b>。原因可能包括：① 2020清华入职后实验室重建的适应期；② 研究方向多元化带来的主线稀释；③ 倾向合作策略的主动选择。这不是异常但是一个势头信号。<span class="anno anno-infer">推断</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 14. 合作者网络 ============ -->
+  <div class="section" id="sec-collab">
+    <div class="section-title"><span class="icon">🔗</span> 14. 合作者网络</div>
+    <div class="card">
+      <table class="styled-table">
+        <thead><tr><th>合作者</th><th>单位</th><th>合作频率</th><th>共同方向</th></tr></thead>
+        <tbody>
+          <tr><td><b>张烜 Zhang Xuan</b></td><td>北京协和医院</td><td><span class="badge badge-green">长期</span></td><td>高纤维饮食与类风湿性关节炎（2022）</td></tr>
+          <tr><td><b>梁乃新 Liang Naixin</b></td><td>北京协和医院胸外科</td><td><span class="badge badge-green">近期</span></td><td>呼吸道菌群与肺癌发展（2024）</td></tr>
+          <tr><td>殷实 Yin Shi</td><td>中国科技大学</td><td><span class="badge badge-blue">近期</span></td><td>膳食纤维调节肠道菌改善酒精肝（2024）</td></tr>
+          <tr><td>黄超兰 Huang Chaolan</td><td>中科院/北大</td><td><span class="badge badge-blue">多次</span></td><td>SCARB2基因缺陷的肠道机制（2022）</td></tr>
+          <tr><td>安徽医科大学团队</td><td>安徽医科大学</td><td><span class="badge badge-blue">近期</span></td><td>酒精肝菌群方向（2024）</td></tr>
+          <tr><td>上海交通大学医学院</td><td>上海交大医学院</td><td><span class="badge badge-blue">偶尔</span></td><td>肠道菌群相关合作</td></tr>
+          <tr><td>中科院生物物理所</td><td>前东家</td><td><span class="badge badge-grey">早期</span></td><td>2012-2019独立PI期的合作网络</td></tr>
+          <tr><td>NIH前合作者</td><td>美国NIH</td><td><span class="badge badge-grey">早期</span></td><td>博后时期合作，可能延续</td></tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-card" style="margin-top:14px;">
+        <div class="hl-title">🌐 合作网络特征</div>
+        <p style="font-size:14px;">合作者以<b>北京协和医院 + 中科大 + 安徽医大为主的"机制-临床"联合网络</b>为特征，符合她转向多器官轴研究的方向。近年合作频率上升，独立通讯频率下降，说明实验室策略从"独立攻关"转向"网络联合"。这对学生的影响是：① 有机会接触多个机构的资源和数据；② 但毕业论文可能涉及跨机构合作，推进节奏受外部因素影响。<span class="anno anno-infer">推断</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 15. 经费基金 ============ -->
+  <div class="section" id="sec-fund">
+    <div class="section-title"><span class="icon">💰</span> 15. 经费与基金</div>
+    <div class="card">
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 经费具体数据未能从公开渠道完整获取</div>
+        <p style="font-size:14px;">NSFC大数据门户 (kd.nsfc.cn) 需JavaScript登录查询，无法自动抓取。以下信息基于论文致谢、公开奖项和lab页面推断。</p>
+      </div>
+
+      <table class="info-table">
+        <tr><td>青年千人计划</td><td><b>2012年入选</b>（中组部国家海外高层次人才）<span class="anno anno-fact">已确认</span></td></tr>
+        <tr><td>优秀青年科学基金</td><td><b>2015年获得</b>（国家自然科学基金）<span class="anno anno-fact">已确认</span></td></tr>
+        <tr><td>长城教授奖</td><td>2013年 中科院-诺和诺德<span class="anno anno-fact">已确认</span></td></tr>
+        <tr><td>NSFC 常规支持</td><td><b>持续</b>（2018-2024论文致谢NSFC面上项目）<span class="anno anno-infer">推断</span></td></tr>
+        <tr><td>清华内部经费</td><td>清华大学基础医学院 / 免疫学研究所 内部支持</td></tr>
+        <tr><td>国自然杰青/重点</td><td>未公开见记录 <span class="anno anno-infer">推断</span></td></tr>
+        <tr><td>新基石研究员</td><td>未入选 <span class="anno anno-fact">事实</span></td></tr>
+        <tr><td>重大研究计划</td><td>2024年NSFC"免疫力数字解码"未见明确获资记录</td></tr>
+        <tr><td>横向经费</td><td>未发现明显产业合作横向项目</td></tr>
+      </table>
+
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 经费稳定性：中</div>
+        <p style="font-size:14px;">2024年仍有多篇论文致谢NSFC支持，经费短期内是稳定的。但从青千+优青之后的<b>10年里没有明确的更大量级基金（杰青、重点、重大研究计划）获资记录</b>，这是一个值得关注的信号。实验室6人规模的运转需要持续经费，学生应在面试时直接询问未来5年的经费规划和具体项目编号。<span class="anno anno-infer">推断</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 16. 学术指标 ============ -->
+  <div class="section" id="sec-metrics">
+    <div class="section-title"><span class="icon">📊</span> 16. 学术指标（与同院系对比）</div>
+    <div class="card">
+      <table class="styled-table">
+        <thead><tr><th>指标</th><th>刘志华</th><th>同院系顶级PI（参考）</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Google Scholar 总引</td>
+            <td>未直接检索，估约3,000-5,000 <span class="anno anno-infer">推断</span></td>
+            <td>祁海 &gt;10,000；石彦 ~9,000</td>
+            <td>属基础医学院中等</td>
+          </tr>
+          <tr>
+            <td>h-index (估)</td>
+            <td>~20-30 <span class="anno anno-infer">推断</span></td>
+            <td>顶级PI普遍 &gt;50</td>
+            <td>中等</td>
+          </tr>
+          <tr>
+            <td>中国高被引学者</td>
+            <td>未见入选</td>
+            <td>同院系2024年共9位入选</td>
+            <td>未达到</td>
+          </tr>
+          <tr>
+            <td>Nature/Science/Cell 主刊</td>
+            <td>博后期Nature 2010（共一）</td>
+            <td>傅阳心、饶子和等多次主刊</td>
+            <td>独立PI期无主刊通讯</td>
+          </tr>
+          <tr>
+            <td>Nature子刊通讯</td>
+            <td>Nature Immunology 2015 封面故事（独立通讯）</td>
+            <td>多数顶级PI有多篇NI/NM</td>
+            <td>硬通货1篇</td>
+          </tr>
+          <tr>
+            <td>NSFC 青千/优青</td>
+            <td>✅ 青千(2012) + 优青(2015)</td>
+            <td>-</td>
+            <td>青年期走通</td>
+          </tr>
+          <tr>
+            <td>NSFC 杰青</td>
+            <td>未入选 <span class="anno anno-fact">事实</span></td>
+            <td>多数正教授级PI入选</td>
+            <td>缺失</td>
+          </tr>
+          <tr>
+            <td>新基石/领军等大奖</td>
+            <td>未入选</td>
+            <td>祁海为新基石研究员</td>
+            <td>距离最高一档有差距</td>
+          </tr>
+          <tr>
+            <td>职称</td>
+            <td><b>副教授（14年未晋升）</b></td>
+            <td>同龄PI多数已为正教授</td>
+            <td>晋升节奏偏慢</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-card">
+        <div class="hl-title">📊 定位：基础医学院"中等偏稳"学者</div>
+        <p style="font-size:14px;">刘志华的学术指标处于基础医学院的中等水平。她既不是金字塔尖的"明星PI"（如董晨、祁海、饶子和），也不属于已经滑入衰退的"老PI"，而是稳定在"副教授级成熟研究者"档位。<b>相对于同所更年轻、势头更猛的PI（如朱可可），她的优势在于履历和经验，劣势在于晋升节奏和顶刊势头</b>。对学生来说，这意味着：能得到扎实训练，但"师门光环"的加成有限。<span class="anno anno-infer">推断</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 17. 院系背景 ============ -->
+  <div class="section" id="sec-dept">
+    <div class="section-title"><span class="icon">🏛️</span> 17. 院系背景</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>学院</td><td>清华大学基础医学院 (School of Basic Medical Sciences) / 医学院</td></tr>
+        <tr><td>研究所</td><td>免疫学研究所 (Institute for Immunology)</td></tr>
+        <tr><td>办公位置</td><td><b>郑裕彤医学楼 D213</b></td></tr>
+        <tr><td>学科排名</td><td>清华大学免疫学科ESI全球前1%；基础医学院为清华医科核心建设单位</td></tr>
+        <tr><td>2024高被引学者</td><td>基础医学院共9位入选（傅阳心/李海涛/刘云才/祁海/饶子和/石彦/张林琦/林欣/Charles David），<b>刘志华未入选</b></td></tr>
+        <tr><td>免疫所女PI代表性</td><td>在清华免疫所的男性主导环境中，刘志华是少数女性PI之一</td></tr>
+      </table>
+
+      <div style="margin-top:14px;">
+        <div style="font-weight:700; margin-bottom:8px;">同所免疫学PI（可作为替代/对比）</div>
+        <div class="collab-list" style="display:flex; flex-wrap:wrap; gap:10px;">
+          <span class="badge badge-blue">董晨 Chen Dong (T细胞分化)</span>
+          <span class="badge badge-blue">祁海 Hai Qi (抗体记忆/Tfh)</span>
+          <span class="badge badge-blue">刘万里 Wanli Liu (BCR信号)</span>
+          <span class="badge badge-blue">彭敏 Min Peng (T细胞代谢)</span>
+          <span class="badge badge-blue">曾文文 Wenwen Zeng (神经免疫)</span>
+          <span class="badge badge-blue">石彦 Yan Shi (生物物理免疫)</span>
+          <span class="badge badge-green">朱可可 Coco Chu (神经免疫-菌群 · 年轻替代方案)</span>
+          <span class="badge badge-blue">黄志伟 Zhiwei Huang</span>
+        </div>
+      </div>
+
+      <div class="highlight-card" style="margin-top:14px;">
+        <div class="hl-title">⭐ 替代方案重点推荐：朱可可 (Coco Chu)</div>
+        <p style="font-size:14px;">同一清华免疫所的<b>朱可可</b>正好做神经免疫-菌群交叉方向，和刘志华的研究重合度很高但年龄更年轻、势头更猛，且就在同一楼办公。对于想做菌群-神经免疫方向的学生，朱可可是直接的对比对象。建议学生同时联系两位PI，对比实验室氛围、学生去向、指导密度等维度再做决定。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 18. 总结与建议 ============ -->
+  <div class="section" id="sec-summary">
+    <div class="section-title"><span class="icon">📝</span> 18. 总结与下一步行动</div>
+    <div class="card">
+      <div class="highlight-card">
+        <div class="hl-title">🎯 核心结论</div>
+        <p style="font-size:15px; line-height:1.8;">
+          刘志华是清华基础医学院的<b>中等偏稳资深副教授</b>，平台一流、履历完美、学术训练扎实、方向扎实、无toxicity报道，49岁正值稳定期。<b>综合评分 3.3/5</b>，属于"中性偏谨慎"档位。主要问题是<b>势头从爆发期转为稳定期（副教授14年未升正教授）、2024 NI Reply事件、以及学生去向数据完全空白</b>这三个信号叠加。学生去向盲区是最大的情报黑洞，<b>选择前必须通过亲自联系在读学生和已毕业学生来补齐</b>。
+        </p>
+      </div>
+
+      <div class="good-card">
+        <div class="hl-title">✅ 适合选择刘志华的学生画像</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li>明确要做<b>肠道菌-宿主互作（免疫/代谢/神经方向）</b>的机制研究</li>
+          <li>有一定自驱力，能接受"中等放养 + 中后期可能push"的节奏</li>
+          <li>看重<b>跨系统训练价值</b>（肠道-胰岛-脑-肾上腺四个方向都可触及）</li>
+          <li>对"顶刊频率"不敏感，更看重训练完整性和毕业论文深度</li>
+          <li>本科/硕士有独立科研经验，能自己主动查资料、联系在读学生核实</li>
+          <li>不纠结导师性别，欢迎在女性PI环境下工作</li>
+          <li>风险承受能力中等，能接受"天花板未知"的情报盲区</li>
+        </ul>
+      </div>
+
+      <div class="danger-card">
+        <div class="hl-title">❌ 不适合的学生画像</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li>必须冲顶刊（Nature/Cell/NI）、目标是进C9高校教职的学生</li>
+          <li>毕业目标是<b>临床转化/微生态产品工业化</b></li>
+          <li>需要PI每天手把手指导、需要明确阶段性反馈的学生</li>
+          <li>风险厌恶，需要"师兄姐明确去向"作为决策依据</li>
+          <li>希望加入势头最猛的"上升期新星PI"</li>
+          <li>对副教授14年未升这件事特别介意</li>
+          <li>没做好自查（不愿意联系在读学生、不愿意查毕业生名单）</li>
+        </ul>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">📋 面试/选组前必须做的6件事</div>
+        <ol style="padding-left:22px; font-size:14px;">
+          <li><b>查近10年毕业生名单</b>：通过清华基础医学院/CLS博士学位论文答辩信息，按"导师：刘志华"筛选（含生物物理所时期的学生），统计人数和论文质量，这是验证天花板的最硬指标</li>
+          <li><b>联系当前在读6位成员</b>：通过lab主页的邮箱（Yabo Zhao、Kemeng Dong、Xingchen Liu、Shukun Lv、Wei Wan、Haonan Yu），匿名或实名询问实验室氛围、毕业预期、PI指导密度、是否遇到2024 NI Reply相关的压力</li>
+          <li><b>直接问刘老师5个硬问题</b>：
+            <ol style="padding-left:22px; margin-top:4px;">
+              <li>您过去10年毕业的博士生和博士后现在分别在哪里？</li>
+              <li>您未来5年的正教授晋升计划和实验室规划是什么？</li>
+              <li>实验室当前的经费结构和未来3年基金申请计划？</li>
+              <li>2024 NI Reply事件对实验室研究方向的影响？</li>
+              <li>您给学生的典型指导频率（周会、一对一meeting）？</li>
+            </ol>
+          </li>
+          <li><b>对比朱可可等同所年轻PI</b>：至少把朱可可、刘万里、曾文文等同所PI做一次横向比较，重点比较"学生去向可见度"这一项</li>
+          <li><b>查2024 NI Reply原文</b>：阅读<a href="https://www.nature.com/articles/s41590-024-01968-w" target="_blank">Liu Z 2024 NI Reply</a>和引发质疑的原始论文，判断这是正常学术讨论还是结果不稳固的信号</li>
+          <li><b>核实真实的毕业预期</b>：询问"正常博士毕业需要几年？最长几年？近3年有无延期毕业的案例？"</li>
+        </ol>
+      </div>
+
+      <div style="text-align:center; margin-top:20px; padding:20px; background:linear-gradient(135deg, #FFFBEB, #FFF7ED); border-radius:12px;">
+        <div style="font-size:14px; color:var(--muted); margin-bottom:6px;">最终综合评分</div>
+        <div style="font-size:56px; font-weight:800; color:var(--accent); line-height:1;">3.3<span style="font-size:24px; color:var(--muted);"> / 5</span></div>
+        <div style="font-size:14px; color:var(--text); margin-top:10px; font-weight:600;">中性偏谨慎 · 适合想做经典肠道免疫学、稳健型、能独立自查的学生</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:8px;">未触发一票否决 · 3项黄灯待学生亲自核实（学生去向盲区 / NI Reply事件 / 副教授晋升节奏）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 附录：数据来源 ============ -->
+  <div class="section" id="sec-sources">
+    <div class="section-title"><span class="icon">📎</span> 附录：数据来源</div>
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:10px;">官方页面</div>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.9;">
+        <li><a href="https://www.bms.tsinghua.edu.cn/info/1350/1427.htm" target="_blank">清华大学基础医学院 - 刘志华</a>（基本信息、研究方向）</li>
+        <li><a href="https://www.med.tsinghua.edu.cn/info/1072/2125.htm" target="_blank">清华大学医学院 - 刘志华</a>（履历）</li>
+        <li><a href="http://www.iitu.tsinghua.edu.cn/ZhihuaLiu/list.htm" target="_blank">清华大学免疫学研究所 - 刘志华实验室主页</a>（实验室成员、论文）</li>
+      </ul>
+
+      <div style="font-weight:700; margin:14px 0 10px;">第三方档案</div>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.9;">
+        <li><a href="https://www.chinagut.cn/zhiku/person/5768dc572dc6438ca85d79896d9520a0" target="_blank">热心肠智库 - 刘志华</a>（菌群领域学者档案）</li>
+      </ul>
+
+      <div style="font-weight:700; margin:14px 0 10px;">代表论文原文</div>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.9;">
+        <li><a href="https://www.nature.com/articles/ni.3233" target="_blank">Nature Immunology 2015 - Commensal bacteria cargo sorting（封面故事）</a></li>
+        <li><a href="https://www.nature.com/articles/s41422-019-0190-3" target="_blank">Cell Research 2019 - Intestinal Lysozyme Nod1 ligands insulin trafficking</a></li>
+        <li><a href="https://www.nature.com/articles/s41590-024-01968-w" target="_blank">Nature Immunology 2024 Reply - LRRK2 lysozyme Paneth cells</a></li>
+        <li><a href="https://pubmed.ncbi.nlm.nih.gov/38364095/" target="_blank">PubMed 2024 - 近期论文查询</a></li>
+        <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10949482/" target="_blank">PMC10949482 - Intestinal lysozyme1 Qing110 NAD+</a></li>
+      </ul>
+
+      <div style="font-weight:700; margin:14px 0 10px;">数据库查询</div>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.9;">
+        <li>PubMed - "Liu Z[Author] AND Tsinghua[Affiliation] AND microbiota"</li>
+        <li>PubMed - "Liu Zhihua[Author] AND Paneth"</li>
+        <li>Google Scholar - Zhihua Liu @Tsinghua（验证文献列表）</li>
+        <li>NSFC大数据知识管理门户 - kd.nsfc.cn（JavaScript限制，未成功自动查询）</li>
+        <li>知乎 / 小木虫 / 保研论坛 / mysupervisor - 未检索到有效评价</li>
+      </ul>
+
+      <div class="highlight-card" style="margin-top:14px;">
+        <div class="hl-title">⚠️ 数据局限性说明</div>
+        <ul style="padding-left:18px; font-size:13px;">
+          <li><b>学生毕业去向数据完全空白</b>——未在任何公开渠道追踪到已毕业博士生的明确位置，这是本报告最大的情报盲区</li>
+          <li>NSFC具体项目编号和金额未能直接获取</li>
+          <li>未找到针对刘志华的知乎/小木虫等正面或负面的具体评价帖</li>
+          <li>年龄为根据1995年北大入学推算，未直接证实</li>
+          <li>副教授晋升时间线和清华"非升即走"具体合同细节未公开，估算为参考</li>
+          <li>Google Scholar总引和h-index未直接获取，为同量级推断</li>
+          <li>2024 NI Reply事件的具体细节需学生自行阅读原文评估</li>
+          <li>部分论文年份为基于用户提供数据，DOI已列出可交叉验证的链接</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Generated by <b>DeepTutor v1.1</b> — Powered by Claude · 2026-04-12
+    <br>
+    数据来源仅用于辅助决策，最终判断应结合学生本人面谈与实地调研
+  </div>
+
+</div>
+
+</body>
+</html>
