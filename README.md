@@ -7,7 +7,7 @@
 <div align="center">
 
 <p align="center">
-  <img src="logo.png" alt="Deeptutor Logo" width="100">
+  <img src="logo.png" alt="Deeptutor Logo" width="150">
 </p>
 
 # DeepTutor
