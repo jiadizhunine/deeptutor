@@ -6,11 +6,11 @@
 
 <div align="center">
 
+# DeepTutor
+
 <p align="center">
   <img src="logo.png" alt="Deeptutor Logo" width="150">
 </p>
-
-# DeepTutor
 
 ### 学术导师综合调查评估系统
 
