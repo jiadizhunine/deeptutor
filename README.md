@@ -16,9 +16,9 @@
 
 在选择研究生导师之前，用 AI 做一次深度尽职调查。DeepTutor 自动检索导师的学术成果、学生去向、社交舆情与实验室文化，生成一份独立的 HTML 评估报告，帮你做出更明智的读研决策。
 
-![Version](https://img.shields.io/badge/version-v1.1-blue)
+![Version](https://img.shields.io/badge/version-v1.3-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Platform](https://img.shields.io/badge/platform-Claude_Code-purple)
+![Platform](https://img.shields.io/badge/platform-Claude_Code%20|%20Cursor%20|%20OpenClaw%20|%20OpenCode-purple)
 
 <!-- screenshot of example report -->
 
@@ -42,6 +42,11 @@
 - **退休与稳定性风险（v1.1 新增）** — 评估导师在学生就读期间是否稳定
 - **多导师对比模式** — 并排对比多位导师，输出综合推荐
 - **独立 HTML 报告** — 单文件交付，无外部依赖，可离线浏览
+- **Web-Rooter 集成（v2.0）** — 中国高校网站 404/反爬时自动降级到浏览器渲染
+- **多平台兼容（v2.0）** — 支持 Claude Code、Cursor、OpenClaw、OpenCode 等 AI 编程工具
+- **HTML 报告生成脚本（v3.0 新增）** — 模型只需输出 JSON，脚本自动渲染精美 HTML 报告
+- **完整版/轻量版双模式（v3.0 新增）** — 自动检测模型能力，低端模型跑 6 阶段精简版，高端模型跑完整 10 阶段
+- **自包含 Python 脚本（v3.0 新增）** — 内置抗反爬获取 + 社交搜索 + 报告生成，零外部依赖
 
 ---
 
@@ -125,17 +130,28 @@ DeepTutor 从 **11 个维度** 对导师进行量化评估（中国版本）：
 
 ```
 deeptutor/
-├── SKILL.md                  # 核心技能定义
-├── README.md                 # 中文说明（默认）
-├── README.en.md              # English README
-├── LICENSE                   # MIT 许可证
-├── references/               # 参考文档
+├── SKILL.md                          # 核心技能定义（主文件）
+├── .claude/skills/deeptutor/SKILL.md # Claude Code 适配
+├── .agents/skills/deeptutor/SKILL.md # AGENTS.md 生态适配
+├── .cursor/rules/deeptutor.mdc       # Cursor IDE 适配
+├── .openclaw/AGENTS.md               # OpenClaw 适配
+├── .opencode/AGENTS.md               # OpenCode 适配
+├── README.md                         # 中文说明（默认）
+├── README.en.md                      # English README
+├── LICENSE                           # MIT 许可证
+├── scripts/                          # 自包含工具脚本（零外部依赖）
+│   ├── robust_fetch.py               # 抗反爬网页获取（3层降级）
+│   ├── search_social.py              # 中国社交平台导师评价搜索
+│   └── generate_report.py            # JSON → HTML 报告渲染器
+├── references/                       # 参考文档
 │   ├── advisor_evaluation_framework.md
 │   ├── chinese_academic_system.md
 │   ├── international_academic_system.md
 │   ├── publication_search_protocol.md
-│   └── report_template.md
-└── examples/                 # 虚拟案例
+│   ├── report_template.md
+│   ├── web_rooter_integration.md     # Web 访问降级策略
+│   └── lite_mode.md                  # 轻量版调查规范
+└── examples/                         # 报告案例
     ├── 张伟_北京大学.html
     └── sarah_mitchell_MIT.html
 ```
@@ -152,4 +168,5 @@ deeptutor/
 
 - Built with [Claude Code](https://claude.ai/claude-code)
 - Powered by [Anthropic Claude](https://www.anthropic.com)
+- Web access capabilities powered by [Web-Rooter](https://github.com/pinkpixel-dev/web-rooter) (MIT License)
 - Following [agentskills.io](https://agentskills.io) specification
