@@ -12,9 +12,9 @@
 
 Before committing years of your life to a graduate advisor, let AI run a deep due diligence investigation. DeepTutor automatically searches a professor's publications, student outcomes, social reputation, and lab culture, then delivers a standalone HTML report to help you make a smarter decision.
 
-![Version](https://img.shields.io/badge/version-v1.1-blue)
+![Version](https://img.shields.io/badge/version-v1.3-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Platform](https://img.shields.io/badge/platform-Claude_Code-purple)
+![Platform](https://img.shields.io/badge/platform-Claude_Code%20|%20Cursor%20|%20OpenClaw%20|%20OpenCode-purple)
 
 <!-- screenshot of example report -->
 
@@ -121,19 +121,25 @@ DeepTutor scores advisors across **11 weighted dimensions** (International versi
 
 ```
 deeptutor/
-├── SKILL.md                  # Core skill definition
-├── README.md                 # Chinese README (default)
-├── README.en.md              # English README
-├── LICENSE                   # MIT License
-├── references/               # Reference documents
+├── SKILL.md                          # Core skill definition
+├── .claude/skills/deeptutor/SKILL.md # Claude Code adapter
+├── .agents/skills/deeptutor/SKILL.md # AGENTS.md ecosystem
+├── .cursor/rules/deeptutor.mdc       # Cursor IDE adapter
+├── .openclaw/AGENTS.md               # OpenClaw adapter
+├── .opencode/AGENTS.md               # OpenCode adapter
+├── scripts/                          # Self-contained tools (zero dependencies)
+│   ├── robust_fetch.py               # Anti-bot web fetch (3-layer fallback)
+│   ├── search_social.py              # Chinese social platform search
+│   └── generate_report.py            # JSON → HTML report renderer
+├── references/                       # Reference documents
 │   ├── advisor_evaluation_framework.md
 │   ├── chinese_academic_system.md
 │   ├── international_academic_system.md
 │   ├── publication_search_protocol.md
-│   └── report_template.md
-└── examples/                 # Sample reports
-    ├── 张伟_北京大学.html
-    └── sarah_mitchell_MIT.html
+│   ├── report_template.md
+│   ├── web_rooter_integration.md     # Web access fallback strategy
+│   └── lite_mode.md                  # Lite mode specification
+└── examples/                         # Sample reports
 ```
 
 ---
@@ -148,4 +154,5 @@ This project is open-sourced under the [MIT License](./LICENSE).
 
 - Built with [Claude Code](https://claude.ai/claude-code)
 - Powered by [Anthropic Claude](https://www.anthropic.com)
+- Web access capabilities powered by [Web-Rooter](https://github.com/pinkpixel-dev/web-rooter) (MIT License)
 - Following [agentskills.io](https://agentskills.io) specification

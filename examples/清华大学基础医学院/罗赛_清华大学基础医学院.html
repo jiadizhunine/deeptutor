@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepTutor v4 | 罗赛 - 清华大学基础医学院</title>
+<style>
+  :root {
+    --bg: #F9FAFB; --card: #FFFFFF; --accent: #D97706;
+    --text: #1F2937; --muted: #6B7280; --green: #059669;
+    --yellow: #D97706; --red: #DC2626; --radius: 12px;
+    --blue: #2563EB; --light-green: #D1FAE5; --light-yellow: #FEF3C7;
+    --light-red: #FEE2E2; --light-blue: #DBEAFE;
+    --sidebar-w: 260px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---- Sidebar ---- */
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
+    background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+    color: #CBD5E1; overflow-y: auto; z-index: 100;
+    padding: 28px 0 40px; display: flex; flex-direction: column;
+  }
+  .sidebar-logo {
+    text-align: center; font-size: 20px; font-weight: 700;
+    color: #F8FAFC; letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .sidebar-logo span { color: var(--accent); }
+  .sidebar-sub { text-align: center; font-size: 11px; color: #64748B; margin-bottom: 24px; }
+  .sidebar nav { flex: 1; }
+  .sidebar nav a {
+    display: block; padding: 9px 24px; font-size: 13px; color: #94A3B8;
+    border-left: 3px solid transparent; transition: all .2s;
+  }
+  .sidebar nav a:hover, .sidebar nav a.active {
+    color: #F8FAFC; background: rgba(255,255,255,.06);
+    border-left-color: var(--accent); text-decoration: none;
+  }
+  .sidebar-score {
+    text-align: center; margin: 24px 20px 0; padding: 18px 12px;
+    background: linear-gradient(135deg, rgba(217,119,6,.18), rgba(37,99,235,.12));
+    border-radius: var(--radius);
+  }
+  .sidebar-score .big { font-size: 42px; font-weight: 800; color: #F8FAFC; }
+  .sidebar-score .label { font-size: 12px; color: #94A3B8; margin-top: 2px; }
+
+  /* ---- Main ---- */
+  .main { margin-left: var(--sidebar-w); padding: 36px 48px 80px; max-width: 960px; }
+  .section { margin-bottom: 44px; scroll-margin-top: 24px; }
+  .section-title {
+    font-size: 22px; font-weight: 700; margin-bottom: 16px;
+    padding-bottom: 8px; border-bottom: 2px solid #E5E7EB;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .icon { font-size: 20px; }
+
+  /* ---- Cards ---- */
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); padding: 24px; margin-bottom: 16px;
+  }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card-grid .card { margin-bottom: 0; }
+
+  /* ---- Info table ---- */
+  .info-table { width: 100%; border-collapse: collapse; }
+  .info-table td { padding: 8px 12px; border-bottom: 1px solid #F3F4F6; }
+  .info-table td:first-child { font-weight: 600; width: 140px; white-space: nowrap; color: var(--muted); font-size: 13px; }
+
+  /* ---- Badges ---- */
+  .badge {
+    display: inline-block; padding: 4px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 600; margin: 3px 4px 3px 0;
+  }
+  .badge-green { background: var(--light-green); color: var(--green); }
+  .badge-red   { background: var(--light-red);   color: var(--red); }
+  .badge-yellow{ background: var(--light-yellow); color: var(--yellow); }
+  .badge-blue  { background: var(--light-blue);  color: var(--blue); }
+
+  /* ---- Tag ---- */
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 6px;
+    font-size: 12px; background: #F3F4F6; color: var(--muted); margin: 2px 4px 2px 0;
+  }
+  .tag-fact  { background: var(--light-blue);  color: var(--blue); }
+  .tag-infer { background: var(--light-yellow); color: var(--yellow); }
+
+  /* ---- Timeline ---- */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 11px; top: 4px; bottom: 4px;
+    width: 2px; background: #E5E7EB;
+  }
+  .tl-item { position: relative; margin-bottom: 24px; }
+  .tl-dot {
+    position: absolute; left: -32px; top: 4px; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--card); border: 3px solid var(--blue);
+    z-index: 1;
+  }
+  .tl-dot.accent { border-color: var(--accent); }
+  .tl-dot.green  { border-color: var(--green); }
+  .tl-year { font-size: 13px; font-weight: 700; color: var(--blue); }
+  .tl-year.accent { color: var(--accent); }
+  .tl-year.green  { color: var(--green); }
+  .tl-title { font-weight: 600; font-size: 15px; }
+  .tl-desc { font-size: 13px; color: var(--muted); }
+
+  /* ---- Progress bar ---- */
+  .score-row { margin-bottom: 14px; }
+  .score-row .label-row {
+    display: flex; justify-content: space-between; font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .score-row .label-row .dim { font-weight: 600; }
+  .score-row .label-row .val { color: var(--accent); font-weight: 700; }
+  .bar-bg {
+    height: 10px; border-radius: 5px; background: #E5E7EB; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 5px;
+    background: linear-gradient(90deg, var(--blue), var(--accent));
+    transition: width .6s ease;
+  }
+
+  /* ---- Table generic ---- */
+  .styled-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .styled-table th {
+    text-align: left; padding: 10px 12px; background: #F8FAFC;
+    border-bottom: 2px solid #E5E7EB; font-weight: 600; font-size: 13px;
+    color: var(--muted);
+  }
+  .styled-table td { padding: 10px 12px; border-bottom: 1px solid #F3F4F6; }
+  .styled-table tr:hover { background: #FAFBFC; }
+
+  /* ---- Highlight card ---- */
+  .highlight-card {
+    border-left: 4px solid var(--accent); padding: 16px 20px;
+    background: linear-gradient(135deg, #FFFBEB, #FFF7ED); border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 16px;
+  }
+  .highlight-card .hl-title { font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+
+  /* ---- Match matrix ---- */
+  .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .matrix-cell {
+    background: var(--card); border-radius: var(--radius); padding: 16px; text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); transition: transform .15s;
+  }
+  .matrix-cell:hover { transform: translateY(-2px); }
+  .matrix-cell .emoji { font-size: 28px; margin-bottom: 6px; }
+  .matrix-cell .m-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .matrix-cell .m-desc { font-size: 12px; color: var(--muted); }
+  .match-high   { border: 2px solid var(--green); }
+  .match-medium { border: 2px solid var(--yellow); }
+  .match-low    { border: 2px solid var(--red); }
+
+  /* ---- Risk meter ---- */
+  .risk-meter { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+  .risk-bar-bg {
+    flex: 1; height: 14px; border-radius: 7px;
+    background: linear-gradient(90deg, var(--green), var(--yellow), var(--red));
+    position: relative;
+  }
+  .risk-pointer {
+    position: absolute; top: -6px; width: 4px; height: 26px;
+    background: var(--text); border-radius: 2px;
+  }
+
+  /* ---- Cooperation network ---- */
+  .collab-list { display: flex; flex-wrap: wrap; gap: 12px; }
+  .collab-card {
+    background: var(--card); border: 1px solid #E5E7EB; border-radius: var(--radius);
+    padding: 14px 18px; min-width: 220px; flex: 1;
+  }
+  .collab-name { font-weight: 700; font-size: 15px; }
+  .collab-role { font-size: 12px; color: var(--muted); }
+
+  /* ---- Footer ---- */
+  .footer {
+    text-align: center; padding: 32px 0; color: var(--muted); font-size: 12px;
+    border-top: 1px solid #E5E7EB; margin-top: 40px;
+  }
+
+  /* ---- Print ---- */
+  @media print {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; max-width: 100%; }
+    .card { box-shadow: none; border: 1px solid #E5E7EB; }
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 860px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .matrix-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ---- Header banner ---- */
+  .hero {
+    background: linear-gradient(135deg, #1E293B, #0F172A);
+    color: #F8FAFC; border-radius: var(--radius); padding: 36px 40px;
+    margin-bottom: 36px; position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: ''; position: absolute; right: -60px; top: -60px;
+    width: 240px; height: 240px; border-radius: 50%;
+    background: rgba(217,119,6,.12);
+  }
+  .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+  .hero .sub { color: #94A3B8; font-size: 15px; }
+  .hero .score-inline {
+    display: inline-flex; align-items: baseline; gap: 8px;
+    margin-top: 16px; padding: 10px 20px;
+    background: rgba(217,119,6,.15); border-radius: 8px;
+  }
+  .hero .score-inline .num { font-size: 36px; font-weight: 800; color: var(--accent); }
+  .hero .score-inline .out { font-size: 16px; color: #94A3B8; }
+
+  /* ---- Annotation chip ---- */
+  .anno { font-size: 11px; border-radius: 4px; padding: 1px 6px; margin-left: 4px; vertical-align: middle; }
+  .anno-fact  { background: var(--light-blue);  color: var(--blue); }
+  .anno-infer { background: var(--light-yellow); color: var(--yellow); }
+
+  /* pub list */
+  .pub-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F3F4F6; }
+  .pub-item:last-child { border-bottom: none; }
+  .pub-title { font-weight: 600; font-size: 14px; }
+  .pub-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .pub-journal { font-weight: 600; color: var(--blue); }
+  .pub-star { color: var(--accent); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Deep<span>Tutor</span> v4</div>
+  <div class="sidebar-sub">Graduate Advisor Intelligence</div>
+  <nav>
+    <a href="#sec-basic">1. 基本信息</a>
+    <a href="#sec-type">2. 导师类型分类</a>
+    <a href="#sec-ceiling">3. 天花板法则</a>
+    <a href="#sec-lights">4. 红灯绿灯速查</a>
+    <a href="#sec-match">5. 毕业目标匹配</a>
+    <a href="#sec-timeline">6. 教育与经历</a>
+    <a href="#sec-research">7. 研究方向</a>
+    <a href="#sec-pubs">8. 发表成果分析</a>
+    <a href="#sec-collab">9. 合作者网络</a>
+    <a href="#sec-fund">10. 经费与基金</a>
+    <a href="#sec-metrics">11. 学术指标</a>
+    <a href="#sec-dept">12. 院系背景</a>
+    <a href="#sec-pua">13. PUA/PUSH风险</a>
+    <a href="#sec-scores">14. 多维度评分</a>
+    <a href="#sec-summary">15. 总结与建议</a>
+    <a href="#sec-sources">附录: 数据来源</a>
+  </nav>
+  <div class="sidebar-score">
+    <div class="big">3.8</div>
+    <div class="label">综合评分 / 5.0</div>
+  </div>
+</aside>
+
+<!-- ==================== MAIN ==================== -->
+<div class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>罗赛 (Sai Luo)</h1>
+    <div class="sub">清华大学基础医学院 &middot; 微生物与传染病学系 &middot; 助理教授</div>
+    <div class="score-inline">
+      <span class="num">3.8</span>
+      <span class="out">/ 5.0 综合评分</span>
+    </div>
+  </div>
+
+  <!-- ==================== 1. 基本信息 ==================== -->
+  <div class="section" id="sec-basic">
+    <div class="section-title"><span class="icon">&#128100;</span> 1. 基本信息</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>姓名</td><td>罗赛 (Sai Luo)</td></tr>
+        <tr><td>职称</td><td>助理教授 (Assistant Professor)，2023年至今</td></tr>
+        <tr><td>单位</td><td>清华大学基础医学院 &middot; 微生物与传染病学系</td></tr>
+        <tr><td>办公室</td><td>郑裕彤医学楼 A109</td></tr>
+        <tr><td>邮箱</td><td><a href="mailto:sailuo@tsinghua.edu.cn">sailuo@tsinghua.edu.cn</a></td></tr>
+        <tr><td>个人主页</td><td><a href="https://sailuo.weebly.com/" target="_blank">https://sailuo.weebly.com/</a></td></tr>
+        <tr><td>ResearchGate</td><td><a href="https://www.researchgate.net/profile/Sai-Luo-6" target="_blank">Sai-Luo-6</a></td></tr>
+        <tr><td>其他角色</td><td>清华大学医学院全球健康学科发展总协调人</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== 2. 导师类型分类 ==================== -->
+  <div class="section" id="sec-type">
+    <div class="section-title"><span class="icon">&#127919;</span> 2. 导师类型分类</div>
+    <div class="card-grid">
+      <div class="card" style="border-left: 4px solid var(--accent);">
+        <div style="font-weight:700; margin-bottom:8px; color:var(--accent);">新锐学术型 PI</div>
+        <p style="font-size:14px; color:var(--muted);">2023年独立建组，处于实验室成长初期。本人学术轨迹优秀（吴瑞奖学金 + 哈佛博后），科研品味经过顶级实验室验证，属于"起步阶段的潜力股"。</p>
+        <div style="margin-top:10px;">
+          <span class="badge badge-blue">新 PI (2023至今)</span>
+          <span class="badge badge-green">顶级训练背景</span>
+          <span class="badge badge-yellow">尚在建设期</span>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">关键特征</div>
+        <ul style="font-size:14px; color:var(--muted); padding-left:18px;">
+          <li>无毕业学生（实验室尚年轻）</li>
+          <li>新PI通常对学生培养投入更多精力</li>
+          <li>学术品味经Cell Stem Cell、Science Immunology验证</li>
+          <li>成功实现方向转换（lncRNA &rarr; HIV抗体/疫苗）</li>
+          <li>与哈佛Frederick Alt实验室保持合作</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 3. 天花板法则 ==================== -->
+  <div class="section" id="sec-ceiling">
+    <div class="section-title"><span class="icon">&#127891;</span> 3. 师兄姐去向分析（天花板法则）</div>
+    <div class="card">
+      <div class="highlight-card">
+        <div class="hl-title">暂无毕业学生数据</div>
+        <p style="font-size:14px;">罗赛老师于2023年独立建组，目前实验室尚无毕业生。无法通过"天花板法则"评估学生培养成果。</p>
+      </div>
+      <div style="font-size:14px; color:var(--muted);">
+        <strong>替代参考 &mdash; 导师本人的学术轨迹：</strong>
+        <ul style="padding-left:18px; margin-top:6px;">
+          <li>清华大学生物学博士（沈晓骅实验室）&rarr; 哈佛大学博士后（Frederick Alt实验室）&rarr; 清华独立PI</li>
+          <li>博士期间获吴瑞奖学金（华人圈生物学在读博士最高奖项，每年仅10人）</li>
+          <li>一作发表于 Cell Stem Cell (IF~25)、Science Immunology (IF~30)、PNAS (IF~12)</li>
+        </ul>
+        <p style="margin-top:8px;">导师本人的学术高度可以作为潜在"天花板"的参考。对于新PI，建议关注其未来2-3年的第一批学生培养情况。</p>
+        <span class="anno anno-infer">推断</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 4. 红灯绿灯速查 ==================== -->
+  <div class="section" id="sec-lights">
+    <div class="section-title"><span class="icon">&#128678;</span> 4. 红灯绿灯速查</div>
+    <div class="card-grid">
+      <div class="card" style="border-top: 3px solid var(--green);">
+        <div style="font-weight:700; color:var(--green); margin-bottom:10px;">&#9989; 绿灯信号</div>
+        <div>
+          <span class="badge badge-green">Cell Stem Cell 一作</span>
+          <span class="badge badge-green">Science Immunology 一作</span>
+          <span class="badge badge-green">PNAS 一作</span>
+          <span class="badge badge-green">吴瑞奖学金</span>
+          <span class="badge badge-green">哈佛/HHMI 博后</span>
+          <span class="badge badge-green">Frederick Alt 实验室</span>
+          <span class="badge badge-green">研究方向前沿</span>
+          <span class="badge badge-green">清华大学 Top 5</span>
+          <span class="badge badge-green">方向转换成功</span>
+        </div>
+      </div>
+      <div class="card" style="border-top: 3px solid var(--red);">
+        <div style="font-weight:700; color:var(--red); margin-bottom:10px;">&#9888;&#65039; 红灯/注意信号</div>
+        <div>
+          <span class="badge badge-red">新PI，无毕业生</span>
+          <span class="badge badge-yellow">独立后论文数量待观察</span>
+          <span class="badge badge-yellow">方向跨度大（双刃剑）</span>
+          <span class="badge badge-yellow">实验室资源尚在建设</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 5. 毕业目标匹配矩阵 ==================== -->
+  <div class="section" id="sec-match">
+    <div class="section-title"><span class="icon">&#127919;</span> 5. 毕业目标匹配矩阵</div>
+    <p style="font-size:14px; color:var(--muted); margin-bottom:14px;">用户背景：<strong>生物直博生候选人</strong></p>
+    <div class="matrix-grid">
+      <div class="matrix-cell match-high">
+        <div class="emoji">&#128300;</div>
+        <div class="m-title">继续学术深造</div>
+        <div class="m-desc">高匹配。新PI有强烈动力帮助学生发表高水平论文，导师个人有顶级期刊一作经验和广泛学术人脉。</div>
+        <div style="margin-top:6px;"><span class="badge badge-green">高度匹配</span></div>
+      </div>
+      <div class="matrix-cell match-high">
+        <div class="emoji">&#128138;</div>
+        <div class="m-title">疫苗/抗体行业</div>
+        <div class="m-desc">高匹配。HIV疫苗和广谱中和抗体研究具有极强的转化价值，清华平台也有丰富产业合作。</div>
+        <div style="margin-top:6px;"><span class="badge badge-green">高度匹配</span></div>
+      </div>
+      <div class="matrix-cell match-medium">
+        <div class="emoji">&#128187;</div>
+        <div class="m-title">生物信息/交叉方向</div>
+        <div class="m-desc">中匹配。实验室以湿实验为主（人源化小鼠、抗体工程），但也涉及生信分析（TrieDedup工具开发）。</div>
+        <div style="margin-top:6px;"><span class="badge badge-yellow">中度匹配</span></div>
+      </div>
+      <div class="matrix-cell match-medium">
+        <div class="emoji">&#127757;</div>
+        <div class="m-title">全球健康/公卫</div>
+        <div class="m-desc">中匹配。导师担任全球健康学科协调人，研究涉及HIV/SARS-CoV-2/Ebola等全球公共卫生议题。</div>
+        <div style="margin-top:6px;"><span class="badge badge-yellow">中度匹配</span></div>
+      </div>
+      <div class="matrix-cell match-medium">
+        <div class="emoji">&#128188;</div>
+        <div class="m-title">快速毕业/非学术就业</div>
+        <div class="m-desc">中度。新PI实验室初期产出可能较慢，但也可能因导师投入更多而加速。存在不确定性。</div>
+        <div style="margin-top:6px;"><span class="badge badge-yellow">不确定</span></div>
+      </div>
+      <div class="matrix-cell match-low">
+        <div class="emoji">&#128218;</div>
+        <div class="m-title">追求"大树底下好乘凉"</div>
+        <div class="m-desc">低匹配。新PI资源和人脉仍在积累中，不如资深教授能提供现成的庇荫。需自身主动性强。</div>
+        <div style="margin-top:6px;"><span class="badge badge-red">较低匹配</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 6. 教育与职业经历 ==================== -->
+  <div class="section" id="sec-timeline">
+    <div class="section-title"><span class="icon">&#128197;</span> 6. 教育与职业经历</div>
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2007 &ndash; 2011</div>
+          <div class="tl-title">厦门大学 &middot; 生命科学学院</div>
+          <div class="tl-desc">理学学士</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">2011 &ndash; 2016</div>
+          <div class="tl-title">清华大学 &middot; 医学院（沈晓骅实验室）</div>
+          <div class="tl-desc">生物学博士 | 研究方向：lncRNA与表观遗传调控</div>
+          <div class="tl-desc" style="margin-top:4px;">
+            <span class="badge badge-green">2016年吴瑞奖学金</span>
+            <span class="badge badge-blue">Cell Stem Cell 一作</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">2017 &ndash; 2023</div>
+          <div class="tl-title">哈佛大学医学院 / 波士顿儿童医院（Frederick W. Alt 实验室）</div>
+          <div class="tl-desc">博士后 | 研究方向：HIV广谱中和抗体、人源化小鼠疫苗模型</div>
+          <div class="tl-desc" style="margin-top:4px;">
+            <span class="badge badge-green">Science Immunology 一作</span>
+            <span class="badge badge-green">PNAS 一作</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2023 &ndash; 至今</div>
+          <div class="tl-title">清华大学 &middot; 基础医学院 &middot; 微生物与传染病学系</div>
+          <div class="tl-desc">助理教授（独立PI）| 全球健康学科发展总协调人</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 7. 研究方向 ==================== -->
+  <div class="section" id="sec-research">
+    <div class="section-title"><span class="icon">&#128300;</span> 7. 研究方向</div>
+    <div class="card-grid">
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px; color:var(--blue);">核心方向</div>
+        <ul style="font-size:14px; padding-left:18px;">
+          <li><strong>病毒疫苗和广谱中和抗体研究</strong>（HIV, SARS-CoV-2等）</li>
+          <li><strong>B细胞受体多样化</strong>和等位基因排除机制</li>
+          <li>通过<strong>人源化小鼠模型</strong>探究病毒免疫应答</li>
+          <li>开发<strong>新型疫苗</strong>和<strong>治疗性抗体</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px; color:var(--blue);">涉及病毒类型</div>
+        <div style="margin-bottom:10px;">
+          <span class="badge badge-blue">HIV</span>
+          <span class="badge badge-blue">SARS-CoV-2</span>
+          <span class="badge badge-blue">埃博拉病毒</span>
+          <span class="badge badge-blue">寨卡病毒</span>
+          <span class="badge badge-blue">MERS-CoV</span>
+          <span class="badge badge-blue">禽流感病毒</span>
+        </div>
+        <div style="font-weight:700; margin-bottom:8px; color:var(--accent);">博士期间方向（已转换）</div>
+        <div>
+          <span class="tag">lncRNA</span>
+          <span class="tag">表观遗传调控</span>
+          <span class="tag">干细胞分化</span>
+        </div>
+      </div>
+    </div>
+    <div class="highlight-card" style="margin-top:16px;">
+      <div class="hl-title">方向转换亮点</div>
+      <p style="font-size:14px;">罗赛老师博士期间在沈晓骅实验室从事lncRNA/表观遗传研究，博士后转入Frederick Alt实验室成功切换到HIV广谱中和抗体/疫苗领域。这一跨度极大的方向转换在Science Immunology一作论文中得到了验证，展现了出色的学习适应能力和科研潜力。</p>
+    </div>
+  </div>
+
+  <!-- ==================== 8. 发表成果分析 ==================== -->
+  <div class="section" id="sec-pubs">
+    <div class="section-title"><span class="icon">&#128196;</span> 8. 发表成果分析</div>
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:16px;">
+        <div style="text-align:center;">
+          <div style="font-size:32px; font-weight:800; color:var(--blue);">~13</div>
+          <div style="font-size:12px; color:var(--muted);">总论文数</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:32px; font-weight:800; color:var(--accent);">875</div>
+          <div style="font-size:12px; color:var(--muted);">总被引次数</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:32px; font-weight:800; color:var(--green);">3</div>
+          <div style="font-size:12px; color:var(--muted);">高影响力一作</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:32px; font-weight:800; color:var(--red);">IF 30</div>
+          <div style="font-size:12px; color:var(--muted);">最高一作IF</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 按阶段列出 -->
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px; color:var(--accent);">&#11088; 代表性一作论文</div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">&#9733;</span> Divergent lncRNAs Regulate Gene Expression and Lineage Differentiation in Pluripotent Cells</div>
+        <div class="pub-meta"><strong class="pub-journal">Cell Stem Cell</strong> (2016) &middot; IF ~25 &middot; <strong>第一作者</strong> &middot; 博士期间</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">&#9733;</span> An antibody from single human VH-rearranging mouse neutralizes all SARS-CoV-2 variants through BA.5 by inhibiting membrane fusion</div>
+        <div class="pub-meta"><strong class="pub-journal">Science Immunology</strong> (2022) &middot; IF ~30 &middot; <strong>第一作者/共同第一</strong> &middot; 博士后期间</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">&#9733;</span> Humanized V(D)J-rearranging and TdT-expressing mouse vaccine models with physiological HIV-1 broadly neutralizing antibody precursors</div>
+        <div class="pub-meta"><strong class="pub-journal">PNAS</strong> (2023) &middot; IF ~12 &middot; <strong>第一作者/共同第一</strong> &middot; 博士后/过渡期</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px;">全部论文列表</div>
+
+      <div style="font-weight:600; color:var(--muted); font-size:13px; margin-bottom:8px;">博士期间 (2015-2017)</div>
+      <div class="pub-item">
+        <div class="pub-title">1. CapZ regulates autophagosomal membrane shaping by promoting actin assembly inside the isolation membrane</div>
+        <div class="pub-meta"><strong class="pub-journal">Nature Cell Biology</strong> (2015) &middot; 参与作者</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">2. Divergent lncRNAs Regulate Gene Expression and Lineage Differentiation in Pluripotent Cells</div>
+        <div class="pub-meta"><strong class="pub-journal">Cell Stem Cell</strong> (2016) &middot; <strong>第一作者</strong></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">3. Cis- and trans-acting lncRNAs in pluripotency and reprogramming</div>
+        <div class="pub-meta"><strong class="pub-journal">Curr Opin Genet Dev</strong> (2017) &middot; 综述共同一作</div>
+      </div>
+
+      <div style="font-weight:600; color:var(--muted); font-size:13px; margin: 12px 0 8px;">博士后/过渡期 (2018-2019)</div>
+      <div class="pub-item">
+        <div class="pub-title">4. Mouse knockout models reveal largely dispensable but context-dependent functions of lncRNAs</div>
+        <div class="pub-meta"><strong class="pub-journal">J Mol Cell Biol</strong> (2018) &middot; 参与</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">5. Insight into novel RNA-binding activities via large-scale analysis of lncRNA-bound proteome and IDH1-bound transcriptome</div>
+        <div class="pub-meta"><strong class="pub-journal">Nucleic Acids Research</strong> (2019) &middot; 参与</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">6. The lncRNA Hand2os1/Uph locus orchestrates heart development</div>
+        <div class="pub-meta"><strong class="pub-journal">Development</strong> (2019) &middot; 参与</div>
+      </div>
+
+      <div style="font-weight:600; color:var(--muted); font-size:13px; margin: 12px 0 8px;">博士后/独立期 (2020-2025)</div>
+      <div class="pub-item">
+        <div class="pub-title">7. Engineered B cells expressing an anti-HIV antibody enable memory retention, isotype switching and clonal expansion</div>
+        <div class="pub-meta"><strong class="pub-journal">Nature Communications</strong> (2020) &middot; 参与</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">8. An antibody from single human VH-rearranging mouse neutralizes all SARS-CoV-2 variants through BA.5 by inhibiting membrane fusion</div>
+        <div class="pub-meta"><strong class="pub-journal">Science Immunology</strong> (2022) &middot; <strong>第一作者/共同第一</strong></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">9. Humanized V(D)J-rearranging and TdT-expressing mouse vaccine models with physiological HIV-1 broadly neutralizing antibody precursors</div>
+        <div class="pub-meta"><strong class="pub-journal">PNAS</strong> (2023) &middot; <strong>第一作者/共同第一</strong></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">10. TrieDedup: a fast trie-based deduplication algorithm to handle ambiguous bases in high-throughput sequencing</div>
+        <div class="pub-meta"><strong class="pub-journal">BMC Bioinformatics</strong> (2024) &middot; 参与</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">11. First-ever ASM Global Research Symposium on Microbes in Human Health in Tsinghua</div>
+        <div class="pub-meta"><strong class="pub-journal">mSphere</strong> (2025) &middot; 参与</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">12. Human gut prophage landscape identifies a prophage-mediated fucosylation mechanism alleviating colitis</div>
+        <div class="pub-meta"><strong class="pub-journal">Nature Communications</strong> (2025) &middot; 通讯/参与</div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">13. Recurrent SARS-CoV-2 Omicron broadly neutralizing humanized antibodies in different single human VH1-2-rearranging mouse models</div>
+        <div class="pub-meta"><strong class="pub-journal">PNAS</strong> (2025) &middot; 参与</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 9. 合作者网络 ==================== -->
+  <div class="section" id="sec-collab">
+    <div class="section-title"><span class="icon">&#129309;</span> 9. 合作者网络</div>
+    <div class="collab-list">
+      <div class="collab-card" style="border-left:3px solid var(--accent);">
+        <div class="collab-name">Frederick W. Alt</div>
+        <div class="collab-role">哈佛大学医学院 / HHMI | 博后导师 | 免疫学大牛</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">合作论文: Science Immunology (2022), PNAS (2023, 2025), Nature Communications (2020)</div>
+      </div>
+      <div class="collab-card" style="border-left:3px solid var(--blue);">
+        <div class="collab-name">沈晓骅</div>
+        <div class="collab-role">清华大学医学院 | 博士导师</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">合作论文: Cell Stem Cell (2016), Curr Opin Genet Dev (2017)</div>
+      </div>
+      <div class="collab-card">
+        <div class="collab-name">Jiazhi Hu (胡家志)</div>
+        <div class="collab-role">合作者 | 生信工具开发</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">合作论文: BMC Bioinformatics (2024)</div>
+      </div>
+      <div class="collab-card">
+        <div class="collab-name">其他合作者</div>
+        <div class="collab-role">Gao H, Wang Y-T 等 | 肠道噬菌体方向</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">合作论文: Nature Communications (2025)</div>
+      </div>
+    </div>
+    <div style="font-size:13px; color:var(--muted); margin-top:12px;">
+      <span class="anno anno-fact">事实</span> 与Frederick Alt实验室的长期合作在2025年仍有论文产出，说明海外学术人脉持续活跃。
+    </div>
+  </div>
+
+  <!-- ==================== 10. 经费与基金 ==================== -->
+  <div class="section" id="sec-fund">
+    <div class="section-title"><span class="icon">&#128176;</span> 10. 经费与基金</div>
+    <div class="card">
+      <div class="highlight-card">
+        <div class="hl-title">公开信息有限</div>
+        <p style="font-size:14px;">未在NSFC（国家自然科学基金委）公开数据库中查询到具体项目信息。</p>
+      </div>
+      <table class="styled-table">
+        <thead>
+          <tr><th>项目</th><th>来源</th><th>状态</th><th>标注</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>清华大学人才引进启动基金</td>
+            <td>清华大学</td>
+            <td><span class="badge badge-green">大概率有</span></td>
+            <td><span class="anno anno-infer">推断</span></td>
+          </tr>
+          <tr>
+            <td>NSFC 青年/面上基金</td>
+            <td>国自然</td>
+            <td><span class="badge badge-yellow">待确认</span></td>
+            <td><span class="anno anno-infer">推断</span></td>
+          </tr>
+          <tr>
+            <td>海外高层次青年人才计划</td>
+            <td>组织部</td>
+            <td><span class="badge badge-yellow">可能</span></td>
+            <td><span class="anno anno-infer">推断</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:13px; color:var(--muted); margin-top:12px;">
+        <span class="anno anno-infer">推断</span> 作为清华大学新引进的助理教授（海归背景），通常可获得不低于200万元的启动经费。清华的平台保障了实验室基本运转不成问题。建议面谈时直接询问经费和招生名额情况。
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== 11. 学术指标 ==================== -->
+  <div class="section" id="sec-metrics">
+    <div class="section-title"><span class="icon">&#128202;</span> 11. 学术指标</div>
+    <div class="card-grid">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:48px; font-weight:800; color:var(--blue);">~13</div>
+        <div style="font-size:13px; color:var(--muted);">论文总数</div>
+        <div style="font-size:11px; color:var(--muted);">(ResearchGate)</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:48px; font-weight:800; color:var(--accent);">875</div>
+        <div style="font-size:13px; color:var(--muted);">总被引次数</div>
+        <div style="font-size:11px; color:var(--muted);">(ResearchGate)</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:48px; font-weight:800; color:var(--green);">~8-10</div>
+        <div style="font-size:13px; color:var(--muted);">h-index (估算)</div>
+        <div style="font-size:11px; color:var(--muted);"><span class="anno anno-infer">推断</span></div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:48px; font-weight:800; color:var(--red);">4,394</div>
+        <div style="font-size:13px; color:var(--muted);">ResearchGate 阅读量</div>
+        <div style="font-size:11px; color:var(--muted);">(ResearchGate)</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div style="font-weight:700; margin-bottom:8px;">指标解读</div>
+      <p style="font-size:14px; color:var(--muted);">
+        对于一位2023年才独立建组的新PI，这些指标非常亮眼。875次被引主要贡献来自博士期间的Cell Stem Cell论文和博后期间的Science Immunology论文。论文总量虽然不多（~13篇），但"重质不重量"的发表策略值得肯定——平均每篇被引约67次，远超生物学领域平均水平。
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== 12. 院系背景 ==================== -->
+  <div class="section" id="sec-dept">
+    <div class="section-title"><span class="icon">&#127963;&#65039;</span> 12. 院系背景</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>学校</td><td>清华大学（C9联盟 / QS世界前20）</td></tr>
+        <tr><td>院系</td><td>基础医学院 &middot; 微生物与传染病学系</td></tr>
+        <tr><td>学科水平</td><td>清华医学学科近年发展迅速，基础医学属于国内顶尖梯队</td></tr>
+        <tr><td>优势</td><td>平台资源丰富、交叉学科氛围好、国际合作广泛</td></tr>
+        <tr><td>注意</td><td>清华医学院相比北医/上医历史较短，但发展势头强劲</td></tr>
+      </table>
+    </div>
+    <div class="highlight-card">
+      <div class="hl-title">平台评价</div>
+      <p style="font-size:14px;">清华大学作为国内顶级综合性大学，在科研仪器、国际交流、跨学科合作等方面具有无可比拟的优势。基础医学院近年来大量引进海归青年PI，学术氛围活跃。对于直博生而言，清华平台本身就是一张强力名片，有利于未来学术发展和就业。</p>
+    </div>
+  </div>
+
+  <!-- ==================== 13. PUA/PUSH风险评估 ==================== -->
+  <div class="section" id="sec-pua">
+    <div class="section-title"><span class="icon">&#128680;</span> 13. PUA/PUSH 风险评估</div>
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px;">风险等级仪表</div>
+      <div class="risk-meter">
+        <span style="font-size:13px; color:var(--green); font-weight:600;">低风险</span>
+        <div class="risk-bar-bg">
+          <div class="risk-pointer" style="left: 30%;"></div>
+        </div>
+        <span style="font-size:13px; color:var(--red); font-weight:600;">高风险</span>
+      </div>
+      <p style="font-size:13px; color:var(--muted); margin-top:8px;">
+        指针位置: <strong>偏低 (30%)</strong> &mdash; 数据不足，但现有信号整体偏正面。
+      </p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px; color:var(--green);">正面信号</div>
+        <ul style="font-size:14px; padding-left:18px; color:var(--muted);">
+          <li>未在任何公开平台发现负面评价</li>
+          <li>新PI通常更尊重和关注学生</li>
+          <li>本人受过顶级实验室训练（Alt Lab），学术规范性有保障</li>
+          <li>研究方向前沿、有意义，不太可能让学生做无聊/机械重复的工作</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px; color:var(--yellow);">待观察</div>
+        <ul style="font-size:14px; padding-left:18px; color:var(--muted);">
+          <li>新PI可能工作强度较大（实验室建设初期）</li>
+          <li>无毕业学生反馈，管理风格未知</li>
+          <li>建议面谈了解对学生工作时间、假期的态度</li>
+          <li>可尝试联系实验室现有成员了解情况</li>
+        </ul>
+      </div>
+    </div>
+    <p style="font-size:13px; color:var(--muted); margin-top:8px;">
+      <span class="anno anno-infer">推断</span> 整体评估偏乐观，但因数据不足无法给出确定判断。强烈建议面谈时重点了解。
+    </p>
+  </div>
+
+  <!-- ==================== 14. 多维度评分 ==================== -->
+  <div class="section" id="sec-scores">
+    <div class="section-title"><span class="icon">&#128200;</span> 14. 多维度评分</div>
+    <div class="card">
+
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">研究方向与前景 (10%)</span>
+          <span class="val">4.5 / 5</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:90%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">HIV疫苗/广谱中和抗体是当前热点，有强大的转化潜力。</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">发表成果与质量 (15%)</span>
+          <span class="val">4.0 / 5</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:80%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">对于新PI，论文质量很高：Cell Stem Cell一作、Science Immunology一作、PNAS一作。</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">学生培养实绩 (15%)</span>
+          <span class="val">2.5 / 5</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:50%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">新PI无毕业生，但本人学术路径是优秀参考。 <span class="anno anno-infer">推断</span></div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">平台与资源 (15%)</span>
+          <span class="val">4.5 / 5</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:90%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">清华大学 Top 5 平台，但新实验室硬件资源尚在建设中。</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">独立性与成长空间 (10%)</span>
+          <span class="val">4.0 / 5</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:80%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">新实验室学生有更多机会参与核心课题，导师关注度高。</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">职业轨迹与势头 (5%)</span>
+          <span class="val">4.5 / 5</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:90%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">上升轨迹明显：吴瑞奖 → 哈佛博后 → 回清华独立PI。</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">PUA/PUSH 风险 (10%)</span>
+          <span class="val">3.5 / 5</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:70%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">无负面信息，中立偏正面（新PI通常更尊重学生）。 <span class="anno anno-infer">推断</span></div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">时间自由度 (10%)</span>
+          <span class="val">3.0 / 5</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:60%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">无数据，给予中性评价。 <span class="anno anno-infer">推断</span></div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">毕业目标匹配 (10%)</span>
+          <span class="val">4.0 / 5</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:80%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">对于直博生，学术型新PI很适合：导师有动力培养学生、发表高水平论文。</div>
+      </div>
+
+      <!-- Summary -->
+      <div style="margin-top:24px; padding:20px; background:linear-gradient(135deg, rgba(217,119,6,.08), rgba(37,99,235,.06)); border-radius:var(--radius); text-align:center;">
+        <div style="font-size:14px; color:var(--muted);">加权综合评分</div>
+        <div style="font-size:56px; font-weight:800; color:var(--accent); line-height:1.1;">3.8</div>
+        <div style="font-size:14px; color:var(--muted);">/ 5.0</div>
+        <div style="font-size:13px; color:var(--muted); margin-top:8px;">
+          0.10&times;4.5 + 0.15&times;4.0 + 0.15&times;2.5 + 0.15&times;4.5 + 0.10&times;4.0 + 0.05&times;4.5 + 0.10&times;3.5 + 0.10&times;3.0 + 0.10&times;4.0 = <strong>3.775 &asymp; 3.8</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 15. 总结与建议 ==================== -->
+  <div class="section" id="sec-summary">
+    <div class="section-title"><span class="icon">&#128221;</span> 15. 总结与建议</div>
+    <div class="card">
+      <div class="highlight-card" style="border-left-color: var(--green);">
+        <div class="hl-title" style="color:var(--green);">整体评价</div>
+        <p style="font-size:14px;">
+          罗赛老师是一位学术背景优异、正处于事业上升期的新锐PI。她成功完成了从lncRNA到HIV广谱中和抗体的方向转换，拥有Cell Stem Cell、Science Immunology、PNAS三篇高影响力一作论文，并获得过吴瑞奖学金。在清华大学这一顶级平台上独立建组，研究方向前沿且有转化价值。
+        </p>
+      </div>
+
+      <div style="font-weight:700; margin: 16px 0 10px; font-size:16px;">&#9989; 推荐理由</div>
+      <ul style="font-size:14px; padding-left:18px; margin-bottom:16px; line-height:2;">
+        <li><strong>学术品味经过验证</strong>：在沈晓骅和Frederick Alt两个顶级实验室受训，科研判断力有保障</li>
+        <li><strong>新PI的红利</strong>：实验室处于建设初期，学生有机会参与核心课题、获得更多指导和关注</li>
+        <li><strong>方向前景好</strong>：HIV疫苗和广谱中和抗体是免疫学/传染病学的热点方向，无论学术还是产业都有广阔空间</li>
+        <li><strong>国际视野</strong>：哈佛博后经历 + 持续的海外合作，有利于学生开拓国际学术视野</li>
+        <li><strong>清华平台</strong>：仪器设备、交叉合作、国际交流等资源丰富</li>
+      </ul>
+
+      <div style="font-weight:700; margin: 16px 0 10px; font-size:16px;">&#9888;&#65039; 需关注的风险</div>
+      <ul style="font-size:14px; padding-left:18px; margin-bottom:16px; line-height:2;">
+        <li><strong>新实验室不确定性</strong>：实验体系搭建需要时间，前1-2年可能产出较慢</li>
+        <li><strong>无毕业生参考</strong>：无法通过师兄姐去向评估培养能力</li>
+        <li><strong>管理风格未知</strong>：建议面谈深入了解</li>
+      </ul>
+
+      <div style="font-weight:700; margin: 16px 0 10px; font-size:16px;">&#128161; 面谈建议清单</div>
+      <table class="styled-table">
+        <thead><tr><th>#</th><th>问题</th><th>目的</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>实验室目前有多少学生/博后？招生名额有几个？</td><td>了解资源分配</td></tr>
+          <tr><td>2</td><td>实验室主要在推进哪些课题？直博生可能参与哪个方向？</td><td>评估课题匹配</td></tr>
+          <tr><td>3</td><td>对学生的工作时间和考勤有什么要求？</td><td>评估时间自由度</td></tr>
+          <tr><td>4</td><td>您期望直博生多长时间能发表第一篇论文？</td><td>评估毕业节奏</td></tr>
+          <tr><td>5</td><td>实验室经费和设备情况如何？是否有与Alt Lab的联合培养机会？</td><td>评估资源和国际交流</td></tr>
+          <tr><td>6</td><td>您对学生毕业后的发展有什么期望和支持？</td><td>评估培养理念</td></tr>
+          <tr><td>7</td><td>目前实验室的实验体系搭建到什么程度了？</td><td>评估入组后能否快速上手</td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:20px; padding:16px; background:#F0FDF4; border-radius:var(--radius); border:1px solid #BBF7D0;">
+        <div style="font-weight:700; color:var(--green); margin-bottom:4px;">最终建议</div>
+        <p style="font-size:14px;">
+          <strong>推荐报考</strong>，但建议做好充分的面谈准备。罗赛老师属于典型的"高潜力新锐PI"，对于有学术志向、愿意和导师一起成长的直博生来说，这是一个风险与机遇并存、但整体偏正面的选择。关键在于面谈时确认双方的期望是否匹配。如果你希望"跟着大树好乘凉"或追求确定性，那可能需要额外考虑；如果你愿意接受新实验室的挑战、与导师共同成长，这会是一个很好的机会。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 附录: 数据来源 ==================== -->
+  <div class="section" id="sec-sources">
+    <div class="section-title"><span class="icon">&#128218;</span> 附录: 数据来源</div>
+    <div class="card">
+      <table class="styled-table">
+        <thead><tr><th>来源</th><th>URL</th><th>数据类型</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>ResearchGate</td>
+            <td><a href="https://www.researchgate.net/profile/Sai-Luo-6" target="_blank">researchgate.net/profile/Sai-Luo-6</a></td>
+            <td>论文列表、被引数据、阅读量</td>
+          </tr>
+          <tr>
+            <td>个人主页</td>
+            <td><a href="https://sailuo.weebly.com/" target="_blank">sailuo.weebly.com</a></td>
+            <td>教育背景、研究方向、联系方式</td>
+          </tr>
+          <tr>
+            <td>清华大学基础医学院</td>
+            <td>-</td>
+            <td>院系信息、职称</td>
+          </tr>
+          <tr>
+            <td>PubMed / Google Scholar</td>
+            <td>-</td>
+            <td>论文验证、被引数据交叉检查</td>
+          </tr>
+          <tr>
+            <td>NSFC 公开数据库</td>
+            <td>-</td>
+            <td>未查到具体项目信息</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:16px; font-size:13px; color:var(--muted);">
+        <p><strong>数据获取时间：</strong>2026年3月</p>
+        <p><strong>标注说明：</strong>
+          <span class="anno anno-fact">事实</span> 表示来自可靠公开来源的确认信息；
+          <span class="anno anno-infer">推断</span> 表示基于已知信息的合理推测，仅供参考。
+        </p>
+        <p><strong>免责声明：</strong>本报告基于公开可获取的信息自动生成，旨在为研究生选择导师提供参考。报告中的推断性内容不代表事实，建议结合面谈和多方信息综合判断。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Generated by <strong>DeepTutor v4</strong> &mdash; Powered by Claude<br>
+    <span style="font-size:11px;">报告生成时间: 2026-03-31 | 仅供个人参考，请勿传播</span>
+  </div>
+
+</div><!-- .main -->
+
+</body>
+</html>

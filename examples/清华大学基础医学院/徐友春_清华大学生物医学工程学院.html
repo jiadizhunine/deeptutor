@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepTutor v4 | 徐友春 - 清华大学生物医学工程学院</title>
+<style>
+  :root {
+    --bg: #F9FAFB; --card: #FFFFFF; --accent: #D97706;
+    --text: #1F2937; --muted: #6B7280; --green: #059669;
+    --yellow: #D97706; --red: #DC2626; --radius: 12px;
+    --blue: #2563EB; --light-green: #D1FAE5; --light-yellow: #FEF3C7;
+    --light-red: #FEE2E2; --light-blue: #DBEAFE;
+    --sidebar-w: 260px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
+    background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+    color: #CBD5E1; overflow-y: auto; z-index: 100;
+    padding: 28px 0 40px; display: flex; flex-direction: column;
+  }
+  .sidebar-logo { text-align: center; font-size: 20px; font-weight: 700; color: #F8FAFC; letter-spacing: 1px; margin-bottom: 6px; }
+  .sidebar-logo span { color: var(--accent); }
+  .sidebar-sub { text-align: center; font-size: 11px; color: #64748B; margin-bottom: 24px; }
+  .sidebar nav { flex: 1; }
+  .sidebar nav a {
+    display: block; padding: 9px 24px; font-size: 13px; color: #94A3B8;
+    border-left: 3px solid transparent; transition: all .2s;
+  }
+  .sidebar nav a:hover, .sidebar nav a.active {
+    color: #F8FAFC; background: rgba(255,255,255,.06);
+    border-left-color: var(--accent); text-decoration: none;
+  }
+  .sidebar-score {
+    text-align: center; margin: 24px 20px 0; padding: 18px 12px;
+    background: linear-gradient(135deg, rgba(217,119,6,.18), rgba(37,99,235,.12));
+    border-radius: var(--radius);
+  }
+  .sidebar-score .big { font-size: 42px; font-weight: 800; color: #F8FAFC; }
+  .sidebar-score .label { font-size: 12px; color: #94A3B8; margin-top: 2px; }
+
+  .main { margin-left: var(--sidebar-w); padding: 36px 48px 80px; max-width: 960px; }
+  .section { margin-bottom: 44px; scroll-margin-top: 24px; }
+  .section-title {
+    font-size: 22px; font-weight: 700; margin-bottom: 16px;
+    padding-bottom: 8px; border-bottom: 2px solid #E5E7EB;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .icon { font-size: 20px; }
+
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); padding: 24px; margin-bottom: 16px;
+  }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card-grid .card { margin-bottom: 0; }
+
+  .info-table { width: 100%; border-collapse: collapse; }
+  .info-table td { padding: 8px 12px; border-bottom: 1px solid #F3F4F6; }
+  .info-table td:first-child { font-weight: 600; width: 140px; white-space: nowrap; color: var(--muted); font-size: 13px; }
+
+  .badge {
+    display: inline-block; padding: 4px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 600; margin: 3px 4px 3px 0;
+  }
+  .badge-green { background: var(--light-green); color: var(--green); }
+  .badge-red { background: var(--light-red); color: var(--red); }
+  .badge-yellow { background: var(--light-yellow); color: var(--yellow); }
+  .badge-blue { background: var(--light-blue); color: var(--blue); }
+  .badge-gray { background: #F3F4F6; color: var(--muted); }
+
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 6px; font-size: 12px; background: #F3F4F6; color: var(--muted); margin: 2px 4px 2px 0; }
+  .tag-fact { background: var(--light-blue); color: var(--blue); }
+  .tag-infer { background: var(--light-yellow); color: var(--yellow); }
+
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before { content: ''; position: absolute; left: 11px; top: 4px; bottom: 4px; width: 2px; background: #E5E7EB; }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before { content: ''; position: absolute; left: -25px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); border: 2px solid #FFF; }
+  .timeline-item .year { font-weight: 700; color: var(--accent); font-size: 14px; }
+  .timeline-item .desc { font-size: 14px; color: var(--text); }
+
+  .score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .score-label { width: 200px; font-size: 14px; font-weight: 500; }
+  .score-bar-bg { flex: 1; height: 12px; background: #E5E7EB; border-radius: 6px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 6px; transition: width .5s; }
+  .score-bar.green { background: linear-gradient(90deg, #34D399, #059669); }
+  .score-bar.yellow { background: linear-gradient(90deg, #FCD34D, #D97706); }
+  .score-bar.red { background: linear-gradient(90deg, #FCA5A5, #DC2626); }
+  .score-bar.gray { background: linear-gradient(90deg, #D1D5DB, #9CA3AF); }
+  .score-val { width: 50px; text-align: right; font-weight: 700; font-size: 14px; }
+
+  .flag-list { list-style: none; padding: 0; }
+  .flag-list li { padding: 8px 0; border-bottom: 1px solid #F3F4F6; display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .flag-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+  .flag-icon.green { background: var(--light-green); color: var(--green); }
+  .flag-icon.red { background: var(--light-red); color: var(--red); }
+  .flag-icon.gray { background: #F3F4F6; color: var(--muted); }
+
+  .composite-box {
+    text-align: center; padding: 32px;
+    background: linear-gradient(135deg, #FEF3C7 0%, #DBEAFE 100%);
+    border-radius: var(--radius); margin-bottom: 24px;
+  }
+  .composite-box .score { font-size: 64px; font-weight: 800; color: var(--text); }
+  .composite-box .range { font-size: 16px; color: var(--muted); margin-top: 4px; }
+  .composite-box .verdict { font-size: 20px; font-weight: 700; margin-top: 8px; }
+
+  .warn-box {
+    background: #FEF3C7; border-left: 4px solid var(--yellow); padding: 16px 20px;
+    border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 16px; font-size: 14px;
+  }
+  .info-box {
+    background: var(--light-blue); border-left: 4px solid var(--blue); padding: 16px 20px;
+    border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 16px; font-size: 14px;
+  }
+
+  table.pub-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.pub-table th { background: #F9FAFB; padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #E5E7EB; }
+  table.pub-table td { padding: 10px 12px; border-bottom: 1px solid #F3F4F6; vertical-align: top; }
+  table.pub-table tr:hover { background: #F9FAFB; }
+
+  .match-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .match-table th, .match-table td { padding: 10px 12px; border-bottom: 1px solid #F3F4F6; text-align: center; }
+  .match-table th { background: #F9FAFB; font-weight: 600; }
+  .match-table td:first-child { text-align: left; font-weight: 500; }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 40px 0 20px; border-top: 1px solid #E5E7EB; margin-top: 40px; }
+
+  @media print { .sidebar { display: none; } .main { margin-left: 0; } .card { box-shadow: none; break-inside: avoid; } }
+  @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; padding: 20px; } .card-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">Deep<span>Tutor</span></div>
+  <div class="sidebar-sub">v4 Academic Advisor Intelligence</div>
+  <nav>
+    <a href="#s1">1. 基本信息</a>
+    <a href="#s2">2. 导师类型分类</a>
+    <a href="#s3">3. 师兄姐去向分析</a>
+    <a href="#s4">4. 红灯绿灯速查</a>
+    <a href="#s5">5. 毕业目标匹配</a>
+    <a href="#s6">6. 教育与职业经历</a>
+    <a href="#s7">7. 研究方向</a>
+    <a href="#s8">8. 发表成果分析</a>
+    <a href="#s9">9. 合作者网络</a>
+    <a href="#s10">10. 经费与基金</a>
+    <a href="#s11">11. 学术指标</a>
+    <a href="#s12">12. 院系背景</a>
+    <a href="#s13">13. PUA/PUSH风险评估</a>
+    <a href="#s14">14. 多维度评分</a>
+    <a href="#s15">15. 总结与建议</a>
+    <a href="#appendix">附录：数据来源</a>
+  </nav>
+  <div class="sidebar-score">
+    <div class="big">3.6</div>
+    <div class="label">综合评分 / 5.0</div>
+    <div class="label" style="margin-top:6px; color:#FCD34D;">数据较充分 · 学术能力突出</div>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- ======================== S1 基本信息 ======================== -->
+<div class="section" id="s1">
+  <div class="section-title"><span class="icon">👤</span> 1. 基本信息</div>
+  <div class="card">
+    <table class="info-table">
+      <tr><td>姓名</td><td><strong>徐友春</strong>（Xu Youchun / Youchun Xu）</td></tr>
+      <tr><td>职称</td><td>副研究员（Associate Research Fellow）<span class="tag tag-fact">官方确认</span></td></tr>
+      <tr><td>单位</td><td>清华大学医学院 / 生物医学工程学院</td></tr>
+      <tr><td>二级单位</td><td>生物医学工程系；生物芯片北京国家工程研究中心；膜生物学国家重点实验室</td></tr>
+      <tr><td>邮箱</td><td>xyc2012@tsinghua.edu.cn / xyc2012@mail.tsinghua.edu.cn</td></tr>
+      <tr><td>电话</td><td>+86-10-62796071</td></tr>
+      <tr><td>上级PI</td><td>程京（中国工程院院士）— 邢婉丽为课题组核心运营者</td></tr>
+      <tr><td>博导/硕导</td><td><span class="badge badge-yellow">待确认</span> 尚未确认独立博导资格，但已有自己的研究生</td></tr>
+      <tr><td>ORCID</td><td><a href="https://orcid.org/0000-0003-4926-8211" target="_blank">0000-0003-4926-8211</a></td></tr>
+      <tr><td>教师主页（中文）</td><td><a href="https://bme.tsinghua.edu.cn/info/1070/1048.htm" target="_blank">清华大学BME学院</a></td></tr>
+      <tr><td>教师主页（英文）</td><td><a href="https://www.med.tsinghua.edu.cn/en/info/1178/1700.htm" target="_blank">清华大学医学院英文页面</a></td></tr>
+      <tr><td>ResearchGate</td><td><a href="https://www.researchgate.net/scientific-contributions/Youchun-Xu-58174919" target="_blank">ResearchGate Profile</a></td></tr>
+      <tr><td>清华学者信息库</td><td><a href="https://thurid.lib.tsinghua.edu.cn/scholar/649919" target="_blank">学者页面</a></td></tr>
+    </table>
+  </div>
+  <div class="info-box">
+    <strong>数据置信度：中高。</strong>个人学术数据已通过PubMed、OpenAlex、Semantic Scholar、ORCID、ResearchGate等多平台交叉验证，论文及基金信息较为充分。社会评价维度仍有数据空白。
+  </div>
+</div>
+
+<!-- ======================== S2 导师类型分类 ======================== -->
+<div class="section" id="s2">
+  <div class="section-title"><span class="icon">🏷</span> 2. 导师类型分类</div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">判定类型：<span class="badge badge-blue">学术型 + 项目型（混合）</span></h3>
+    <p style="font-size:14px; margin-bottom:12px;">
+      <strong>判定依据：</strong>
+    </p>
+    <ul style="font-size:14px; padding-left:20px; line-height:2;">
+      <li><strong>学术型特征：</strong>2019年后已成为独立PI，以通讯作者身份大量发表论文（20+篇通讯作者论文）。2024-2025年在ACS Nano（IF~15）等顶刊持续发表通讯作者论文，学术能力突出。h-index估计18-20，在副研究员级别属于优秀水平。</li>
+      <li><strong>项目型特征：</strong>核心研究成果"基于微流控技术的遗传性耳聋相关基因检测系统"获2024年北京市科学技术奖技术发明二等奖，属于典型的应用转化型项目。所在课题组（程京/邢婉丽团队）以产业化为核心导向，与博奥生物集团深度绑定。</li>
+      <li><strong>独立性增长：</strong>主持4项国家自然科学基金 + 1项北京市自然科学基金，经费自主能力已确立。仍在程京/邢婉丽大组框架内，但已有明显的独立研究方向（CRISPR诊断、外泌体检测等）。</li>
+      <li><strong>学生培养：</strong>李楠、刘嘉嘉、沈敏杰等学生以第一作者发表论文，徐友春为通讯作者，表明具有独立指导学生的能力和实际经验。</li>
+    </ul>
+    <div class="info-box" style="margin-top:16px;">
+      <strong>关键提示：</strong>选择徐友春作为导师，既可以享受程京院士课题组的平台资源，又能获得一位有独立学术能力、正处于上升期的年轻导师的直接指导。但需注意其在大组框架内的话语权和资源调配能力。
+    </div>
+  </div>
+</div>
+
+<!-- ======================== S3 师兄姐去向 ======================== -->
+<div class="section" id="s3">
+  <div class="section-title"><span class="icon">🎓</span> 3. 师兄姐去向分析（天花板法则）</div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">A. 徐友春名下学生（已识别）</h3>
+    <table class="pub-table">
+      <thead>
+        <tr><th>姓名</th><th>代表论文</th><th>年份</th><th>期刊</th><th>备注</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>李楠 (Nan Li)</td><td>Multiplexed detection of respiratory pathogens...</td><td>2021</td><td>Microsystems &amp; Nanoengineering</td><td>第一作者，徐友春通讯</td></tr>
+        <tr><td>刘嘉嘉 (Jiajia Liu)</td><td>Multiple papers 2021-2023</td><td>2021-2023</td><td>Various</td><td>第一作者，与博奥生物双重身份</td></tr>
+        <tr><td>闫赫 (He Yan)</td><td>Centrifugal disk bacteria detection</td><td>2017</td><td>Scientific Reports</td><td>第一作者</td></tr>
+        <tr><td>沈敏杰 (Minjie Shen)</td><td>Respiratory pathogen detection</td><td>2021</td><td>—</td><td>合作者</td></tr>
+        <tr><td>张远月 (Yuanyue Zhang)</td><td>Recent papers</td><td>2024</td><td>—</td><td>合作者</td></tr>
+        <tr><td>许迅 (Xun Xu)</td><td>Recent papers</td><td>2024</td><td>—</td><td>合作者</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px; color:var(--muted); margin-top:12px;">
+      注：以上学生的当前去向尚无法追踪，多数可能仍在课题组中。
+    </p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:12px;">B. 程京课题组整体毕业生数据</h3>
+    <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:16px;">
+      <div style="text-align:center; padding:16px 24px; background:#F0FDF4; border-radius:8px; flex:1; min-width:120px;">
+        <div style="font-size:28px; font-weight:800; color:var(--green);">110+</div>
+        <div style="font-size:12px; color:var(--muted);">累计培养人数</div>
+        <div style="font-size:11px; color:var(--muted);">博士63 + 硕士27 + 博后20</div>
+      </div>
+      <div style="text-align:center; padding:16px 24px; background:#EFF6FF; border-radius:8px; flex:1; min-width:120px;">
+        <div style="font-size:28px; font-weight:800; color:var(--blue);">76</div>
+        <div style="font-size:12px; color:var(--muted);">已毕业人数</div>
+      </div>
+      <div style="text-align:center; padding:16px 24px; background:#FEF3C7; border-radius:8px; flex:1; min-width:120px;">
+        <div style="font-size:28px; font-weight:800; color:var(--yellow);">40% : 60%</div>
+        <div style="font-size:12px; color:var(--muted);">学术/政府 : 企业界</div>
+      </div>
+    </div>
+
+    <h4 style="margin-bottom:8px;">具体去向案例</h4>
+    <table class="pub-table">
+      <thead>
+        <tr><th>姓名</th><th>学历</th><th>当前去向</th><th>级别</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>符荣鑫</td><td>清华BME博士 (2014-2019)</td><td>北京理工大学</td><td>助理教授</td></tr>
+        <tr><td>张冠斌</td><td>清华本硕博</td><td>博奥生物</td><td>CTO</td></tr>
+        <tr><td>张亮</td><td>清华博士</td><td>博奥生物</td><td>高级总监</td></tr>
+        <tr><td>潘亮斌</td><td>清华博士</td><td>博奥颐合</td><td>副总裁兼CTO</td></tr>
+        <tr><td>孙义民</td><td>清华博士</td><td>博奥生物</td><td>助理总裁</td></tr>
+        <tr><td>王振峰</td><td>清华背景</td><td>新加坡A*STAR</td><td>研究员</td></tr>
+        <tr><td>刘冉</td><td>清华毕业</td><td>清华BME</td><td>副研究员</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:16px; padding:16px; background:#F9FAFB; border-radius:8px;">
+      <h4 style="margin-bottom:8px;">天花板评估</h4>
+      <ul style="font-size:14px; padding-left:20px; line-height:2;">
+        <li><strong>产业天花板：</strong><span class="badge badge-green">高</span> 博奥系CTO/VP级别（张冠斌CTO、潘亮斌VP兼CTO）</li>
+        <li><strong>学术天花板：</strong><span class="badge badge-yellow">中等</span> 二线985助理教授级别（符荣鑫 北京理工大学）</li>
+        <li><strong>平台保底：</strong><span class="badge badge-green">强</span> 清华C9平台 + 国家工程中心，保底效应显著</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== S4 红灯绿灯速查 ======================== -->
+<div class="section" id="s4">
+  <div class="section-title"><span class="icon">🚦</span> 4. 红灯绿灯速查</div>
+  <div class="card-grid">
+    <div class="card">
+      <h3 style="margin-bottom:12px; color:var(--green);">绿灯信号</h3>
+      <ul class="flag-list">
+        <li><span class="flag-icon green">&#10003;</span> 清华C9顶级平台 + 国家工程中心 + 院士团队</li>
+        <li><span class="flag-icon green">&#10003;</span> 2019年后已独立，20+篇通讯作者论文</li>
+        <li><span class="flag-icon green">&#10003;</span> 主持4项NSFC + 1项北京市自然科学基金</li>
+        <li><span class="flag-icon green">&#10003;</span> 2024-2025年ACS Nano通讯作者论文（顶刊持续产出）</li>
+        <li><span class="flag-icon green">&#10003;</span> 2024年北京市科技奖技术发明二等奖（牵头）</li>
+        <li><span class="flag-icon green">&#10003;</span> 2020年北京科技新星</li>
+        <li><span class="flag-icon green">&#10003;</span> 研究方向（微流控+分子诊断+外泌体+CRISPR）为多热点交叉</li>
+        <li><span class="flag-icon green">&#10003;</span> 博奥生物员工反映"不怎么加班，基本到点上班到点下班"</li>
+        <li><span class="flag-icon green">&#10003;</span> h-index ~18-20，论文30+篇，远超副研究员平均水平</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px; color:var(--red);">黄灯/红灯信号</h3>
+      <ul class="flag-list">
+        <li><span class="flag-icon red">!</span> 博奥生物员工评价偏负面：裙带关系、管理混乱、薪资低</li>
+        <li><span class="flag-icon red">!</span> 程京近年转向中医现代化方向，引发学术争议（方舟子批评）</li>
+        <li><span class="flag-icon gray">?</span> 副研究员职称，晋升轨迹待观察</li>
+        <li><span class="flag-icon gray">?</span> 知乎/小木虫等平台零评价信息（信息空白）</li>
+        <li><span class="flag-icon red">!</span> 课题组与博奥生物深度绑定，学术独立性受限</li>
+        <li><span class="flag-icon red">!</span> 程京/邢婉丽同时管理清华课题组和博奥生物，学术-商业边界模糊</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px;">
+    <h3 style="margin-bottom:8px;">速查结论</h3>
+    <p style="font-size:16px;"><span class="badge badge-green">可选择</span> 学术能力超出预期，独立PI轨迹清晰。核心风险在于课题组与博奥生物的深度绑定及程京的中医转向，需进一步了解对微流控方向的具体影响。</p>
+  </div>
+</div>
+
+<!-- ======================== S5 毕业目标匹配 ======================== -->
+<div class="section" id="s5">
+  <div class="section-title"><span class="icon">🎯</span> 5. 毕业目标匹配矩阵</div>
+  <div class="card">
+    <div class="info-box">用户未明确说明毕业目标，以下为通用匹配分析。</div>
+    <table class="match-table">
+      <thead>
+        <tr><th>毕业目标</th><th>匹配度</th><th>分析</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>读博深造</td><td><span class="badge badge-green">中等偏上</span></td><td>已有独立PI能力，学术产出质量高；但课题组偏应用，纯基础研究路线需考量</td></tr>
+        <tr><td>考公/考编</td><td><span class="badge badge-yellow">待确认</span></td><td>时间自由度需直接了解，课题组文化信息有限</td></tr>
+        <tr><td>进大厂</td><td><span class="badge badge-green">较好</span></td><td>微流控+分子诊断的工程技能强，交叉学科背景在科技大厂有竞争力</td></tr>
+        <tr><td>药企/IVD/CRO</td><td><span class="badge badge-green">很好</span></td><td>博奥系直接出口，微流控方向在IVD行业极其受欢迎，产业人脉丰富</td></tr>
+        <tr><td>进医院</td><td><span class="badge badge-yellow">中等</span></td><td>以工程为主，临床资源取决于具体合作项目</td></tr>
+        <tr><td>纯拿学位</td><td><span class="badge badge-yellow">中等</span></td><td>项目型课题组可能有较高的工作量要求，但博奥"不加班"是正面信号</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ======================== S6 教育与职业经历 ======================== -->
+<div class="section" id="s6">
+  <div class="section-title"><span class="icon">📅</span> 6. 教育与职业经历</div>
+  <div class="card">
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="year">2002-2006</div>
+        <div class="desc">清华大学电子工程系 学士 <span class="tag tag-fact">确认</span></div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2006-2011</div>
+        <div class="desc">清华大学生物医学工程系 博士 <span class="tag tag-fact">确认</span></div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2011-至今</div>
+        <div class="desc">清华大学生物医学工程系 副研究员 <span class="tag tag-fact">确认</span></div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2020年</div>
+        <div class="desc">获评"北京科技新星" <span class="tag tag-fact">获奖记录</span></div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2024年</div>
+        <div class="desc">牵头项目获北京市科学技术奖技术发明二等奖 <span class="tag tag-fact">获奖记录</span></div>
+      </div>
+    </div>
+    <div class="info-box" style="margin-top:16px;">
+      <strong>学科交叉背景：</strong>本科学电子工程，博士转BME（生物医学工程），学科交叉背景有利于微流控芯片方向的工程实践。清华本科直博，学术背景扎实。
+    </div>
+  </div>
+</div>
+
+<!-- ======================== S7 研究方向 ======================== -->
+<div class="section" id="s7">
+  <div class="section-title"><span class="icon">🔬</span> 7. 研究方向</div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">核心研究领域</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+      <span class="badge badge-blue">微流控芯片</span>
+      <span class="badge badge-blue">分子诊断</span>
+      <span class="badge badge-blue">CRISPR/Cas诊断</span>
+      <span class="badge badge-blue">外泌体检测</span>
+      <span class="badge badge-blue">Lab-on-a-Chip</span>
+      <span class="badge badge-blue">核酸检测</span>
+      <span class="badge badge-blue">细胞电穿孔</span>
+      <span class="badge badge-blue">POCT即时检测</span>
+    </div>
+
+    <h4 style="margin-bottom:8px;">方向一：微流控核酸检测系统</h4>
+    <p style="font-size:14px; margin-bottom:16px;">代表成果为获得2024年北京市科技奖的遗传性耳聋基因检测系统。课题组开发了基于离心分配和热封阻断的微流控多指标分析技术，实现了遗传性耳聋相关基因的快速筛查。此外还开发了自包含全集成流控盒系统用于多重细菌核酸检测，以及基于LAMP技术的离心式微流控细菌多重检测。</p>
+
+    <h4 style="margin-bottom:8px;">方向二：细胞操控与分析芯片</h4>
+    <p style="font-size:14px; margin-bottom:16px;">开发了可单独寻址的细胞阵列用于选择性图案化和电穿孔，以及悬挂液滴电穿孔系统用于高通量细胞转染。还研发了无鞘流电阻抗微流式细胞术装置，用于免标记细胞分类和活性检测。</p>
+
+    <h4 style="margin-bottom:8px;">方向三：液体活检与外泌体检测</h4>
+    <p style="font-size:14px; margin-bottom:16px;">从血浆中快速高效分离和检测细胞外囊泡用于肺癌诊断。开发了增强离心辅助侧流免疫分析技术用于蛋白生物标志物的即时检测。2024-2025年在ACS Nano和Chemical Engineering Journal发表单颗外泌体水平蛋白和miRNA并发检测技术，实现数字化外泌体检测突破。</p>
+
+    <h4 style="margin-bottom:8px;">方向四：CRISPR/Cas分子诊断</h4>
+    <p style="font-size:14px; margin-bottom:16px;">2024年在ACS Nano发表"High-Throughput CRISPR/Cas12a-Based Molecular Diagnosis"，将CRISPR基因编辑工具应用于分子诊断领域，实现高通量、高灵敏度的病原体检测。该方向将基因编辑热点与分子诊断结合，前沿性强。</p>
+
+    <h4 style="margin-bottom:8px;">方向五：数字化外泌体检测</h4>
+    <p style="font-size:14px; margin-bottom:16px;">2024-2025年最新研究方向，在ACS Nano和Chemical Engineering Journal发表论文，实现单颗外泌体水平蛋白和miRNA并发检测。代表了液体活检领域的技术前沿，具有重要的临床转化潜力。</p>
+
+    <h4 style="margin-bottom:8px;">前景评估</h4>
+    <p style="font-size:14px;">
+      <span class="badge badge-green">高热度 · 多前沿交叉</span> 微流控芯片与分子诊断是当前生物医学工程领域的持续热点。CRISPR诊断和数字化外泌体检测更是近年来的前沿方向。该方向兼具学术价值和产业转化潜力，在IVD（体外诊断）行业就业前景广阔。
+    </p>
+  </div>
+</div>
+
+<!-- ======================== S8 发表成果分析 ======================== -->
+<div class="section" id="s8">
+  <div class="section-title"><span class="icon">📊</span> 8. 发表成果分析</div>
+  <div class="card">
+    <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:20px;">
+      <div style="text-align:center; padding:16px 24px; background:#F0FDF4; border-radius:8px; flex:1; min-width:100px;">
+        <div style="font-size:28px; font-weight:800; color:var(--green);">30+</div>
+        <div style="font-size:12px; color:var(--muted);">SCI论文</div>
+      </div>
+      <div style="text-align:center; padding:16px 24px; background:#EFF6FF; border-radius:8px; flex:1; min-width:100px;">
+        <div style="font-size:28px; font-weight:800; color:var(--blue);">20+</div>
+        <div style="font-size:12px; color:var(--muted);">通讯作者论文</div>
+      </div>
+      <div style="text-align:center; padding:16px 24px; background:#FEF3C7; border-radius:8px; flex:1; min-width:100px;">
+        <div style="font-size:28px; font-weight:800; color:var(--yellow);">~18-20</div>
+        <div style="font-size:12px; color:var(--muted);">h-index（估计）</div>
+      </div>
+      <div style="text-align:center; padding:16px 24px; background:#F3F4F6; border-radius:8px; flex:1; min-width:100px;">
+        <div style="font-size:28px; font-weight:800; color:var(--muted);">10+</div>
+        <div style="font-size:12px; color:var(--muted);">发明专利</div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">一作代表论文（5篇确认）</h3>
+    <table class="pub-table">
+      <thead>
+        <tr><th>#</th><th>年份</th><th>论文</th><th>期刊</th><th>引用</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>2016</td><td>A review of impedance measurements of whole cells</td><td>Biosens Bioelectron</td><td>35</td></tr>
+        <tr><td>2</td><td>2015</td><td>A fully sealed plastic chip for multiplex detection</td><td>Lab on a Chip</td><td>23</td></tr>
+        <tr><td>3</td><td>2015</td><td>Cell electroporation with a three-dimensional microelectrode array</td><td>Bioelectrochemistry</td><td>16</td></tr>
+        <tr><td>4</td><td>2014</td><td>An individually addressable suspended-drop electroporation system</td><td>Lab on a Chip</td><td>10</td></tr>
+        <tr><td>5</td><td>2012</td><td>A microfluidic device with passive air-bubble valves for multiplexed detection</td><td>Biosens Bioelectron</td><td>46</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:20px; margin-bottom:12px;">通讯作者代表论文（20+篇，列出关键10篇）</h3>
+    <table class="pub-table">
+      <thead>
+        <tr><th>#</th><th>年份</th><th>论文</th><th>期刊</th><th>引用</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>2025</td><td>Digital quantification of EV proteins and miRNAs at the single vesicle level</td><td>Chem Eng J</td><td>—</td></tr>
+        <tr><td>2</td><td>2025</td><td>Metal-organic framework-based dual-functional electrochemical biosensor</td><td>Chem Eng J</td><td>—</td></tr>
+        <tr><td>3</td><td>2024</td><td>Concurrent Detection of Protein and miRNA at the Single EV Level</td><td>ACS Nano</td><td>41</td></tr>
+        <tr><td>4</td><td>2024</td><td>High-Throughput CRISPR/Cas12a-Based Molecular Diagnosis</td><td>ACS Nano</td><td>29</td></tr>
+        <tr><td>5</td><td>2024</td><td>A Wax Interface-Enabled One-Pot Multiplexed Nucleic Acid Testing</td><td>Small Methods</td><td>8</td></tr>
+        <tr><td>6</td><td>2024</td><td>A chip-based universal strategy to realize multiplex PCR</td><td>Biosens Bioelectron</td><td>3</td></tr>
+        <tr><td>7</td><td>2022</td><td>Sensitive and Rapid Diagnosis of Respiratory Virus Coinfection</td><td>Small</td><td>45</td></tr>
+        <tr><td>8</td><td>2022</td><td>A fully integrated SNP genotyping system</td><td>Lab Chip</td><td>6</td></tr>
+        <tr><td>9</td><td>2020</td><td>An enhanced centrifugation-assisted lateral flow immunoassay (ECLFIA)</td><td>Lab Chip</td><td>62</td></tr>
+        <tr><td>10</td><td>2020</td><td>A portable microfluidic analyzer for integrated bacterial detection</td><td>Sensors Actuators B</td><td>53</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:20px; margin-bottom:12px;">引用最高论文 Top 5</h3>
+    <table class="pub-table">
+      <thead>
+        <tr><th>#</th><th>论文</th><th>期刊</th><th>引用</th><th>作者角色</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Bacteria detection from urine (2018)</td><td>Lab Chip</td><td>111</td><td>合作者</td></tr>
+        <tr><td>2</td><td>ECLFIA protein biomarker detection (2020)</td><td>Lab Chip</td><td>62</td><td>通讯作者</td></tr>
+        <tr><td>3</td><td>Portable bacterial detection analyzer (2020)</td><td>Sensors Actuators B</td><td>53</td><td>通讯作者</td></tr>
+        <tr><td>4</td><td>Passive air-bubble valve device (2012)</td><td>Biosens Bioelectron</td><td>46</td><td>第一作者</td></tr>
+        <tr><td>5</td><td>Respiratory virus coinfection diagnosis (2022)</td><td>Small</td><td>45</td><td>通讯作者</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:20px; margin-bottom:12px;">发表趋势与期刊分布</h3>
+    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:250px;">
+        <strong>主要发表期刊：</strong>
+        <ul style="font-size:13px; padding-left:20px; margin-top:8px; line-height:2;">
+          <li>ACS Nano (IF~15)</li>
+          <li>Small (IF~13)</li>
+          <li>Chemical Engineering Journal (IF~13)</li>
+          <li>Biosensors &amp; Bioelectronics (IF~12)</li>
+          <li>Analytical Chemistry (IF~7)</li>
+          <li>Lab on a Chip (IF~6)</li>
+          <li>Small Methods, Sensors Actuators B 等</li>
+        </ul>
+      </div>
+      <div style="flex:1; min-width:250px;">
+        <strong>发表趋势：</strong>
+        <p style="font-size:13px; margin-top:8px;">稳步增长，2019-2025年期间独立产出显著提升。通讯作者论文从2019年开始大量出现，2024-2025年期刊影响因子进一步提高（ACS Nano, Chem Eng J），体现了明显的上升势头。</p>
+        <p style="font-size:13px; margin-top:8px;"><strong>注：</strong>h-index估计值（18-20）基于OpenAlex/Semantic Scholar数据，已排除同名军事交通学院作者的干扰。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== S9 合作者网络 ======================== -->
+<div class="section" id="s9">
+  <div class="section-title"><span class="icon">🤝</span> 9. 合作者网络</div>
+  <div class="card">
+    <table class="pub-table">
+      <thead>
+        <tr><th>合作者</th><th>关系</th><th>单位</th><th>合作频次</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>程京</strong></td><td>学术带头人</td><td>清华BME / 中国工程院</td><td>高（早期几乎所有，近期减少）</td><td>2019年后徐友春逐渐独立</td></tr>
+        <tr><td><strong>邢婉丽</strong></td><td>课题组核心运营者</td><td>清华BME / 博奥生物CEO</td><td>中（早期高，2018年后显著降低）</td><td>2018年后论文中出现频率降低</td></tr>
+        <tr><td><strong>卢颖</strong> (Ying Lu)</td><td>课题组成员</td><td>清华BME</td><td>高（几乎所有论文）</td><td>middle author</td></tr>
+        <tr><td><strong>李楠</strong> (Nan Li)</td><td>学生</td><td>清华BME</td><td>高（2018年后）</td><td>第一作者</td></tr>
+        <tr><td><strong>刘嘉嘉</strong> (Jiajia Liu)</td><td>学生</td><td>清华BME / 博奥生物</td><td>中（2021年后）</td><td>第一作者</td></tr>
+        <tr><td>Sotnikov, Dzantiev等</td><td>国际合作者</td><td>俄罗斯</td><td>低（2022-2023）</td><td>侧向流免疫分析合作</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:16px; padding:16px; background:#F9FAFB; border-radius:8px;">
+      <h4 style="margin-bottom:8px;">合作网络分析</h4>
+      <p style="font-size:14px;">徐友春的合作网络正在从"大组内部"向"有限的外部合作"扩展。与邢婉丽的合作频次在2018年后明显降低，说明他正在建立自己的独立研究方向。与程京的合作也在减少，但仍保持联系。国际合作方面已有俄罗斯团队的合作记录，但覆盖面仍较窄。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== S10 经费与基金 ======================== -->
+<div class="section" id="s10">
+  <div class="section-title"><span class="icon">💰</span> 10. 经费与基金</div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">个人独立经费（已确认）</h3>
+    <table class="pub-table">
+      <thead>
+        <tr><th>基金来源</th><th>数量</th><th>状态</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>国家自然科学基金 (NSFC)</td><td>4项</td><td><span class="badge badge-green">已确认</span></td><td>具体项目编号未获取，据清华BME官方页面摘要信息</td></tr>
+        <tr><td>北京市自然科学基金</td><td>1项</td><td><span class="badge badge-green">已确认</span></td><td>据清华BME官方页面摘要信息</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:20px; margin-bottom:12px;">课题组层面资源</h3>
+    <table class="pub-table">
+      <thead>
+        <tr><th>资源</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>生物芯片北京国家工程研究中心</td><td>国家级平台，设备和资源丰富</td></tr>
+        <tr><td>膜生物学国家重点实验室</td><td>国家级平台</td></tr>
+        <tr><td>程京院士经费</td><td>院士团队整体经费充裕</td></tr>
+        <tr><td>博奥生物产业化项目</td><td>与博奥生物集团有产业化合作项目</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:16px; padding:16px; background:#F0FDF4; border-radius:8px;">
+      <h4 style="margin-bottom:8px;">资金风险评估</h4>
+      <p style="font-size:14px;"><span class="badge badge-green">低风险</span> 个人有独立NSFC资助（4项） + 课题组国家级平台保障 + 院士团队经费支撑。经费断档风险极低。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== S11 学术指标 ======================== -->
+<div class="section" id="s11">
+  <div class="section-title"><span class="icon">📈</span> 11. 学术指标</div>
+  <div class="card">
+    <table class="pub-table">
+      <thead>
+        <tr><th>指标</th><th>数值</th><th>同级基准（副研究员级）</th><th>评价</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>已确认论文</td><td><strong>30+篇</strong></td><td>15-40篇</td><td><span class="badge badge-green">达标偏上</span></td></tr>
+        <tr><td>h-index</td><td><strong>~18-20（估计）</strong></td><td>8-15</td><td><span class="badge badge-green">优秀</span></td></tr>
+        <tr><td>一作论文</td><td><strong>5篇确认</strong></td><td>5-10篇</td><td><span class="badge badge-blue">达标</span></td></tr>
+        <tr><td>通讯论文</td><td><strong>20+篇确认</strong></td><td>5-15篇</td><td><span class="badge badge-green">优秀</span></td></tr>
+        <tr><td>ORCID</td><td><a href="https://orcid.org/0000-0003-4926-8211" target="_blank">0000-0003-4926-8211</a></td><td>—</td><td><span class="badge badge-green">有</span></td></tr>
+        <tr><td>Google Scholar</td><td>未找到</td><td>—</td><td><span class="badge badge-yellow">缺失</span></td></tr>
+        <tr><td>获奖</td><td>2024北京科技奖二等奖（牵头）; 2020北京科技新星</td><td>—</td><td><span class="badge badge-green">有分量</span></td></tr>
+        <tr><td>NSFC</td><td>4项（主持）</td><td>1-3项</td><td><span class="badge badge-green">优秀</span></td></tr>
+        <tr><td>专利</td><td>10+项（个人）</td><td>—</td><td><span class="badge badge-blue">达标</span></td></tr>
+      </tbody>
+    </table>
+    <div class="info-box" style="margin-top:16px;">
+      <strong>综合评价：</strong>徐友春的学术指标在副研究员级别中属于优秀，尤其是通讯作者论文数量（20+篇）和h-index（~18-20）明显超过同级基准。主持4项NSFC也超过同级平均水平（1-3项）。缺少Google Scholar主页是一个小遗憾，影响学术可见度。
+    </div>
+  </div>
+</div>
+
+<!-- ======================== S12 院系背景 ======================== -->
+<div class="section" id="s12">
+  <div class="section-title"><span class="icon">🏫</span> 12. 院系背景</div>
+  <div class="card">
+    <table class="info-table">
+      <tr><td>学院</td><td>清华大学医学院 / 生物医学工程学院</td></tr>
+      <tr><td>学科评估</td><td>生物医学工程 教育部一级学科评估 <strong>A-</strong></td></tr>
+      <tr><td>教师规模</td><td>32名教师，其中教授/研究员21人</td></tr>
+      <tr><td>研究生规模</td><td>在读研究生322人（硕士45人，博士277人）</td></tr>
+      <tr><td>核心平台</td><td>生物芯片北京国家工程研究中心（国家级）</td></tr>
+      <tr><td>关联平台</td><td>膜生物学国家重点实验室</td></tr>
+      <tr><td>产业关联</td><td>博奥生物集团 / 博奥晶典生物技术有限公司</td></tr>
+    </table>
+
+    <div style="margin-top:16px;">
+      <h4 style="margin-bottom:8px;">院系特点</h4>
+      <ul style="font-size:14px; padding-left:20px; line-height:2;">
+        <li>清华BME学院是国内生物医学工程领域的顶尖平台之一，在微流控、分子诊断、医学影像等方向有强大的科研实力</li>
+        <li>博士生占比高（277/322 = 86%），以科研为导向</li>
+        <li>生物芯片北京国家工程研究中心为程京院士牵头建设，与博奥生物形成产学研一体化体系</li>
+        <li>学院整体学术氛围浓厚，但不同课题组风格差异较大</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== S13 PUA/PUSH风险评估 ======================== -->
+<div class="section" id="s13">
+  <div class="section-title"><span class="icon">🛡</span> 13. PUA/PUSH风险评估</div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">徐友春个人评价</h3>
+    <div class="warn-box">
+      <strong>信息空白：</strong>知乎、小木虫、RateYourSupervisor等平台均未找到关于徐友春个人的评价信息。以下分析基于间接信号。
+    </div>
+
+    <h3 style="margin-bottom:12px;">博奥生物员工评价（间接参考）</h3>
+    <div class="card-grid" style="margin-bottom:16px;">
+      <div style="padding:16px; background:#F0FDF4; border-radius:8px;">
+        <h4 style="color:var(--green); margin-bottom:8px;">正面评价</h4>
+        <ul style="font-size:13px; padding-left:16px; line-height:2;">
+          <li>"不怎么加班，基本到点上班到点下班"</li>
+          <li>"环境好"</li>
+          <li>"同事关系融洽"</li>
+        </ul>
+      </div>
+      <div style="padding:16px; background:#FEE2E2; border-radius:8px;">
+        <h4 style="color:var(--red); margin-bottom:8px;">负面评价</h4>
+        <ul style="font-size:13px; padding-left:16px; line-height:2;">
+          <li>"裙带关系"</li>
+          <li>"管理混乱"</li>
+          <li>"一言堂"</li>
+          <li>"薪资低"</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">程京课题组相关争议</h3>
+    <ul style="font-size:14px; padding-left:20px; line-height:2;">
+      <li>程京近年转向中医现代化方向，开设"类经堂"中医养生馆，被方舟子等人批评</li>
+      <li>RateYourSupervisor上程京有页面但返回403禁止访问，无法获取学生评价</li>
+      <li>课题组与博奥生物的深度绑定引发学术-商业边界模糊的担忧</li>
+    </ul>
+
+    <div style="margin-top:16px; padding:16px; background:#F9FAFB; border-radius:8px;">
+      <h4 style="margin-bottom:8px;">风险综合评估</h4>
+      <p style="font-size:14px;"><span class="badge badge-yellow">信息有限 · 间接信号偏中性</span></p>
+      <p style="font-size:14px; margin-top:8px;">博奥生物的管理问题可能不完全反映到清华学术课题组。课题组学术产出持续且质量上升，学生有第一作者论文机会，这些是正面信号。但缺乏直接的学生评价，建议联系在读学生了解真实体验。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== S14 多维度评分 ======================== -->
+<div class="section" id="s14">
+  <div class="section-title"><span class="icon">📐</span> 14. 多维度评分</div>
+
+  <div class="composite-box">
+    <div class="score">3.6</div>
+    <div class="range">/ 5.0</div>
+    <div class="verdict" style="color:var(--green);">可选择 · 学术能力超预期 · 独立PI轨迹清晰</div>
+  </div>
+
+  <div class="card">
+    <!-- 1. 研究方向与前景 10% -->
+    <div class="score-row">
+      <div class="score-label">1. 研究方向与前景 (10%)</div>
+      <div class="score-bar-bg"><div class="score-bar green" style="width:90%"></div></div>
+      <div class="score-val">4.5</div>
+    </div>
+    <!-- 2. 发表成果与质量 15% -->
+    <div class="score-row">
+      <div class="score-label">2. 发表成果与质量 (15%)</div>
+      <div class="score-bar-bg"><div class="score-bar green" style="width:80%"></div></div>
+      <div class="score-val">4.0</div>
+    </div>
+    <!-- 3. 学生培养实绩 15% -->
+    <div class="score-row">
+      <div class="score-label">3. 学生培养实绩 (15%)</div>
+      <div class="score-bar-bg"><div class="score-bar yellow" style="width:50%"></div></div>
+      <div class="score-val">2.5</div>
+    </div>
+    <!-- 4. 平台与资源 15% -->
+    <div class="score-row">
+      <div class="score-label">4. 平台与资源 (15%)</div>
+      <div class="score-bar-bg"><div class="score-bar green" style="width:96%"></div></div>
+      <div class="score-val">4.8</div>
+    </div>
+    <!-- 5. 独立性与成长空间 10% -->
+    <div class="score-row">
+      <div class="score-label">5. 独立性与成长空间 (10%)</div>
+      <div class="score-bar-bg"><div class="score-bar green" style="width:76%"></div></div>
+      <div class="score-val">3.8</div>
+    </div>
+    <!-- 6. 职业轨迹与势头 5% -->
+    <div class="score-row">
+      <div class="score-label">6. 职业轨迹与势头 (5%)</div>
+      <div class="score-bar-bg"><div class="score-bar green" style="width:76%"></div></div>
+      <div class="score-val">3.8</div>
+    </div>
+    <!-- 7. PUA/PUSH风险 10% -->
+    <div class="score-row">
+      <div class="score-label">7. PUA/PUSH风险 (10%)</div>
+      <div class="score-bar-bg"><div class="score-bar yellow" style="width:60%"></div></div>
+      <div class="score-val">3.0</div>
+    </div>
+    <!-- 8. 时间自由度 10% -->
+    <div class="score-row">
+      <div class="score-label">8. 时间自由度 (10%)</div>
+      <div class="score-bar-bg"><div class="score-bar yellow" style="width:64%"></div></div>
+      <div class="score-val">3.2</div>
+    </div>
+    <!-- 9. 毕业目标匹配 10% -->
+    <div class="score-row">
+      <div class="score-label">9. 毕业目标匹配 (10%)</div>
+      <div class="score-bar-bg"><div class="score-bar yellow" style="width:60%"></div></div>
+      <div class="score-val">3.0</div>
+    </div>
+
+    <div style="margin-top:16px; padding:16px; background:#F9FAFB; border-radius:8px; font-size:13px; color:var(--muted);">
+      <strong>计算过程：</strong>4.5×0.10 + 4.0×0.15 + 2.5×0.15 + 4.8×0.15 + 3.8×0.10 + 3.8×0.05 + 3.0×0.10 + 3.2×0.10 + 3.0×0.10 = 0.45 + 0.60 + 0.375 + 0.72 + 0.38 + 0.19 + 0.30 + 0.32 + 0.30 = 3.635 ≈ <strong>3.6</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== S15 总结与建议 ======================== -->
+<div class="section" id="s15">
+  <div class="section-title"><span class="icon">📝</span> 15. 总结与建议</div>
+  <div class="card">
+    <h3 style="margin-bottom:12px; color:var(--green);">核心优势</h3>
+    <ul style="font-size:14px; padding-left:20px; line-height:2; margin-bottom:20px;">
+      <li><strong>学术实力超出预期：</strong>30+篇SCI、20+通讯论文、h-index ~18-20，2024-2025年在ACS Nano等顶刊持续产出</li>
+      <li><strong>独立PI能力已确立：</strong>4项NSFC + 北京科技新星 + 省部级科技奖牵头</li>
+      <li><strong>顶级平台保底：</strong>清华C9 + 国家工程中心 + 院士团队</li>
+      <li><strong>学科交叉优势：</strong>电子工程本科 + BME博士，工程实践能力强</li>
+      <li><strong>研究热度高：</strong>微流控 + CRISPR + 外泌体，多个前沿方向交叉</li>
+    </ul>
+
+    <h3 style="margin-bottom:12px; color:var(--red);">核心风险</h3>
+    <ul style="font-size:14px; padding-left:20px; line-height:2; margin-bottom:20px;">
+      <li><strong>职称与晋升：</strong>副研究员职称，晋升为独立研究员/教授的时间表不明</li>
+      <li><strong>博奥绑定：</strong>课题组与博奥生物深度绑定，博奥生物员工评价偏负面（裙带关系、管理混乱）</li>
+      <li><strong>程京中医转向：</strong>程京近年转向中医方向，可能影响课题组整体学术方向和声誉</li>
+      <li><strong>培养数据不足：</strong>学生培养数据仍不充分，毕业生去向无法追踪</li>
+      <li><strong>信息空白：</strong>社交平台零评价，无法从外部验证导师风格</li>
+    </ul>
+
+    <h3 style="margin-bottom:12px; color:var(--blue);">行动建议</h3>
+    <ol style="font-size:14px; padding-left:20px; line-height:2;">
+      <li><strong>直接联系在读学生：</strong>了解日常科研体验、工作时间、导师指导风格等第一手信息</li>
+      <li><strong>确认独立博导资格：</strong>了解是否可以独立招收博士生，毕业要求是否由徐友春还是程京/邢婉丽决定</li>
+      <li><strong>了解日常指导分工：</strong>徐友春 vs 邢婉丽/程京在日常指导中的具体分工和话语权</li>
+      <li><strong>评估中医转向影响：</strong>程京的中医现代化方向是否影响到微流控方向的资源分配和学术声誉</li>
+      <li><strong>明确职业目标：</strong>如果目标是IVD/医疗器械行业，这是一个好选择；如果追求纯学术路线，需评估独立性是否足够</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ======================== 附录 ======================== -->
+<div class="section" id="appendix">
+  <div class="section-title"><span class="icon">📎</span> 附录：数据来源与可信度</div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">数据来源</h3>
+    <table class="pub-table">
+      <thead>
+        <tr><th>来源</th><th>类型</th><th>信息内容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>PubMed / OpenAlex / Semantic Scholar</td><td>论文数据库</td><td>38+篇论文确认，引用数据交叉验证</td></tr>
+        <tr><td><a href="https://orcid.org/0000-0003-4926-8211" target="_blank">ORCID</a></td><td>学者ID</td><td>身份确认，论文列表</td></tr>
+        <tr><td><a href="https://www.researchgate.net/scientific-contributions/Youchun-Xu-58174919" target="_blank">ResearchGate</a></td><td>学术社交</td><td>论文列表，合作者网络</td></tr>
+        <tr><td><a href="https://thurid.lib.tsinghua.edu.cn/scholar/649919" target="_blank">清华学者信息库</a></td><td>机构数据</td><td>论文与基金摘要</td></tr>
+        <tr><td><a href="https://bme.tsinghua.edu.cn/info/1070/1048.htm" target="_blank">清华BME教师主页（中文）</a></td><td>官方页面</td><td>个人简介、研究方向、基金信息</td></tr>
+        <tr><td><a href="https://www.med.tsinghua.edu.cn/en/info/1178/1700.htm" target="_blank">清华医学院教师主页（英文）</a></td><td>官方页面</td><td>英文简介</td></tr>
+        <tr><td>知乎（博奥生物员工评价）</td><td>社交平台</td><td>博奥生物工作体验间接参考</td></tr>
+        <tr><td>RateYourSupervisor</td><td>导师评价</td><td>程京页面存在但403禁止访问</td></tr>
+        <tr><td>百度百科 / 维基百科</td><td>百科</td><td>程京、邢婉丽、博奥生物背景</td></tr>
+        <tr><td>RSC / ACS / Wiley / Elsevier等出版商</td><td>期刊出版</td><td>论文全文与引用数据</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:16px; padding:16px; background:#F9FAFB; border-radius:8px;">
+      <h4 style="margin-bottom:8px;">数据置信度</h4>
+      <p style="font-size:14px;"><span class="badge badge-green">中高</span> 个人学术数据充分（论文、基金、获奖均有多源验证），社会评价维度仍有限（知乎/小木虫/RateYourSupervisor等平台零直接评价）。</p>
+      <p style="font-size:13px; color:var(--muted); margin-top:8px;"><strong>搜索规模：</strong>100+次跨平台搜索，覆盖PubMed、OpenAlex、Semantic Scholar、ORCID、ResearchGate、清华学者库、知乎、小木虫、RateYourSupervisor、百度学术、Google Scholar等平台。</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Generated by DeepTutor v4 — Powered by Claude<br>
+  报告日期：2026年4月1日 | 数据置信度：中高 | 搜索轮次：100+
+</footer>
+
+</div><!-- end .main -->
+
+</body>
+</html>

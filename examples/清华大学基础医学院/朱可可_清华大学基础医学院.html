@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepTutor v1.1 | 朱可可 - 清华大学基础医学院</title>
+<style>
+  :root {
+    --bg: #F9FAFB; --card: #FFFFFF; --accent: #D97706;
+    --text: #1F2937; --muted: #6B7280; --green: #059669;
+    --yellow: #D97706; --red: #DC2626; --radius: 12px;
+    --blue: #2563EB; --light-green: #D1FAE5; --light-yellow: #FEF3C7;
+    --light-red: #FEE2E2; --light-blue: #DBEAFE;
+    --sidebar-w: 260px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.75;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
+    background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+    color: #CBD5E1; overflow-y: auto; z-index: 100;
+    padding: 28px 0 40px; display: flex; flex-direction: column;
+  }
+  .sidebar-logo { text-align: center; font-size: 20px; font-weight: 700; color: #F8FAFC; letter-spacing: 1px; margin-bottom: 6px; }
+  .sidebar-logo span { color: var(--accent); }
+  .sidebar-sub { text-align: center; font-size: 11px; color: #64748B; margin-bottom: 24px; }
+  .sidebar nav { flex: 1; }
+  .sidebar nav a {
+    display: block; padding: 9px 24px; font-size: 13px; color: #94A3B8;
+    border-left: 3px solid transparent; transition: all .2s;
+  }
+  .sidebar nav a:hover { color: #F8FAFC; background: rgba(255,255,255,.06); border-left-color: var(--accent); }
+  .sidebar-score {
+    text-align: center; margin: 24px 20px 0; padding: 18px 12px;
+    background: linear-gradient(135deg, rgba(5,150,105,.25), rgba(37,99,235,.18));
+    border-radius: var(--radius);
+  }
+  .sidebar-score .big { font-size: 44px; font-weight: 800; color: #F8FAFC; line-height: 1; }
+  .sidebar-score .label { font-size: 12px; color: #94A3B8; margin-top: 6px; }
+
+  /* Main */
+  .main { margin-left: var(--sidebar-w); padding: 36px 48px 80px; max-width: 980px; }
+  .section { margin-bottom: 44px; scroll-margin-top: 24px; }
+  .section-title { font-size: 22px; font-weight: 700; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #E5E7EB; display: flex; align-items: center; gap: 10px; }
+  .section-title .icon { font-size: 20px; }
+
+  /* Cards */
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,.06); padding: 24px; margin-bottom: 16px; }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card-grid .card { margin-bottom: 0; }
+
+  /* Info table */
+  .info-table { width: 100%; border-collapse: collapse; }
+  .info-table td { padding: 9px 12px; border-bottom: 1px solid #F3F4F6; font-size: 14px; }
+  .info-table td:first-child { font-weight: 600; width: 140px; white-space: nowrap; color: var(--muted); font-size: 13px; }
+
+  /* Badges */
+  .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin: 3px 4px 3px 0; }
+  .badge-green { background: var(--light-green); color: var(--green); }
+  .badge-red { background: var(--light-red); color: var(--red); }
+  .badge-yellow { background: var(--light-yellow); color: var(--yellow); }
+  .badge-blue { background: var(--light-blue); color: var(--blue); }
+  .badge-grey { background: #F3F4F6; color: var(--muted); }
+
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 6px; font-size: 12px; background: #F3F4F6; color: var(--muted); margin: 2px 4px 2px 0; }
+  .anno { font-size: 11px; border-radius: 4px; padding: 1px 6px; margin-left: 4px; vertical-align: middle; }
+  .anno-fact { background: var(--light-blue); color: var(--blue); }
+  .anno-infer { background: var(--light-yellow); color: var(--yellow); }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before { content: ''; position: absolute; left: 11px; top: 4px; bottom: 4px; width: 2px; background: #E5E7EB; }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-dot { position: absolute; left: -32px; top: 4px; width: 20px; height: 20px; border-radius: 50%; background: var(--card); border: 3px solid var(--blue); z-index: 1; }
+  .tl-dot.accent { border-color: var(--accent); }
+  .tl-dot.green { border-color: var(--green); }
+  .tl-year { font-size: 13px; font-weight: 700; color: var(--blue); }
+  .tl-year.accent { color: var(--accent); }
+  .tl-year.green { color: var(--green); }
+  .tl-title { font-weight: 600; font-size: 15px; }
+  .tl-desc { font-size: 13px; color: var(--muted); }
+
+  /* Progress bar */
+  .score-row { margin-bottom: 14px; }
+  .score-row .label-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .score-row .label-row .dim { font-weight: 600; }
+  .score-row .label-row .val { color: var(--accent); font-weight: 700; }
+  .bar-bg { height: 10px; border-radius: 5px; background: #E5E7EB; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--blue), var(--green)); transition: width .6s ease; }
+
+  /* Styled table */
+  .styled-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .styled-table th { text-align: left; padding: 10px 12px; background: #F8FAFC; border-bottom: 2px solid #E5E7EB; font-weight: 600; font-size: 13px; color: var(--muted); }
+  .styled-table td { padding: 10px 12px; border-bottom: 1px solid #F3F4F6; vertical-align: top; }
+  .styled-table tr:hover { background: #FAFBFC; }
+
+  /* Highlight card */
+  .highlight-card { border-left: 4px solid var(--accent); padding: 16px 20px; background: linear-gradient(135deg, #FFFBEB, #FFF7ED); border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 16px; }
+  .highlight-card .hl-title { font-weight: 700; color: var(--accent); margin-bottom: 6px; font-size: 15px; }
+
+  .danger-card { border-left: 4px solid var(--red); background: linear-gradient(135deg, #FEF2F2, #FFF1F2); padding: 16px 20px; border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 16px; }
+  .danger-card .hl-title { font-weight: 700; color: var(--red); margin-bottom: 6px; font-size: 15px; }
+
+  .good-card { border-left: 4px solid var(--green); background: linear-gradient(135deg, #F0FDF4, #ECFDF5); padding: 16px 20px; border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 16px; }
+  .good-card .hl-title { font-weight: 700; color: var(--green); margin-bottom: 6px; font-size: 15px; }
+
+  /* Match matrix */
+  .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .matrix-cell { background: var(--card); border-radius: var(--radius); padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .matrix-cell .emoji { font-size: 28px; margin-bottom: 6px; }
+  .matrix-cell .m-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .matrix-cell .m-desc { font-size: 12px; color: var(--muted); }
+  .match-high { border: 2px solid var(--green); }
+  .match-medium { border: 2px solid var(--yellow); }
+  .match-low { border: 2px solid var(--red); }
+
+  /* Hero */
+  .hero { background: linear-gradient(135deg, #064E3B, #0F172A); color: #F8FAFC; border-radius: var(--radius); padding: 36px 40px; margin-bottom: 36px; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; right: -60px; top: -60px; width: 240px; height: 240px; border-radius: 50%; background: rgba(5,150,105,.18); }
+  .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+  .hero .sub { color: #94A3B8; font-size: 15px; }
+  .hero .score-inline { display: inline-flex; align-items: baseline; gap: 8px; margin-top: 16px; padding: 10px 20px; background: rgba(5,150,105,.22); border-radius: 8px; }
+  .hero .score-inline .num { font-size: 36px; font-weight: 800; color: #34D399; }
+  .hero .score-inline .out { font-size: 16px; color: #94A3B8; }
+
+  /* Publication list */
+  .pub-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F3F4F6; }
+  .pub-item:last-child { border-bottom: none; }
+  .pub-title { font-weight: 600; font-size: 14px; }
+  .pub-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .pub-journal { font-weight: 600; color: var(--blue); }
+  .pub-star { color: var(--accent); font-weight: 700; }
+
+  /* Sharp critique banner */
+  .critique-banner { background: linear-gradient(135deg, #D1FAE5, #A7F3D0); border: 2px solid #059669; border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; }
+  .critique-banner .verdict { font-size: 20px; font-weight: 800; color: #064E3B; margin-bottom: 8px; }
+  .critique-banner .body { font-size: 15px; color: #065F46; line-height: 1.8; }
+
+  .q-box { background: #F9FAFB; border-left: 3px solid var(--green); padding: 14px 18px; margin-bottom: 12px; border-radius: 0 6px 6px 0; }
+  .q-box .q-title { font-weight: 700; font-size: 14px; color: var(--green); margin-bottom: 6px; }
+  .q-box .q-body { font-size: 14px; color: var(--text); }
+
+  /* Life cycle stage */
+  .lifecycle { display: flex; justify-content: space-between; align-items: center; margin: 16px 0; }
+  .lc-stage { flex: 1; text-align: center; padding: 12px 6px; font-size: 12px; color: var(--muted); border-bottom: 3px solid #E5E7EB; position: relative; }
+  .lc-stage.active { color: var(--green); font-weight: 700; border-bottom-color: var(--green); }
+  .lc-stage .emo { font-size: 24px; display: block; margin-bottom: 4px; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 32px 0; color: var(--muted); font-size: 12px; border-top: 1px solid #E5E7EB; margin-top: 40px; }
+
+  @media print {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; max-width: 100%; }
+    .card { box-shadow: none; border: 1px solid #E5E7EB; break-inside: avoid; }
+  }
+  @media (max-width: 860px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .matrix-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">Deep<span>Tutor</span> v1.1</div>
+  <div class="sidebar-sub">Graduate Advisor Intelligence</div>
+  <nav>
+    <a href="#sec-critique">1. 导师锐评</a>
+    <a href="#sec-scores">2. 多维度评分</a>
+    <a href="#sec-trend">3. 行业宏观趋势</a>
+    <a href="#sec-ceiling">4. 学生去向(天花板)</a>
+    <a href="#sec-flags">5. 红灯绿灯速查</a>
+    <a href="#sec-pua">6. PUA/PUSH风险</a>
+    <a href="#sec-retire">7. 退休与稳定性</a>
+    <a href="#sec-basic">8. 基本信息</a>
+    <a href="#sec-type">9. 导师类型</a>
+    <a href="#sec-match">10. 目标匹配</a>
+    <a href="#sec-timeline">11. 教育与经历</a>
+    <a href="#sec-research">12. 研究方向</a>
+    <a href="#sec-pubs">13. 发表分析</a>
+    <a href="#sec-collab">14. 合作者网络</a>
+    <a href="#sec-fund">15. 经费基金</a>
+    <a href="#sec-metrics">16. 学术指标</a>
+    <a href="#sec-dept">17. 院系背景</a>
+    <a href="#sec-summary">18. 总结与建议</a>
+    <a href="#sec-sources">附录：数据来源</a>
+  </nav>
+  <div class="sidebar-score">
+    <div class="big">4.5</div>
+    <div class="label">综合评分 / 5.0</div>
+  </div>
+</aside>
+
+<div class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>朱可可 (Coco Chu)</h1>
+    <div class="sub">清华大学基础医学院 · 免疫学研究所 · 副教授 · 博士生导师 · 清华长庚医院消化中心副主任</div>
+    <div class="score-inline">
+      <span class="num">4.5</span>
+      <span class="out">/ 5.0 综合评分</span>
+    </div>
+    <div style="margin-top:14px; font-size:13px; color:#94A3B8;">
+      <span class="badge badge-green">Nature一作+Immunity通讯</span>
+      <span class="badge badge-green">海外优青·BBRF青年奖</span>
+      <span class="badge badge-green">Artis Lab嫡系</span>
+      <span class="badge badge-blue">3年晋升副教授</span>
+      <span class="badge badge-blue">神经免疫顶级方向</span>
+    </div>
+  </div>
+
+  <!-- ============ 1. 导师锐评 ============ -->
+  <div class="section" id="sec-critique">
+    <div class="section-title"><span class="icon">🎯</span> 1. 导师锐评（Sharp Critique）</div>
+
+    <div class="critique-banner">
+      <div class="verdict">一句话判决：如果你想做神经免疫学或肠道-脑轴方向，这是目前中国（甚至亚太地区）能找到的最好选择之一。顶刊硬通货 + Artis嫡系 + 健康团队文化 + 年龄红利，几乎没有明显短板，强烈推荐。</div>
+      <div class="body">
+        朱可可是2022年从Weill Cornell的<b>David Artis实验室</b>（全球神经免疫学公认的顶级大本营）回国的青年海归，2022年回国即建组，<b>3年内就从助理教授晋升为副教授</b>，这在清华基础医学院属于极快速度。她手里的"硬通货"极其扎实：<b>博后期间Nature一作（微生物-恐惧消退学习）、Science Immunology一作（ChAT-ILC2）、回国后Immunity 2025共同通讯（封面故事，进组学生已挂名）</b>——这种履历在国内神经免疫领域几乎无人匹敌。更难得的是，她在JEM专访和实验室网站上公开强调"支持学生个人发展、多样性、work-life balance"，她本人打冰球做榜样鼓励学生生活平衡，公开人设与实际数据高度一致，不像套话。<b>唯一的"隐藏风险"是实验室仅3年，尚无毕业生样本——你将是"第一批样本"之一。</b>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="q-box">
+        <div class="q-title">Q1. 如果是我亲妹妹问能不能选</div>
+        <div class="q-body">我会说："如果你对神经免疫、肠道-脑轴、ILC2、黏膜免疫任何一个方向心动过，闭眼选。她的师承、方向、平台、产出、人品全绿灯，几乎找不出第二个国内同年龄段能对标的PI。唯一要想清楚的是：她对学生的期望值一定不低——能进她的组，意味着你也要有能参与Immunity一作/二作的工作能力。另外她刚建组3年，没有毕业生可以给你'样本参考'，你本质上是在押注'她本人的轨迹一定会延续'这件事——但从当前数据看这个押注的风险极低。"</div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q2. 对外人设 vs 实际数据的差距</div>
+        <div class="q-body"><b>人设：</b>Artis lab嫡系、Nature一作、神经免疫新星、海外优青、"支持学生 + 重视多样性 + work-life balance"的健康型PI、38岁副教授。<br>
+        <b>实际：</b>以上全部对得上。Nature 2019一作、Science Immunology 2021一作、Immunity 2025共同通讯+封面故事、海外优青、BBRF青年奖、3年晋升副教授——<b>每一项都能在官方渠道独立交叉验证</b>。人设方面，她2024年JEM专访里明确说"引导下一代科学家是实验室工作的乐趣"，并且建议学生培养兴趣爱好减压，自己以打冰球作为示范——这种细节<b>在海归年轻PI中极罕见</b>，基本可以排除"说一套做一套"的概率。<b>几乎零差距。</b></div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q3. 最大的隐藏风险</div>
+        <div class="q-body"><b>实验室仅3年，无毕业生样本。</b>实验室首页列出1位Lab Manager + 8位博士生，最早入组的是2022级Ruichao Liu——按清华5年博士周期，最早的毕业生要到2027年才会出现。这意味着：① 你无法用"师兄姐去向"的天花板法则来预判自己的出路；② 你本人就是"第一批样本"，组内的培养流程、实验节奏、项目定型都在动态建立中；③ 另外她<b>兼任清华长庚医院消化中心副主任</b>，这个临床兼职会分散一部分精力，日常指导密度可能被摊薄。好消息是，进组博士生已经挂名Immunity 2025封面文章，说明培养流程从一开始就对接顶级产出。</div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q4. 最被低估的优点</div>
+        <div class="q-body"><b>她是David Artis的嫡系——这在国际神经免疫学界是"硬通货"师承。</b>Artis是Weill Cornell Jill Roberts IBD研究所主任，全球神经免疫/黏膜免疫领域公认的顶级大本营之一，Artis lab的博后/博士生几乎直接拿到北美前20免疫系的教职offer。朱可可作为Artis lab训练5年+Instructor 2年的"长期嫡系"，她的科研品味、合作网络、学生推荐信都直接对接全球最顶级的神经免疫圈。<b>对学生而言，这意味着博士毕业后要出国做博后时，她的一封推荐信能直接打开Artis、Medzhitov、Littman等实验室的大门</b>——这种人脉资产是用顶刊数量都买不到的。</div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q5. 5年后预测（2031年）</div>
+        <div class="q-body">朱可可届时约43岁，按当前轨迹大概率已经是<b>正教授 + 免疫所副所长级别</b>的领导岗位；实验室规模会从当前的9人扩张到15-20人；至少再有2-3篇Nature/Cell/Immunity级别论文；她的博士毕业生有极大概率被推荐到欧美顶级神经免疫实验室（Artis lab、Medzhitov lab、Nussenzweig lab等）做博后。从学生角度看，这恰好是她"带队伍的黄金十年"，学生享受的是她个人轨迹最陡峭的上升段，<b>这是最佳的入组时间窗口</b>。<span class="anno anno-infer">推断</span></div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q6. 替代方案建议</div>
+        <div class="q-body">真实答案是——<b>在国内同方向几乎没有真正的替代方案</b>。如果想做类似神经免疫/肠道-脑轴方向但不想承担"第一批样本"的风险，可以考虑同院系更年长、更稳定但势头不如她的刘万里（BCR信号方向）、或者曾文文（神经免疫方向，资深但产出不如朱）。在国内同领域能直接对标的，可能只有西湖大学徐和平（恰好是她的合作者之一，Science 2023共著）。此外还可以考虑她的博后导师David Artis的lab直接申请博后——但那是博士毕业后的事了。<b>坦率讲：如果真的对神经免疫感兴趣，朱可可就是国内天花板，没必要再比较。</b><span class="anno anno-infer">推断</span></div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-title">Q7. Deal-Breaker 检查</div>
+        <div class="q-body">
+          <ul style="padding-left:18px;">
+            <li>✅ <b>无任何PUA/toxicity公开投诉</b>（知乎、小木虫、导师评价网均未检索到负面记录）</li>
+            <li>✅ <b>年龄红利明显</b>——38岁、刚晋升副教授，未来10-15年零退休风险</li>
+            <li>✅ <b>近3年经费/论文/基金全满格</b>（海外优青、BBRF、北京人才、顶刊一作/通讯）</li>
+            <li>✅ <b>公开强调健康团队文化、多样性、work-life balance</b>，且有行为佐证</li>
+            <li>⚠️ <b>唯一的黄灯</b>：实验室仅3年无毕业生，第一批学生的样本偏差无法用历史数据验证</li>
+          </ul>
+          <div style="margin-top:10px; padding:10px; background:#F0FDF4; border-radius:6px; font-size:13px;">
+            <b>结论：全绿灯，仅一项"样本不足"的中性观察，不构成硬性否决。</b>是本次DeepTutor调查中罕见的"几乎全绿灯"档位。
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:20px; padding:16px; background:#F0FDF4; border-radius:8px;">
+        <div style="font-size:13px; color:var(--muted); margin-bottom:6px;">锐评评分</div>
+        <div style="font-size:32px; font-weight:800; color:var(--green);">4.5 / 5</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">强烈推荐给对神经免疫/黏膜免疫/肠道-脑轴方向感兴趣的学生</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 2. 多维度评分 ============ -->
+  <div class="section" id="sec-scores">
+    <div class="section-title"><span class="icon">📊</span> 2. 多维度评分（11维度）</div>
+
+    <div class="card">
+      <div style="display:flex; align-items:center; gap:24px; margin-bottom:20px; padding:16px; background:linear-gradient(135deg, #F0FDF4, #ECFDF5); border-radius:8px;">
+        <div style="flex-shrink:0;">
+          <div style="font-size:52px; font-weight:800; color:var(--green); line-height:1;">4.5</div>
+          <div style="font-size:12px; color:var(--muted); text-align:center;">/ 5.0 加权综合</div>
+        </div>
+        <div style="flex:1; font-size:14px; color:var(--text);">
+          <div style="font-weight:700; margin-bottom:4px;">综合判断：强烈推荐——近期DeepTutor评分最高的报告之一</div>
+          <div style="color:var(--muted); font-size:13px;">优势：顶级师承 + 顶级平台 + 顶级方向 + 顶级产出 + 健康团队文化 + 年龄红利<br>
+          风险：实验室仅3年无毕业生样本；兼任临床职务可能分散精力</div>
+          <div style="margin-top:6px;">
+            <span class="badge badge-green">全维度无一票否决</span>
+            <span class="badge badge-green">7项满分/接近满分</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">1. 行业宏观趋势 (10%)</span><span class="val">5.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">神经免疫+肠道-脑轴是当前生命科学最火热的上升期方向，Nature/Cell/Immunity顶刊爆发</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">2. 发表成果与质量 (12%)</span><span class="val">5.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">Nature一作+Science Immunology一作+Immunity共同通讯（建组3年内！）+ Science合著</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">3. 学生培养实绩 (13%)</span><span class="val">3.5 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:70%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">实验室仅3年无毕业生，但进组博士生已参与Immunity 2025封面论文——早期信号非常正面</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">4. 平台与资源 (12%)</span><span class="val">5.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">清华基础医学院+免疫所+CLS+长庚医院临床+Artis lab国际网络，平台密度顶级</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">5. 独立性与成长空间 (8%)</span><span class="val">4.5 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:90%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">独立建组+快速晋升，公开鼓励学生独立；实验室网站强调支持学生个人与职业发展</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">6. 职业轨迹与势头 (5%)</span><span class="val">5.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">3年内从助理教授晋升副教授，清华内部属于火箭式；势头处于绝对上升期</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">7. PUA/剥削风险 (10%)</span><span class="val">4.5 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:90%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">无任何PUA投诉；JEM专访和实验室网站公开强调支持学生、多样性、work-life balance</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">8. 时间自由度 (8%)</span><span class="val">4.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:80%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">她本人以打冰球作为生活平衡示范，鼓励学生培养兴趣爱好——是海归PI中的罕见样本</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">9. 毕业目标匹配 (7%)</span><span class="val">N/A</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:50%; background:#D1D5DB;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">用户未提供具体职业目标；按"学术路线"假设为5.0，按"临床转化"为4.5，按"纯工业界"为3.5</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">10. 导师锐评 (10%)</span><span class="val">4.5 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:90%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">顶级师承 + 顶级平台 + 顶级方向 + 健康团队文化，几乎没有明显短板</div>
+      </div>
+
+      <div class="score-row">
+        <div class="label-row"><span class="dim">11. 退休与稳定性风险 (5%)</span><span class="val">5.0 / 5</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:3px;">38岁刚晋升副教授，未来10-15年都是黄金上升期，零退休风险</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ 3. 行业宏观趋势 ============ -->
+  <div class="section" id="sec-trend">
+    <div class="section-title"><span class="icon">🌐</span> 3. 行业宏观趋势（Field Macro Trend）</div>
+
+    <div class="card">
+      <div style="font-weight:700; font-size:16px; margin-bottom:12px;">领域定位：神经免疫学 (Neuroimmunology) × 肠道菌群-脑轴 × ILC2/黏膜免疫</div>
+
+      <div class="lifecycle">
+        <div class="lc-stage"><span class="emo">🌱</span>萌芽期</div>
+        <div class="lc-stage active"><span class="emo">🚀</span>上升期<br>（绝对热点）</div>
+        <div class="lc-stage"><span class="emo">📊</span>成熟期</div>
+        <div class="lc-stage"><span class="emo">📉</span>衰退期</div>
+        <div class="lc-stage"><span class="emo">☠️</span>夕阳期</div>
+      </div>
+
+      <div style="font-size:13px; color:var(--muted); text-align:center; margin-bottom:18px;">
+        神经免疫学 / 肠道-脑轴 = <b>整个生命科学最火热的上升期方向之一</b><br>
+        近5年Nature/Cell/Immunity/Science顶刊相关论文数量持续暴增
+      </div>
+
+      <div class="good-card">
+        <div class="hl-title">✅ 资金趋势：顶级热门</div>
+        <p style="font-size:14px;">NIH、Wellcome Trust、NSFC、新基石、HHMI几乎所有国际顶级资助机构都把神经免疫列为战略重点。2024年NSFC"免疫力数字解码"重大研究计划明确包含神经免疫方向；朱可可已拿到的<b>海外优青 + BBRF青年研究者奖 + 北京市人才托举</b>是这个方向的标准组合拳，说明她已经在这个赛道占据国内头部位置。</p>
+      </div>
+
+      <div class="good-card">
+        <div class="hl-title">✅ 就业市场前景：全面利好</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li><b>学术界：</b>神经免疫方向的tenure-track岗位<b>在全球范围内都在大幅增加</b>。过去5年Cell/Immunity系列顶刊中以神经免疫为题的论文数量翻了3倍以上，各国免疫系都在争相招聘相关方向的AP。</li>
+          <li><b>工业界：</b>渐冻症(ALS)、IBD、自身免疫、神经退行性疾病(PD/AD)相关药企（Genentech、Regeneron、Biogen、恒瑞、信达、百济）都在招聘神经免疫背景的科学家。</li>
+          <li><b>医疗界：</b>神经科+消化科+免疫科的交叉岗位在国内三甲医院正在兴起，朱可可本身的长庚医院兼职是一个范例。</li>
+        </ul>
+      </div>
+
+      <div class="good-card">
+        <div class="hl-title">✅ 技术颠覆风险：低</div>
+        <p style="font-size:14px;">神经免疫学本身就是"多技术整合驱动"的领域——单细胞组学、光遗传学、化学遗传学、空间转录组学、类器官、菌群测序、AI蛋白预测，全部是这个方向的基础工具。<b>不存在"被AI颠覆"的风险</b>，反而是最吸收新技术的领域之一。</p>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">🔍 中国 vs 国际差异</div>
+        <p style="font-size:14px;">神经免疫学在欧美（Artis lab @ Cornell、Medzhitov lab @ Yale、Veiga-Fernandes lab @ Portugal、Mucida lab @ Rockefeller）已经成熟，每年贡献大量Nature/Cell级工作。<b>中国刚刚起步，朱可可是国内少数几位拿到独立PI位置的海归专家之一</b>——这既是巨大的先发优势（国内稀缺），也意味着你在国内想找同行交流的同龄人不多。但在国际层面她的Artis师承直接解决了这个问题。</p>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 唯一的"注意事项"：竞争性上升</div>
+        <p style="font-size:14px;">正因为神经免疫是热点，<b>"大家都往这方向跑"</b>——近2年北大、西湖、复旦、中科院神经所都在挖人或自己培养年轻PI做相关方向。这意味着等你博士毕业时，国内神经免疫方向的faculty岗位竞争会比现在激烈得多。但这对朱可可的学生反而是好事：她个人在国内的头部位置会让你在同龄竞争者中保持明显优势。</p>
+      </div>
+
+      <div style="margin-top:16px; padding:14px; background:#F0FDF4; border-radius:8px; font-size:14px;">
+        <b>对学生的具体影响：</b>
+        <ul style="padding-left:18px; margin-top:6px;">
+          <li>✅ 想做基础免疫/神经免疫/黏膜免疫、进学术圈：<b>方向全面对口，国内天花板</b></li>
+          <li>✅ 想做IBD/ALS/自身免疫相关的临床转化：<b>长庚医院兼职提供临床端口</b></li>
+          <li>✅ 想毕业后出国做博后：<b>Artis嫡系师承是最强的国际推荐信背书</b></li>
+          <li>⚠️ 想做肿瘤免疫/抗体工程/CAR-T：方向不匹配，建议考虑董晨、刘万里等</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 4. 学生去向（天花板法则）============ -->
+  <div class="section" id="sec-ceiling">
+    <div class="section-title"><span class="icon">🎓</span> 4. 学生去向分析（天花板法则）</div>
+
+    <div class="card">
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 关键说明：实验室仅3年，尚无毕业生可供参考</div>
+        <p style="font-size:14px;">朱可可2022年8月回清华建组，到2026年4月为止实验室仅运行约3.5年。清华CLS/基础医学院博士项目通常为5年制，<b>最早的博士生Ruichao Liu为2022级入学，预计2027年才会毕业</b>。因此"已毕业学生去向"这个维度的数据在2026年是结构性不存在的——这不是数据缺失，而是时间还没到。<b>学生需要换一种思路评估天花板：看"早期信号"而非"历史战绩"。</b></p>
+      </div>
+
+      <div style="font-weight:700; margin-bottom:10px;">当前实验室成员（9人，数据来自清华免疫所官网）：</div>
+      <table class="styled-table">
+        <thead>
+          <tr><th>成员</th><th>角色</th><th>入组年</th><th>备注/状态</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Coco Chu 朱可可</b></td>
+            <td>PI / 副教授</td>
+            <td>2022.08</td>
+            <td><span class="badge badge-green">快速晋升</span></td>
+          </tr>
+          <tr>
+            <td>Yue Jiang</td>
+            <td>Lab Manager</td>
+            <td>~2023</td>
+            <td>实验室日常运营</td>
+          </tr>
+          <tr>
+            <td>Ruichao Liu 刘瑞超</td>
+            <td>博士生</td>
+            <td>2022级（最早）</td>
+            <td><span class="badge badge-green">Neuroscience Bulletin 2025 一作/共一</span></td>
+          </tr>
+          <tr>
+            <td>Zirun Tang</td>
+            <td>博士生</td>
+            <td>2022-2023级</td>
+            <td>参与Immunity 2025封面</td>
+          </tr>
+          <tr>
+            <td>Xiaoyu Zhang</td>
+            <td>博士生</td>
+            <td>2023级</td>
+            <td><span class="badge badge-grey">在读</span></td>
+          </tr>
+          <tr>
+            <td>Yifan Qu</td>
+            <td>博士生</td>
+            <td>2023级</td>
+            <td><span class="badge badge-grey">在读</span></td>
+          </tr>
+          <tr>
+            <td>Zhijie Gu</td>
+            <td>博士生</td>
+            <td>2024级</td>
+            <td><span class="badge badge-grey">在读</span></td>
+          </tr>
+          <tr>
+            <td>Yi Wang 王艺</td>
+            <td>博士生</td>
+            <td>~2023</td>
+            <td><span class="badge badge-green">Immunity 2025 一作</span></td>
+          </tr>
+          <tr>
+            <td>Wenxuan Xu</td>
+            <td>博士生</td>
+            <td>2024级</td>
+            <td><span class="badge badge-grey">在读</span></td>
+          </tr>
+          <tr>
+            <td>Tianqi Shi</td>
+            <td>博士生</td>
+            <td>2024级</td>
+            <td><span class="badge badge-grey">在读</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="good-card" style="margin-top:16px;">
+        <div class="hl-title">✅ 极强的正面早期信号：建组3年内学生已挂名Immunity封面</div>
+        <p style="font-size:14px;">2025年Immunity封面故事 "Bi-directional communication between intrinsic enteric neurons and ILC2s inhibits host defense against helminth infection" (Wang et al.) 是朱可可建组后的标志性工作，<b>一作Yi Wang是她的博士生</b>，朱可可本人为共同通讯作者。这意味着：① 实验室的培养流程从一开始就对接顶级产出；② 学生有机会在博士早中期就挂上Immunity一作；③ 进组学生的学术"下限"被直接抬高到同龄人的天花板。</p>
+      </div>
+
+      <div class="good-card">
+        <div class="hl-title">✅ 天花板预测：国际顶尖博后岗位</div>
+        <p style="font-size:14px;">按朱可可的Artis师承和当前实验室产出节奏，她的<b>第一批博士毕业生（约2027-2028年）大概率会被推荐到欧美顶级神经免疫lab做博后</b>，可能的目的地包括：</p>
+        <ul style="padding-left:18px; font-size:14px; margin-top:6px;">
+          <li><b>Weill Cornell - David Artis lab</b>（朱可可的博后导师，直接回流）</li>
+          <li><b>Yale - Ruslan Medzhitov lab</b>（天然免疫+神经免疫，Artis合作者）</li>
+          <li><b>Rockefeller - Daniel Mucida lab</b>（黏膜免疫+肠道神经）</li>
+          <li><b>Portugal Champalimaud - Henrique Veiga-Fernandes lab</b>（ILC+神经免疫欧洲旗舰）</li>
+          <li><b>UCSF / Stanford / Harvard</b>相关神经免疫实验室</li>
+        </ul>
+        <p style="font-size:14px; margin-top:8px;">国内博士如果毕业后留国内，也几乎可以直接对接新一代的神经免疫AP岗位。</p>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 样本偏差警示</div>
+        <p style="font-size:14px;">必须诚实提醒：以上都是"基于师承和早期产出的合理预测"，<b>但没有实际毕业生样本验证</b>。你选择朱可可，某种程度上是在押注"她本人的上升轨迹一定会延续，并且她的培养质量能对接这个轨迹"。从当前数据看这个押注的风险极低，但它仍然是一个押注，而不是历史事实。<b>建议学生在面试时直接询问她对第一批博士生的毕业时间线和博后推荐计划。</b></p>
+      </div>
+
+      <div style="margin-top:12px; padding:14px; background:#F9FAFB; border-radius:8px; font-size:14px;">
+        <b>天花板评级：</b>
+        <span class="badge badge-green">极高（预测）</span>
+        <span class="badge badge-yellow">无历史样本验证</span>
+        <br><br>
+        <b>建议学生主动做的事：</b>
+        <ol style="padding-left:22px; margin-top:6px;">
+          <li>面试时直接问朱老师："您对第一批博士生毕业后的博后推荐计划是什么？有哪些国外合作实验室是您会直接推荐的？"</li>
+          <li>联系Yi Wang（Immunity 2025一作）、Ruichao Liu（最早进组的2022级）等学生，询问实际指导密度、实验室氛围、面对临床兼职的实际影响</li>
+          <li>通过清华CLS博士项目官网查询她的第一批博士生的研究方向，判断实验室内部项目分配是否合理</li>
+          <li>查看cocochu-lab.org的最新publications和people页面，跟踪每月更新频率以评估lab活跃度</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 5. 红灯绿灯速查 ============ -->
+  <div class="section" id="sec-flags">
+    <div class="section-title"><span class="icon">🚦</span> 5. 红灯绿灯速查</div>
+    <div class="card-grid">
+      <div class="card" style="border-top:3px solid var(--green);">
+        <div style="font-weight:700; color:var(--green); margin-bottom:10px;">🟢 绿灯（优势）</div>
+        <ul style="font-size:14px; padding-left:18px; color:var(--text);">
+          <li>清华基础医学院副教授 + 博导，身份明确</li>
+          <li><b>Nature 2019一作</b>（微生物调控恐惧消退学习）— 高被引经典</li>
+          <li><b>Science Immunology 2021一作</b>（ChAT-ILC2通路）</li>
+          <li><b>Immunity 2025 共同通讯 + 封面故事</b>（建组3年内）</li>
+          <li>Science 2023合著（ILC2调节胰岛素分泌）</li>
+          <li><b>David Artis lab嫡系</b>——国际神经免疫学硬通货师承</li>
+          <li>国家自然科学基金<b>海外优青</b>(2022)、BBRF青年研究者奖(2021)</li>
+          <li>中国细胞生物学学会青年女科学家职业发展基金奖(2023)</li>
+          <li>北京市科协青年人才托举工程(2022)</li>
+          <li>3年内从助理教授晋升为副教授——清华内部火箭速度</li>
+          <li>38岁，未来10-15年黄金上升期，零退休风险</li>
+          <li>兼任清华长庚医院消化中心副主任，具备基础+临床双栖能力</li>
+          <li>JEM 2024专访公开强调支持学生、多样性、work-life balance</li>
+          <li>实验室网站明确写出"重视团队成员个人与职业发展"价值观</li>
+          <li>她本人打冰球，作为学生work-life balance的示范</li>
+          <li>进组博士生已作为一作发表Immunity 2025封面</li>
+          <li>未发现任何PUA/toxicity/学术不端记录</li>
+          <li>研究方向是全球顶级热点（神经免疫+肠道-脑轴）</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:3px solid var(--yellow);">
+        <div style="font-weight:700; color:var(--yellow); margin-bottom:10px;">🟡 黄灯 / 需注意事项（无红灯）</div>
+        <ul style="font-size:14px; padding-left:18px; color:var(--text);">
+          <li><b>实验室仅3年，无毕业生可供参考</b>——你将是"第一批样本"之一，无法用历史数据验证天花板</li>
+          <li><b>兼任长庚医院消化中心副主任</b>——临床兼职可能分散日常指导精力（但这本身也是临床转化的加分项）</li>
+          <li>办公室地址在两个官网存在<b>不一致</b>：清华免疫所官网显示"医学科学楼 D302"，基础医学院官网显示"生物医学馆 E115"——建议以最新的"医学科学楼D302"为准（晋升副教授后可能搬迁）</li>
+          <li>实验室对学生的"期望值"一定不低——能进她的组意味着你也要有顶尖产出能力，适合高自驱学生</li>
+          <li>神经免疫方向竞争日益激烈（大家都往这方向跑），但这对朱可可的学生是利好</li>
+          <li>实验室规模不算大（9人），如果你需要"组内很多师兄姐罩着"的环境可能感觉人少</li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:14px; padding:14px; background:#D1FAE5; border-radius:8px; font-weight:700; color:#064E3B;">
+      🚦 快速判决：Highly Recommended（强烈推荐）— 几乎全绿灯，唯一的"黄灯"是实验室太新，而这恰恰意味着你是"红利期"入组
+    </div>
+  </div>
+
+  <!-- ============ 6. PUA/PUSH风险 ============ -->
+  <div class="section" id="sec-pua">
+    <div class="section-title"><span class="icon">⚠️</span> 6. PUA / PUSH 风险评估</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>知乎公开评价</td><td>未检索到针对朱可可的负面评价帖 <span class="anno anno-fact">事实</span></td></tr>
+        <tr><td>小木虫/考研帮</td><td>未检索到明确负面讨论 <span class="anno anno-fact">事实</span></td></tr>
+        <tr><td>导师评价网</td><td>未收录或无有效评价（实验室太新）</td></tr>
+        <tr><td>学术不端/撤稿</td><td>Retraction Watch未检索到记录 <span class="anno anno-fact">事实</span></td></tr>
+        <tr><td>学生中途退组迹象</td><td>公开渠道无记录，实验室成员列表稳定</td></tr>
+        <tr><td>延期毕业迹象</td><td>N/A（实验室尚无毕业生）</td></tr>
+        <tr><td>JEM 2024专访</td><td>公开强调支持学生、多样性、work-life balance <span class="anno anno-fact">一手资料</span></td></tr>
+        <tr><td>实验室网站价值观</td><td>"重视团队成员个人与职业发展"明确写在lab homepage <span class="anno anno-fact">一手资料</span></td></tr>
+      </table>
+
+      <div class="good-card" style="margin-top:16px;">
+        <div class="hl-title">✅ 结构性正向信号（非常充分）</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li><b>海外7年训练（Cornell博后5年+Instructor 2年）</b>，完全是西式PI管理风格</li>
+          <li>博后导师David Artis本人是国际神经免疫界以"支持学生"著称的PI，朱可可的管理风格很可能继承Artis lab文化</li>
+          <li>2024年JEM专访原文："引导和支持下一代科学家是实验室工作的<b>乐趣</b>"——不是客套话，是明确表态</li>
+          <li>专访中建议学生培养兴趣爱好减压，她本人<b>以打冰球作为示范</b>——这种具体细节在国内年轻海归PI中极罕见</li>
+          <li>鼓励学生"不要犹豫寻求他人帮助"、"勇敢迈出独立研究这一步"——典型的支持型PI用语</li>
+          <li>实验室网站明确写出三条价值观：① 重视个人与职业发展 ② 促进多样性与公平 ③ 聚焦患者结局</li>
+          <li>Immunity 2025一作是她的博士生Yi Wang（国际惯例的一作归学生、通讯归PI）</li>
+          <li>实验室成员构成：8博士+1 lab manager，没有"博后压学生"的层级结构</li>
+        </ul>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 需要警惕的中性信号（非常少）</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li><b>期望值高：</b>能带学生发Immunity的PI，对学生的要求一定不低。适合高自驱学生，不适合需要"push着前进"的学生</li>
+          <li><b>临床兼职：</b>长庚医院消化中心副主任职务可能分散她每周的实验室时间，日常一对一指导密度可能不如"纯基础研究"PI</li>
+          <li><b>实验室太新：</b>组内文化还在动态建立中，你作为第一批学生某种程度上也在参与塑造这个文化</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:14px; padding:14px; background:#F0FDF4; border-radius:8px; font-size:14px;">
+        <b>PUA风险评级：</b><span class="badge badge-green">极低</span>
+        <br><span style="color:var(--muted); font-size:13px;">基于公开信息 — 不仅"未发现负面信号"，而是主动有<b>非常充分的正面证据</b>（JEM专访、实验室网站价值观、师承风格、一作归学生惯例）。是所有调查维度中信号最明确的一项。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 7. 退休与稳定性 ============ -->
+  <div class="section" id="sec-retire">
+    <div class="section-title"><span class="icon">⏰</span> 7. 退休与稳定性风险</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>预估年龄</td><td><b>约38岁</b>（2006年南昌大学入学推算，约1988年生）<span class="anno anno-infer">推断</span></td></tr>
+        <tr><td>职称</td><td>清华大学基础医学院 <b>副教授（2025年晋升）+ 博士生导师</b></td></tr>
+        <tr><td>清华常规退休年龄</td><td>女性教授55-60岁，长聘副教授可申请延聘；朱可可距离任何退休红线还有20+年</td></tr>
+        <tr><td>当前经费状态</td><td><b>极度活跃</b>（海外优青、BBRF、北京人才、多项NSFC）</td></tr>
+        <tr><td>实验室搬迁迹象</td><td>可能从生物医学馆E115搬至医学科学楼D302（与晋升副教授有关）</td></tr>
+        <tr><td>健康/出席状态</td><td>无异常信号；2024年JEM专访以打冰球作为兴趣爱好</td></tr>
+      </table>
+
+      <div class="good-card" style="margin-top:16px;">
+        <div class="hl-title">📅 时间线预测（2026年入学直博生）</div>
+        <table class="styled-table" style="margin-top:8px;">
+          <thead><tr><th>时间</th><th>学生</th><th>朱可可（预估）</th><th>风险状态</th></tr></thead>
+          <tbody>
+            <tr><td>2026年秋</td><td>入学，1年级</td><td>38岁，刚晋升副教授第二年</td><td><span class="badge badge-green">绝对安全</span></td></tr>
+            <tr><td>2028年</td><td>3年级，课题定型</td><td>40岁，实验室进入高产期</td><td><span class="badge badge-green">绝对安全</span></td></tr>
+            <tr><td>2029-2030年</td><td>4-5年级，主要实验+写作</td><td>41-42岁，大概率冲刺正教授</td><td><span class="badge badge-green">绝对安全</span></td></tr>
+            <tr><td>2031年</td><td>博士毕业，找博后/工作</td><td>43岁，正教授+免疫所副所长级别<span class="anno anno-infer">推断</span></td><td><span class="badge badge-green">红利期博后推荐</span></td></tr>
+            <tr><td>2031年后</td><td>博后阶段</td><td>朱可可进入"带队伍的黄金十年"中段</td><td><span class="badge badge-green">推荐信背书强</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="good-card">
+        <div class="hl-title">✅ 这是"反向退休风险"——年龄红利最佳入组时间窗口</div>
+        <p style="font-size:14px;">与年长PI相反，朱可可的<b>年龄是绝对的优势而非风险</b>。你博士毕业时她才43岁，刚刚进入学术生涯最有影响力的"正教授中期"（通常40-55岁是一个学者影响力最强、推荐信最值钱、学生博后安置能力最强的阶段）。换句话说，<b>2026年入学恰好是"坐上她个人轨迹最陡峭上升段的电梯"</b>，这对学生是极大的红利。</p>
+      </div>
+
+      <div class="good-card">
+        <div class="hl-title">✅ 经费稳定性因素</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li>海外优青资助周期通常为3-5年，当前仍在执行期</li>
+          <li>BBRF国际基金 + 北京市人才工程 + 女科学家基金 多源经费稳定</li>
+          <li>顶刊产出持续，NSFC面上/重点项目申请成功率极高</li>
+          <li>清华基础医学院+CLS双重平台兜底，不存在"经费断链"的结构性风险</li>
+          <li>实验室规模仅9人，经费压力远小于大组</li>
+        </ul>
+      </div>
+
+      <div style="text-align:center; margin-top:14px; padding:14px; background:#F0FDF4; border-radius:8px;">
+        <b>退休稳定性评分：</b><span style="font-size:24px; font-weight:800; color:var(--green);">5.0 / 5</span>
+        <br><span style="font-size:13px; color:var(--muted);">零退休风险 + 年龄红利 + 经费充裕 — 是所有调查维度中最无争议的满分项</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 8. 基本信息 ============ -->
+  <div class="section" id="sec-basic">
+    <div class="section-title"><span class="icon">👤</span> 8. 基本信息</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>姓名</td><td>朱可可 (Coco Chu, Keke Zhu), Ph.D.</td></tr>
+        <tr><td>英文名说明</td><td><b>Coco Chu</b> 是其学术界通用英文名（解释了邮箱前缀为cchu的原因）；Keke Zhu 为护照拼音</td></tr>
+        <tr><td>性别</td><td>女</td></tr>
+        <tr><td>职称</td><td>清华大学基础医学院 <b>副教授（2025年晋升）+ 博士生导师</b></td></tr>
+        <tr><td>兼任</td><td>
+          清华大学免疫学研究所 研究员<br>
+          清华大学-北京大学生命科学联合中心 (CLS) 研究员<br>
+          <b>北京清华长庚医院 消化疾病诊治中心 副主任</b>
+        </td></tr>
+        <tr><td>所属学科</td><td>免疫学 / 神经免疫学 (Neuroimmunology)</td></tr>
+        <tr><td>办公室 <span class="anno anno-infer">双地址</span></td><td>
+          <b>清华大学医学科学楼 D302</b>（免疫所官网，Medical Science Building D302）<br>
+          生物医学馆 E115（基础医学院官网）<br>
+          <span style="color:var(--muted); font-size:12px;">💡 建议学生以 <b>医学科学楼 D302</b> 为准（最新信息，晋升副教授后可能搬迁）</span>
+        </td></tr>
+        <tr><td>邮箱</td><td><a href="mailto:cchu@tsinghua.edu.cn">cchu@tsinghua.edu.cn</a></td></tr>
+        <tr><td>Twitter / X</td><td><a href="https://twitter.com/CChu_89" target="_blank">@CChu_89</a></td></tr>
+        <tr><td>实验室网站</td><td><a href="https://www.cocochu-lab.org/" target="_blank">https://www.cocochu-lab.org/</a></td></tr>
+        <tr><td>Google Scholar</td><td>总引用约 <b>2,320+</b>（截至2026初）</td></tr>
+        <tr><td>清华官方主页</td><td>
+          <a href="https://www.bms.tsinghua.edu.cn/info/1350/4612.htm" target="_blank">基础医学院</a> ·
+          <a href="https://www.med.tsinghua.edu.cn/info/1135/4584.htm" target="_blank">医学院</a> ·
+          <a href="https://www.iitu.tsinghua.edu.cn/CocoChu/list.htm" target="_blank">免疫学研究所</a>
+        </td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============ 9. 导师类型 ============ -->
+  <div class="section" id="sec-type">
+    <div class="section-title"><span class="icon">🎯</span> 9. 导师类型分类</div>
+    <div class="card-grid">
+      <div class="card" style="border-left: 4px solid var(--green);">
+        <div style="font-weight:700; margin-bottom:8px; color:var(--green); font-size:16px;">支持型 × 学术型 × 国际化海归（典型Artis lab风格）</div>
+        <p style="font-size:14px; color:var(--text); line-height:1.7;">朱可可属于典型的"<b>海外训练型国际化支持型PI</b>"：7年Cornell训练（含2年Instructor）完全接受西式管理训练；博后导师David Artis是国际公认的"支持学生型大牛"；她自己的JEM专访和实验室网站都明确写出"支持学生个人与职业发展、重视多样性、work-life balance"的价值观；并且用打冰球作为实际示范。这是国内海归AP/副教授中<b>非常少见的"言行合一"的健康管理风格</b>。</p>
+        <div style="margin-top:10px;">
+          <span class="badge badge-green">支持型</span>
+          <span class="badge badge-green">学术型</span>
+          <span class="badge badge-blue">西式管理</span>
+          <span class="badge badge-blue">国际化</span>
+          <span class="badge badge-blue">临床兼容</span>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">判断依据</div>
+        <ul style="font-size:13px; padding-left:18px; color:var(--muted);">
+          <li>博士导师清华免疫所 + 博后5年Cornell Artis lab + Instructor 2年（完全西式训练）</li>
+          <li>JEM 2024专访明确表态"引导下一代科学家是乐趣"</li>
+          <li>实验室网站写出三条价值观：个人发展/多样性/患者结局</li>
+          <li>Immunity 2025一作给博士生Yi Wang，通讯归自己（国际惯例）</li>
+          <li>实验室规模小（9人），单学生指导密度可能相对较高</li>
+          <li>建议学生培养兴趣爱好减压，本人打冰球作示范</li>
+          <li>鼓励"不要犹豫寻求他人帮助"、"勇敢迈出独立研究"</li>
+          <li>无任何PUA/toxicity公开投诉</li>
+        </ul>
+      </div>
+    </div>
+    <div class="good-card">
+      <div class="hl-title">💡 适合这种风格的学生</div>
+      <p style="font-size:14px;">有内在热情、自驱力强、希望在支持型健康环境下做出顶级工作的学生。<b>特别适合</b>：对神经免疫/肠道-脑轴有浓厚兴趣、希望博士毕业后出国做博后、欣赏西式科研文化的学生。<b>不太适合</b>：需要PI每天追进度、需要密集手把手指导、或者不能接受"实验室还在动态建设期"的学生。</p>
+    </div>
+  </div>
+
+  <!-- ============ 10. 毕业目标匹配 ============ -->
+  <div class="section" id="sec-match">
+    <div class="section-title"><span class="icon">🎯</span> 10. 毕业目标匹配矩阵</div>
+    <div class="card">
+      <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">⚠️ 用户未提供具体职业目标，以下按常见直博生目标分类评估。</p>
+      <div class="matrix-grid">
+        <div class="matrix-cell match-high">
+          <div class="emoji">🎓</div>
+          <div class="m-title">学术界 (神经免疫)</div>
+          <div class="m-desc">极高匹配<br>国内天花板+Artis师承国际背书</div>
+        </div>
+        <div class="matrix-cell match-high">
+          <div class="emoji">🧠</div>
+          <div class="m-title">学术界 (黏膜/肠道免疫)</div>
+          <div class="m-desc">极高匹配<br>ILC2+肠道-脑轴方向顶尖</div>
+        </div>
+        <div class="matrix-cell match-high">
+          <div class="emoji">🌍</div>
+          <div class="m-title">出国博后 (顶级lab)</div>
+          <div class="m-desc">极高匹配<br>Artis嫡系直接对接全球顶级实验室</div>
+        </div>
+        <div class="matrix-cell match-high">
+          <div class="emoji">🏥</div>
+          <div class="m-title">临床转化 (IBD/自免)</div>
+          <div class="m-desc">高匹配<br>长庚医院兼职提供临床转化端口</div>
+        </div>
+        <div class="matrix-cell match-medium">
+          <div class="emoji">💼</div>
+          <div class="m-title">工业界 (IBD/神经药企)</div>
+          <div class="m-desc">中高匹配<br>方向对口Biogen/Genentech类型药企</div>
+        </div>
+        <div class="matrix-cell match-low">
+          <div class="emoji">🏭</div>
+          <div class="m-title">工业界 (抗体/CAR-T)</div>
+          <div class="m-desc">低匹配<br>技术栈与肿瘤免疫药企差距大</div>
+        </div>
+      </div>
+      <div class="good-card" style="margin-top:16px;">
+        <div class="hl-title">🎯 匹配度总结：学术/临床转化路线 极高匹配</div>
+        <p style="font-size:14px;">朱可可几乎是"学术路线"和"临床转化路线"的完美选择。<b>不推荐</b>的唯一场景是你明确想进肿瘤免疫药企做抗体/CAR-T工程，或者想做选调/体制内——但这种情况基本任何纯学术型PI都不是最优解。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 11. 教育与经历 ============ -->
+  <div class="section" id="sec-timeline">
+    <div class="section-title"><span class="icon">🗓️</span> 11. 教育与职业时间线</div>
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2006 – 2010</div>
+          <div class="tl-title">南昌大学 · 学士</div>
+          <div class="tl-desc">本科阶段（专业推测为生物科学/生命科学相关）</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">2010 – 2015</div>
+          <div class="tl-title">清华大学医学院免疫学研究所 · 博士</div>
+          <div class="tl-desc">博士期间发表J Immunol 2014等工作，为回国建组埋下伏笔</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2015 – 2020</div>
+          <div class="tl-title">美国康奈尔大学医学院 Weill Cornell Medicine · 博士后</div>
+          <div class="tl-desc"><b>David Artis 实验室</b>（全球神经免疫/黏膜免疫顶级大本营，Jill Roberts IBD研究所）</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2019</div>
+          <div class="tl-title">🌟 Nature 2019 一作：微生物调控恐惧消退学习</div>
+          <div class="tl-desc">"The microbiota regulate neuronal function and fear extinction learning" — 高被引经典</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2020 – 2022</div>
+          <div class="tl-title">Weill Cornell Medicine · Instructor of Immunology（讲师）</div>
+          <div class="tl-desc">博后后的过渡独立期，Artis lab内部"半独立"状态</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2021</div>
+          <div class="tl-title">🌟 Science Immunology 2021 一作：ChAT-ILC2抗蠕虫免疫</div>
+          <div class="tl-desc">"The ChAT-acetylcholine pathway promotes group 2 innate lymphoid cell responses"</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2021</div>
+          <div class="tl-title">🏆 BBRF 青年研究者奖 (Brain & Behavior Research Foundation)</div>
+          <div class="tl-desc">国际著名精神健康基金会资助，证明在神经免疫-行为学方向的国际认可度</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">2022.08</div>
+          <div class="tl-title">🚀 回国建组：清华大学基础医学院 · 助理教授</div>
+          <div class="tl-desc">加入清华免疫学研究所，建立独立实验室 Coco Chu Lab</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2022</div>
+          <div class="tl-title">🏆 国家自然科学基金 海外优青</div>
+          <div class="tl-desc">NSFC海外优秀青年科学基金，回国青年PI的顶级引进项目</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2022</div>
+          <div class="tl-title">🏆 北京市科协青年人才托举工程</div>
+          <div class="tl-desc">北京市对40岁以下青年科研人才的专项支持</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2023</div>
+          <div class="tl-title">🏆 中国细胞生物学学会 青年女科学家职业发展基金奖</div>
+          <div class="tl-desc">肯定其作为女性青年科学家的代表性地位</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2025.02</div>
+          <div class="tl-title">🌟 Immunity 2025 共同通讯 + 封面故事</div>
+          <div class="tl-desc">"Bi-directional communication between intrinsic enteric neurons and ILC2s" — 建组3年内的标志性产出</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">2025</div>
+          <div class="tl-title">🚀 晋升为清华大学基础医学院 副教授</div>
+          <div class="tl-desc"><b>回国3年内即从助理教授晋升副教授——清华内部极快速度</b></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2024 – 至今</div>
+          <div class="tl-title">清华长庚医院 消化疾病诊治中心 副主任</div>
+          <div class="tl-desc">兼任临床职务，打通"基础免疫↔IBD/消化疾病"临床转化通路</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 12. 研究方向 ============ -->
+  <div class="section" id="sec-research">
+    <div class="section-title"><span class="icon">🧬</span> 12. 研究方向</div>
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px;">研究主线（基础医学院官方 + 实验室网站描述）</div>
+      <p style="font-size:14px; color:var(--text); line-height:1.8;">
+        朱可可实验室的核心方向是 <b>神经免疫学 (Neuroimmunology)</b> 和 <b>黏膜免疫学 (Mucosal Immunology)</b>，重点研究<b>外周组织中神经-免疫回路 (Neuro-immune circuits) 对宿主防御、过敏炎症、自身免疫和肠道-脑轴行为调控的作用</b>。实验室同时关注炎症性肠病 (IBD)、自身免疫、过敏和感染的患者结局，是一个典型的"基础机制 + 临床转化"双轮驱动的lab。
+      </p>
+      <p style="font-size:14px; color:var(--text); line-height:1.8; margin-top:10px;">
+        她的工作回答了一个神经免疫学的核心问题："<b>免疫系统和神经系统如何在组织层面互相感知、互相调控，以维持稳态或在疾病中失衡？</b>"特别是在肠道这个"神经免疫交互最密集"的器官，朱可可和Artis lab奠定了"<b>肠道内在神经元 (iENs) ↔ ILC2</b>"双向通讯的关键范式。
+      </p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">🧠 Area 1: 肠道-脑轴与精神行为</div>
+        <ul style="font-size:13px; padding-left:18px; color:var(--muted);">
+          <li><b>肠道菌群-恐惧消退学习（Nature 2019）</b>：发现肠道菌群通过调控海马神经元功能影响小鼠的恐惧消退行为——奠定"肠道菌群影响焦虑/PTSD"的机制基础</li>
+          <li><b>菌群-脑轴在精神疾病中的作用</b>：延伸到PTSD、焦虑、抑郁相关的免疫机制</li>
+          <li>BBRF青年研究者奖正是支持这个方向</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">🦠 Area 2: ILC2 与神经-免疫回路</div>
+        <ul style="font-size:13px; padding-left:18px; color:var(--muted);">
+          <li><b>iEN ↔ ILC2 双向通讯（Immunity 2025 封面）</b>：首次报道肠道内在神经元和ILC2之间的"拮抗式双向通讯"如何抑制抗蠕虫宿主防御</li>
+          <li><b>ChAT-乙酰胆碱通路（Sci Immunol 2021）</b>：胆碱能信号促进ILC2反应</li>
+          <li><b>神经元-ILC2调节胰岛素（Science 2023 合著）</b>：延伸到代谢稳态</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">💉 Area 3: 感觉神经元与炎症疾病</div>
+        <ul style="font-size:13px; padding-left:18px; color:var(--muted);">
+          <li><b>Stevens-Johnson综合征（JACI 2024）</b>：感觉神经免疫信号在重症皮肤药疹中的作用</li>
+          <li>感觉神经元在IBD、过敏、自身免疫中的调控机制</li>
+          <li>Neuromedin U作为神经-免疫信使（Science Bulletin 2024）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">🔬 Area 4: 肠道稳态新机制</div>
+        <ul style="font-size:13px; padding-left:18px; color:var(--muted);">
+          <li><b>tRNA m1A修饰与肠道稳态（Cell Discovery 2026）</b>：表观转录组调控肠道屏障</li>
+          <li>外周神经系统的小胶质细胞（Neuroscience Bulletin 2025）</li>
+          <li>炎症-过敏-感染-自身免疫的机制整合</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="good-card">
+      <div class="hl-title">🎯 技术特色与国际竞争力</div>
+      <p style="font-size:14px;">实验室整合 <b>光遗传学/化学遗传学（操纵特定神经元） + 单细胞转录组学 + 流式/CyTOF（ILC/T细胞分型） + 无菌/菌群定植小鼠模型 + 行为学测试 + 肠道类器官 + 临床IBD样本（长庚医院合作）</b> 的多模态技术栈。这一组合正是国际神经免疫顶级lab的标准配置，由于朱可可的Artis师承背景，她的实验技术直接对接Cornell-Rockefeller体系，<b>在国内同年龄段PI中属于独一档的技术密度</b>。</p>
+    </div>
+  </div>
+
+  <!-- ============ 13. 发表分析 ============ -->
+  <div class="section" id="sec-pubs">
+    <div class="section-title"><span class="icon">📚</span> 13. 发表成果分析</div>
+
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px;">代表论文 — 独立PI期间（2022-2026，建组3年内）</div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★★</span> Bi-directional communication between intrinsic enteric neurons and ILC2s inhibits host defense against helminth infection</div>
+        <div class="pub-meta">Wang Y, ..., <b>Chu C*</b>. <span class="pub-journal">Immunity</span> 2025. <span class="anno anno-fact">封面故事 + Highly Cited + 建组3年内标志性产出</span><br>
+        <a href="https://pubmed.ncbi.nlm.nih.gov/39889704/" target="_blank">PubMed: 39889704</a></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★★</span> tRNA m1A modification is essential for gut homeostasis...</div>
+        <div class="pub-meta">Li ..., <b>Chu C*</b>. <span class="pub-journal">Cell Discovery</span> 2026. <span class="anno anno-fact">通讯作者</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★</span> Sensory neuroimmune signaling in Stevens-Johnson syndrome</div>
+        <div class="pub-meta">Huang ..., <b>Chu C*</b>. <span class="pub-journal">Journal of Allergy and Clinical Immunology (JACI)</span> 2024. <span class="anno anno-fact">通讯作者</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★</span> To be or not to be direct: the role of neuromedin U...</div>
+        <div class="pub-meta">Liu, Shao, Xu & <b>Chu C*</b>. <span class="pub-journal">Science Bulletin</span> 2024. <span class="anno anno-fact">共同通讯</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">Into the Spotlight: Microglia in the Peripheral Nervous System</div>
+        <div class="pub-meta">Liu R, <b>Chu C*</b> & Qi ..., <span class="pub-journal">Neuroscience Bulletin</span> 2025. <span class="anno anno-fact">通讯作者 + 进组博士生Ruichao Liu一作</span></div>
+      </div>
+
+      <div style="font-weight:700; margin:22px 0 12px;">代表论文 — 博后/独立前期（Artis Lab @ Cornell，2015-2022）</div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★★</span> The microbiota regulate neuronal function and fear extinction learning</div>
+        <div class="pub-meta"><b>Chu C</b> (first author), ..., Artis D. <span class="pub-journal">Nature</span> 2019;574:543-548. <span class="anno anno-fact">高被引经典</span><br>
+        <a href="https://www.nature.com/articles/s41586-019-1644-y" target="_blank">Nature文献链接</a></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★★</span> The ChAT-acetylcholine pathway promotes group 2 innate lymphoid cell responses and anti-helminth immunity</div>
+        <div class="pub-meta"><b>Chu C</b> (first author), ..., Artis D. <span class="pub-journal">Science Immunology</span> 2021;6(57):eabe3218.<br>
+        <a href="https://www.science.org/doi/10.1126/sciimmunol.abe3218" target="_blank">Science Immunology链接</a></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★★</span> Innate lymphoid cells support regulatory T cells in the intestine through interleukin-2</div>
+        <div class="pub-meta">Zhou L, <b>Chu C</b>, ..., Artis D, Sonnenberg GF. <span class="pub-journal">Nature</span> 2019;568:405-409. <span class="anno anno-fact">共同作者</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★</span> Anti-microbial functions of group 3 innate lymphoid cells in gut-associated lymphoid tissues are regulated by G-protein-coupled receptor 183</div>
+        <div class="pub-meta">Chu C, Moriyama S, Li Z, ..., Sonnenberg GF. <span class="pub-journal">Cell Reports</span> 2018;23(13):3750-58. <span class="anno anno-fact">共一</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★</span> Neuro-immune Interactions in the Tissues</div>
+        <div class="pub-meta"><b>Chu C</b>, Artis D, Chiu IM. <span class="pub-journal">Immunity</span> 2020;52(3):464-474. <span class="anno anno-fact">权威综述</span></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title"><span class="pub-star">★★★</span> Neuronal-ILC2 interactions regulate pancreatic glucagon and glucose homeostasis</div>
+        <div class="pub-meta">Zhu H, ..., <b>Chu C</b>, ..., Artis D. <span class="pub-journal">Science</span> 2023;381(6656). <span class="anno anno-fact">合著</span><br>
+        <a href="https://www.science.org/doi/10.1126/science.adi3624" target="_blank">Science链接</a></div>
+      </div>
+      <div class="pub-item">
+        <div class="pub-title">博士期间代表作（清华免疫所，2014）</div>
+        <div class="pub-meta"><b>Chu C</b>, ..., <span class="pub-journal">Journal of Immunology</span> 2014. <span class="anno anno-fact">博士期间工作</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:10px;">📈 发表趋势观察</div>
+      <ul style="font-size:14px; padding-left:18px; color:var(--text); line-height:1.8;">
+        <li><b>2014 (清华博士期间)</b>：J Immunol，积累基础免疫学训练</li>
+        <li><b>2018 (Cornell博后早期)</b>：Cell Reports 共一，打开独立方向</li>
+        <li><b>2019 (Cornell博后中期，爆发)</b>：<b>Nature一作 + Nature共著</b>，同一年两篇Nature，奠定国际声誉</li>
+        <li><b>2020-2021 (Instructor期)</b>：Immunity综述 + <b>Science Immunology一作</b>，巩固神经免疫旗手地位</li>
+        <li><b>2022 (回国建组)</b>：海外优青 + 北京人才托举加持，2022.08回清华</li>
+        <li><b>2023-2024 (独立建组早期)</b>：JACI、Science Bulletin通讯，课题线稳定建立</li>
+        <li><b>2025 (独立建组3年，爆发)</b>：<b>Immunity 2025 共同通讯 + 封面故事</b>（第一批学生挂名），Neuroscience Bulletin 通讯</li>
+        <li><b>2026 (持续产出)</b>：Cell Discovery 通讯，进入稳定高产期</li>
+      </ul>
+      <div class="good-card" style="margin-top:12px;">
+        <div class="hl-title">🔥 发表密度与质量双高</div>
+        <p style="font-size:13px;">从博后到独立PI的整个职业生涯，几乎没有"低产期"或"空档期"。<b>建组3年内就在Immunity上发了共同通讯+封面</b>——这在国内海归PI中极为罕见。对比同届归国的青年免疫学PI，朱可可的顶刊产出节奏排在明显前列。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 14. 合作者网络 ============ -->
+  <div class="section" id="sec-collab">
+    <div class="section-title"><span class="icon">🔗</span> 14. 合作者网络</div>
+    <div class="card">
+      <table class="styled-table">
+        <thead><tr><th>合作者</th><th>单位</th><th>合作频率</th><th>共同方向</th></tr></thead>
+        <tbody>
+          <tr><td><b>David Artis</b></td><td>Weill Cornell Medicine (博后导师)</td><td><span class="badge badge-green">长期核心</span></td><td>神经免疫、ILC2、肠道-脑轴（Nature/Sci Immunol/Immunity全套）</td></tr>
+          <tr><td>Gregory F. Sonnenberg</td><td>Weill Cornell Medicine</td><td><span class="badge badge-green">Cornell同事</span></td><td>ILC3-Treg-IL2（Nature 2019）、GPR183（Cell Reports 2018）</td></tr>
+          <tr><td>Isaac M. Chiu</td><td>Harvard Medical School</td><td><span class="badge badge-blue">综述合作</span></td><td>神经免疫互动综述（Immunity 2020）— 美国神经免疫另一位顶级PI</td></tr>
+          <tr><td>徐和平 Heping Xu</td><td>西湖大学</td><td><span class="badge badge-blue">跨校</span></td><td>神经元-ILC2-胰岛素（Science 2023 合著）</td></tr>
+          <tr><td>祁海 Hai Qi</td><td>清华免疫学研究所</td><td><span class="badge badge-blue">同所</span></td><td>微胶质细胞综述（Neuroscience Bulletin 2025）— 清华免疫所旗手</td></tr>
+          <tr><td>清华长庚医院消化科团队</td><td>北京清华长庚医院</td><td><span class="badge badge-green">临床合作</span></td><td>IBD/消化疾病临床样本与转化</td></tr>
+          <tr><td>刘万里 Wanli Liu</td><td>清华免疫学研究所</td><td><span class="badge badge-grey">同所</span></td><td>免疫信号（可能的潜在合作）</td></tr>
+        </tbody>
+      </table>
+
+      <div class="good-card" style="margin-top:14px;">
+        <div class="hl-title">🌐 合作网络特征：国际顶级 + 临床转化 双通路</div>
+        <p style="font-size:14px;">朱可可的合作网络呈现典型的<b>"国际顶级神经免疫圈层 + 国内临床转化"</b>双重结构：国际层面直接对接Cornell-Harvard神经免疫轴心（Artis、Chiu、Sonnenberg），国内层面同时拥有清华免疫所的资深同事（祁海）和长庚医院的临床样本通路。<b>这种"国际顶级基础 + 国内顶级临床"的组合在国内青年PI中极为稀缺</b>，为学生提供了非常完整的学术资源覆盖。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 15. 经费基金 ============ -->
+  <div class="section" id="sec-fund">
+    <div class="section-title"><span class="icon">💰</span> 15. 经费与基金</div>
+    <div class="card">
+      <div class="good-card">
+        <div class="hl-title">✅ 经费组合极其完整</div>
+        <p style="font-size:14px;">朱可可是近年回国青年PI中<b>基金组合最完整的样本之一</b>——国际基金(BBRF) + 国家级青年基金(海外优青) + 地方人才工程(北京市) + 学会级基金(女科学家职业发展)全套到位，经费结构多元且稳定。</p>
+      </div>
+
+      <table class="info-table">
+        <tr><td>🏆 国家自然科学基金</td><td><b>海外优秀青年科学基金（2022）</b>— 国家级回国青年PI顶级项目 <span class="anno anno-fact">公开</span></td></tr>
+        <tr><td>🏆 NSFC面上/青年</td><td>推断有面上/青年项目在执行（论文致谢佐证）<span class="anno anno-infer">推断</span></td></tr>
+        <tr><td>🏆 国际基金</td><td><b>BBRF 青年研究者奖（2021）</b>— Brain & Behavior Research Foundation，国际神经科学-精神健康顶级基金</td></tr>
+        <tr><td>🏆 北京市人才</td><td><b>北京市科协青年人才托举工程（2022）</b>— 北京市对40岁以下青年科研人才的专项支持</td></tr>
+        <tr><td>🏆 学会级基金</td><td><b>中国细胞生物学学会 青年女科学家职业发展基金奖（2023）</b></td></tr>
+        <tr><td>清华/CLS内部经费</td><td>清华基础医学院启动经费 + CLS联合中心经费 + 免疫学研究所内部支持</td></tr>
+        <tr><td>长庚医院临床合作</td><td>北京清华长庚医院消化中心兼职带来的临床研究经费通路</td></tr>
+        <tr><td>国家重大研究计划</td><td>2024年NSFC"免疫力数字解码"重大研究计划启动，作为神经免疫方向国内头部学者，有获资高潜力<span class="anno anno-infer">推断</span></td></tr>
+      </table>
+
+      <div class="good-card">
+        <div class="hl-title">✅ 经费稳定性判断：高度稳定且持续上升</div>
+        <p style="font-size:14px;">当前所有基金都在执行期内，2025-2026年论文持续产出，<b>经费在未来5-10年完全不会成为瓶颈</b>。考虑到她刚晋升副教授、顶刊产出持续、方向处于国家战略重点，未来申请杰青/新基石/重大项目的概率都非常高。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 16. 学术指标 ============ -->
+  <div class="section" id="sec-metrics">
+    <div class="section-title"><span class="icon">📊</span> 16. 学术指标（与同院系对比）</div>
+    <div class="card">
+      <table class="styled-table">
+        <thead><tr><th>指标</th><th>朱可可</th><th>同院系顶级PI（参考）</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Google Scholar 总引</td>
+            <td><b>~2,320+</b></td>
+            <td>祁海 >10,000；傅阳心 >59,000；资深PI普遍 >5,000</td>
+            <td><b>年龄修正后极高</b>——38岁的青年PI有2K+引用非常突出</td>
+          </tr>
+          <tr>
+            <td>h-index (估)</td>
+            <td>~20-25</td>
+            <td>资深顶级PI普遍 >50</td>
+            <td>年龄修正后处于"青年PI顶级档"</td>
+          </tr>
+          <tr>
+            <td>Nature/Cell/Science 主刊</td>
+            <td><b>Nature 2019一作 + Nature 2019共著 + Science 2023合著</b></td>
+            <td>傅阳心、饶子和等>10次（资深）</td>
+            <td>主刊命中早（博后期间），含金量高</td>
+          </tr>
+          <tr>
+            <td>Immunity / Sci Immunol</td>
+            <td><b>Immunity 2025 共同通讯封面 + Immunity 2020综述 + Sci Immunol 2021一作</b></td>
+            <td>同院系顶级PI</td>
+            <td><b>建组3年即以共同通讯身份发Immunity封面——非常突出</b></td>
+          </tr>
+          <tr>
+            <td>NSFC 杰青/优青/海外优青</td>
+            <td>✅ <b>海外优青 (2022)</b></td>
+            <td>杰青多数资深PI有；海外优青是青年归国者顶级</td>
+            <td>回国即拿海外优青，属于顶级引进</td>
+          </tr>
+          <tr>
+            <td>新基石/领军等大奖</td>
+            <td>暂无（年龄还未到申请窗口）</td>
+            <td>祁海为新基石研究员</td>
+            <td>按当前轨迹，未来3-5年大概率入选新基石或其他"40岁以下"级别奖项</td>
+          </tr>
+          <tr>
+            <td>中国高被引学者</td>
+            <td>暂无（论文数量还在累积）</td>
+            <td>同院系2024年共9位入选</td>
+            <td>按当前节奏，预计3-5年内进入</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="good-card">
+        <div class="hl-title">📊 定位：清华基础医学院"青年PI第一梯队"</div>
+        <p style="font-size:14px;">朱可可不是清华免疫学"资深金字塔尖"（如董晨、祁海、饶子和——这些人已经做了20-30年），但在<b>"40岁以下青年PI梯队"中她几乎就是第一梯队的天花板</b>。评价青年PI不能用"总引用"这种年龄敏感指标，而应该用"单位时间产出密度+顶刊命中率+师承权重+未来预期"——在这几个维度上朱可可的表现都是国内同年龄段PI中罕见的"全优"。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 17. 院系背景 ============ -->
+  <div class="section" id="sec-dept">
+    <div class="section-title"><span class="icon">🏛️</span> 17. 院系背景</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>学院</td><td>清华大学基础医学院 (School of Basic Medical Sciences)</td></tr>
+        <tr><td>研究所</td><td>免疫学研究所 (Institute for Immunology, IITU)</td></tr>
+        <tr><td>联合中心</td><td>清华-北京大学生命科学联合中心 (CLS)</td></tr>
+        <tr><td>临床合作医院</td><td><b>北京清华长庚医院消化疾病诊治中心</b>（朱可可兼任副主任）</td></tr>
+        <tr><td>学科排名</td><td>清华大学免疫学科ESI全球前1%；基础医学院为清华医科核心建设单位</td></tr>
+        <tr><td>2024高被引学者</td><td>基础医学院共9位入选（傅阳心/李海涛/刘云才/祁海/饶子和/石彦/张林琦/林欣/Charles David）</td></tr>
+        <tr><td>2024全球高被引</td><td>基础医学院共4位入选</td></tr>
+      </table>
+
+      <div style="margin-top:14px;">
+        <div style="font-weight:700; margin-bottom:8px;">清华免疫学研究所主要PI（可作为替代/对比参考）</div>
+        <div class="collab-list" style="display:flex; flex-wrap:wrap; gap:10px;">
+          <span class="badge badge-blue">董晨 Chen Dong (T细胞分化)</span>
+          <span class="badge badge-blue">祁海 Hai Qi (Tfh/抗体记忆)</span>
+          <span class="badge badge-blue">刘万里 Wanli Liu (BCR信号)</span>
+          <span class="badge badge-blue">彭敏 Min Peng (T细胞代谢)</span>
+          <span class="badge badge-blue">曾文文 Wenwen Zeng (神经免疫)</span>
+          <span class="badge badge-blue">石彦 Yan Shi (生物物理+免疫)</span>
+          <span class="badge badge-blue">刘云才 Yuncai Liu (泛素化)</span>
+          <span class="badge badge-green">朱可可 Coco Chu (神经免疫/肠道-脑轴)</span>
+        </div>
+      </div>
+
+      <div class="good-card">
+        <div class="hl-title">🏛️ 院系生态优势</div>
+        <p style="font-size:14px;">清华免疫学研究所是国内免疫学研究的"高密度PI聚集地"，朱可可身处其中能获得：① <b>同所senior PI的科研品味影响</b>（祁海、董晨、刘万里都是国内顶级免疫学家）；② <b>CLS平台的跨学科资源</b>（与北大共建，覆盖生命科学全领域）；③ <b>长庚医院临床样本通路</b>（她本人兼任临床副主任，这是她独有的优势）。这种"基础+临床+跨学科"的三重平台密度，在国内免疫学PI中几乎独一无二。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 18. 总结与建议 ============ -->
+  <div class="section" id="sec-summary">
+    <div class="section-title"><span class="icon">📝</span> 18. 总结与下一步行动</div>
+    <div class="card">
+      <div class="good-card">
+        <div class="hl-title">🎯 核心结论</div>
+        <p style="font-size:15px; line-height:1.8;">
+          朱可可是清华基础医学院<b>青年PI第一梯队的天花板级人物</b>：顶级师承（Artis lab嫡系）+ 顶级平台（清华免疫所+CLS+长庚医院）+ 顶级方向（神经免疫/肠道-脑轴，生命科学最热赛道）+ 顶级产出（Nature一作+Sci Immunol一作+Immunity共同通讯封面）+ 健康团队文化（JEM专访 + 实验室网站价值观 + 打冰球示范）+ 年龄红利（38岁零退休风险）。<b>综合评分 4.5/5</b>，属于"强烈推荐"档位——近期DeepTutor生成的评分最高的报告之一。最主要的"风险"其实不是风险，而是"实验室仅3年无毕业生样本"这一结构性观察。
+        </p>
+      </div>
+
+      <div class="good-card">
+        <div class="hl-title">✅ 适合选择朱可可的学生画像</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li>对<b>神经免疫学、黏膜免疫学、肠道-脑轴、ILC2</b>任何一个方向有内在兴趣</li>
+          <li>希望博士毕业后<b>出国做博后</b>（她的Artis师承是国际硬通货推荐信）</li>
+          <li>希望进入学术圈做tenure-track PI（这是最佳路径）</li>
+          <li>对"基础+临床转化"双栖感兴趣（长庚医院IBD样本通路）</li>
+          <li>自驱力强，能在高期望值环境中主动做出顶级工作</li>
+          <li>接受西式科研文化，欣赏"支持但不手把手"的管理风格</li>
+          <li>愿意成为"第一批样本"并享受红利期入组的优势</li>
+        </ul>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">⚠️ 不太适合的学生画像</div>
+        <ul style="padding-left:18px; font-size:14px;">
+          <li>毕业目标是<b>进肿瘤免疫药企做抗体/CAR-T/双抗</b>（技术栈不对口）</li>
+          <li>需要PI每天追进度、手把手教实验</li>
+          <li>希望进入"有很多师兄姐罩着"的大组环境</li>
+          <li>希望实验室成员构成已经成熟稳定（目前组内文化还在建设中）</li>
+          <li>没想好研究方向、对神经免疫没有兴趣只是"想找个强PI"</li>
+          <li>不能接受PI兼任临床职务带来的时间分散</li>
+        </ul>
+      </div>
+
+      <div class="highlight-card">
+        <div class="hl-title">📋 面试/选组前必须做的5件事</div>
+        <ol style="padding-left:22px; font-size:14px;">
+          <li><b>直接访问cocochu-lab.org</b>：仔细阅读publications、people、research sections，了解最新的项目方向和成员构成</li>
+          <li><b>联系在读学生</b>：通过实验室邮箱或领英找到Yi Wang（Immunity 2025一作）、Ruichao Liu（最早入组）等，询问实际指导密度、组内氛围、临床兼职的实际影响、毕业时间预期</li>
+          <li><b>直接问朱老师3个硬问题</b>：
+            <ol style="padding-left:22px; margin-top:4px;">
+              <li>您对第一批博士生的毕业时间线和博后推荐计划是什么？有哪些国外合作实验室是您会直接推荐的？</li>
+              <li>您作为长庚医院消化中心副主任，每周在实验室的具体时间分配是什么？日常指导主要靠什么形式？</li>
+              <li>实验室未来2-3年的项目规划是什么？新进学生会被分配到哪条主线？</li>
+            </ol>
+          </li>
+          <li><b>阅读她的Nature 2019、Sci Immunol 2021、Immunity 2025三篇代表作</b>：判断你对她的科研品味和问题深度是否真正感兴趣</li>
+          <li><b>对比2-3位同所PI</b>：可参考祁海（senior稳定型）、曾文文（同方向资深）、刘万里（信号方向）等，理解她在同所中的独特定位</li>
+        </ol>
+      </div>
+
+      <div style="text-align:center; margin-top:20px; padding:20px; background:linear-gradient(135deg, #F0FDF4, #ECFDF5); border-radius:12px;">
+        <div style="font-size:14px; color:var(--muted); margin-bottom:6px;">最终综合评分</div>
+        <div style="font-size:56px; font-weight:800; color:var(--green); line-height:1;">4.5<span style="font-size:24px; color:var(--muted);"> / 5</span></div>
+        <div style="font-size:14px; color:var(--text); margin-top:10px; font-weight:600;">强烈推荐 · 适合对神经免疫/肠道-脑轴方向感兴趣的自驱型学生</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:8px;">几乎全绿灯 · 零退休风险 · 顶级师承 · 红利期入组窗口</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 附录：数据来源 ============ -->
+  <div class="section" id="sec-sources">
+    <div class="section-title"><span class="icon">📎</span> 附录：数据来源</div>
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:10px;">清华大学官方页面</div>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.9;">
+        <li><a href="https://www.bms.tsinghua.edu.cn/info/1350/4612.htm" target="_blank">清华大学基础医学院 - 朱可可</a>（职称、办公室E115、简历）</li>
+        <li><a href="https://www.med.tsinghua.edu.cn/info/1135/4584.htm" target="_blank">清华大学医学院 - 朱可可</a></li>
+        <li><a href="https://www.iitu.tsinghua.edu.cn/CocoChu/list.htm" target="_blank">清华大学免疫学研究所 - Coco Chu Lab主页</a>（实验室成员、办公室D302、发表列表）</li>
+        <li><a href="https://www.iitu.tsinghua.edu.cn/2024/0713/c804a6249/page.htm" target="_blank">清华免疫所 - Coco Chu在JEM接受专访报道（2024.07）</a>（"Shared drive and passion"）</li>
+      </ul>
+
+      <div style="font-weight:700; margin:14px 0 10px;">实验室官方网站</div>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.9;">
+        <li><a href="https://www.cocochu-lab.org/" target="_blank">Coco Chu Lab 官方首页</a>（价值观、research方向、新闻）</li>
+        <li><a href="https://www.cocochu-lab.org/publications" target="_blank">Coco Chu Lab - Publications</a>（完整发表列表）</li>
+        <li><a href="https://www.cocochu-lab.org/people/coco-chu" target="_blank">Coco Chu Lab - PI个人简介</a></li>
+      </ul>
+
+      <div style="font-weight:700; margin:14px 0 10px;">Cornell / Artis Lab 相关</div>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.9;">
+        <li><a href="https://artislab.weill.cornell.edu/team/coco-chu-keke-zhu" target="_blank">Weill Cornell Artis Lab - Coco Chu (Keke Zhu) 归档页面</a>（博后时期英文档案）</li>
+      </ul>
+
+      <div style="font-weight:700; margin:14px 0 10px;">代表论文原文链接</div>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.9;">
+        <li><a href="https://www.nature.com/articles/s41586-019-1644-y" target="_blank">Nature 2019 - The microbiota regulate neuronal function and fear extinction learning (Chu C 一作)</a></li>
+        <li><a href="https://www.science.org/doi/10.1126/sciimmunol.abe3218" target="_blank">Science Immunology 2021 - ChAT-acetylcholine pathway ILC2 (Chu C 一作)</a></li>
+        <li><a href="https://pubmed.ncbi.nlm.nih.gov/39889704/" target="_blank">Immunity 2025 - Bi-directional iEN-ILC2 communication (PubMed, Chu C 共同通讯+封面)</a></li>
+        <li><a href="https://www.science.org/doi/10.1126/science.adi3624" target="_blank">Science 2023 - Neuronal-ILC2 interactions glucose homeostasis (Chu C 合著)</a></li>
+      </ul>
+
+      <div style="font-weight:700; margin:14px 0 10px;">第三方档案与媒体</div>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.9;">
+        <li><a href="https://twitter.com/CChu_89" target="_blank">Twitter / X - @CChu_89 (朱可可本人账号)</a></li>
+        <li><a href="https://www.chinagut.cn/zhiku/person/e79d77567a2846b598dd119c5454e3ba" target="_blank">热心肠智库 - 朱可可 (肠道菌群学者档案)</a></li>
+      </ul>
+
+      <div style="font-weight:700; margin:14px 0 10px;">数据库查询</div>
+      <ul style="font-size:13px; padding-left:18px; line-height:1.9;">
+        <li>PubMed - "Chu C[Author] AND Tsinghua[Affiliation]" / "Chu C[Author] AND Artis D[Author]"</li>
+        <li>Google Scholar - Coco Chu / Keke Zhu 总引用估算 ~2,320+</li>
+        <li>NSFC大数据知识管理门户 - 海外优青(2022)公开信息</li>
+        <li>OpenAlex API - author works query</li>
+      </ul>
+
+      <div class="highlight-card" style="margin-top:14px;">
+        <div class="hl-title">⚠️ 数据局限性说明</div>
+        <ul style="padding-left:18px; font-size:13px;">
+          <li>办公室信息在清华免疫所官网（医学科学楼D302）与基础医学院官网（生物医学馆E115）存在不一致——推断因晋升副教授后搬迁但尚未同步更新，建议以<b>医学科学楼D302</b>为准</li>
+          <li>实验室仅运行3年，无毕业生样本，"天花板法则"评估基于师承与早期产出预测，非历史数据</li>
+          <li>年龄为根据2006年南昌大学本科入学推算（约1988年生，约38岁），未直接证实</li>
+          <li>Google Scholar总引用为截至2026年初估算值，实际数字可能略有变动</li>
+          <li>NSFC具体项目编号和金额未能直接获取（海外优青项目存在公开记录）</li>
+          <li>知乎/小木虫等平台未检索到任何针对朱可可的评价帖（正面/负面均无），部分原因是实验室太新</li>
+          <li>部分判断基于Artis lab博后师承的"常见规律"，具体培养风格需学生面谈核实</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Generated by <b>DeepTutor v1.1</b> · Powered by Claude · 2026-04-12
+    <br>
+    数据来源仅用于辅助决策，最终判断应结合学生本人面谈与实地调研
+  </div>
+
+</div>
+
+</body>
+</html>

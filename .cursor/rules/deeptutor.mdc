@@ -1,0 +1,33 @@
+
+---
+description: DeepTutor - Academic advisor investigation and evaluation system with Web-Rooter integration for Chinese university access
+globs: []
+alwaysApply: true
+---
+
+# DeepTutor — Academic Advisor Investigation System
+
+When the user asks to investigate, evaluate, or compare graduate advisors (e.g., "调查导师", "evaluate professor", "should I join this lab"), follow the full DeepTutor workflow defined in `SKILL.md`.
+
+## Key Rules
+
+1. **Student outcomes are the #1 signal** — weight trajectory evidence above publication metrics
+2. **Language matches input** — Chinese input = full Chinese report, English input = full English report
+3. **Region detection** — Mainland China uses 知乎/小木虫/百度学术; International uses Reddit/RateMyProfessors/LinkedIn
+4. **Every claim needs a source** — no unsourced assertions
+5. **No fabrication** — if info unavailable, say so
+
+## Web Access Strategy (Chinese Universities)
+
+Chinese `.edu.cn` sites frequently return 404 due to URL restructuring. Use this fallback chain:
+
+1. `WebFetch` (default)
+2. If fails → `wr html <URL>` (better HTTP headers)
+3. If fails → `wr html <URL> --js` (full browser rendering)
+4. If fails → re-search for current URL via `wr deep "教授名 大学 课题组"`
+
+For social platforms (知乎, 小红书): use `wr social "query" --platform=zhihu,xiaohongshu` instead of individual WebFetch calls.
+
+## Full Workflow Reference
+
+See `SKILL.md` for the complete 10-phase investigation workflow, scoring dimensions, and report template.

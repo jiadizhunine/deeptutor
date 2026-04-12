@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepTutor v4 | 邢婉丽 - 清华大学医学院/生物医学工程学院</title>
+<style>
+  :root {
+    --bg: #F9FAFB; --card: #FFFFFF; --accent: #D97706;
+    --text: #1F2937; --muted: #6B7280; --green: #059669;
+    --yellow: #D97706; --red: #DC2626; --radius: 12px;
+    --blue: #2563EB; --light-green: #D1FAE5; --light-yellow: #FEF3C7;
+    --light-red: #FEE2E2; --light-blue: #DBEAFE;
+    --sidebar-w: 260px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---- Sidebar ---- */
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
+    background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+    color: #CBD5E1; overflow-y: auto; z-index: 100;
+    padding: 28px 0 40px; display: flex; flex-direction: column;
+  }
+  .sidebar-logo {
+    text-align: center; font-size: 20px; font-weight: 700;
+    color: #F8FAFC; letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .sidebar-logo span { color: var(--accent); }
+  .sidebar-sub { text-align: center; font-size: 11px; color: #64748B; margin-bottom: 24px; }
+  .sidebar nav { flex: 1; }
+  .sidebar nav a {
+    display: block; padding: 9px 24px; font-size: 13px; color: #94A3B8;
+    border-left: 3px solid transparent; transition: all .2s;
+  }
+  .sidebar nav a:hover, .sidebar nav a.active {
+    color: #F8FAFC; background: rgba(255,255,255,.06);
+    border-left-color: var(--accent); text-decoration: none;
+  }
+  .sidebar-score {
+    text-align: center; margin: 24px 20px 0; padding: 18px 12px;
+    background: linear-gradient(135deg, rgba(217,119,6,.18), rgba(37,99,235,.12));
+    border-radius: var(--radius);
+  }
+  .sidebar-score .big { font-size: 42px; font-weight: 800; color: #F8FAFC; }
+  .sidebar-score .label { font-size: 12px; color: #94A3B8; margin-top: 2px; }
+
+  /* ---- Main ---- */
+  .main { margin-left: var(--sidebar-w); padding: 36px 48px 80px; max-width: 960px; }
+  .section { margin-bottom: 44px; scroll-margin-top: 24px; }
+  .section-title {
+    font-size: 22px; font-weight: 700; margin-bottom: 16px;
+    padding-bottom: 8px; border-bottom: 2px solid #E5E7EB;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .icon { font-size: 20px; }
+
+  /* ---- Cards ---- */
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); padding: 24px; margin-bottom: 16px;
+  }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card-grid .card { margin-bottom: 0; }
+
+  /* ---- Info table ---- */
+  .info-table { width: 100%; border-collapse: collapse; }
+  .info-table td { padding: 8px 12px; border-bottom: 1px solid #F3F4F6; }
+  .info-table td:first-child { font-weight: 600; width: 140px; white-space: nowrap; color: var(--muted); font-size: 13px; }
+
+  /* ---- Badges ---- */
+  .badge {
+    display: inline-block; padding: 4px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 600; margin: 3px 4px 3px 0;
+  }
+  .badge-green { background: var(--light-green); color: var(--green); }
+  .badge-red   { background: var(--light-red);   color: var(--red); }
+  .badge-yellow{ background: var(--light-yellow); color: var(--yellow); }
+  .badge-blue  { background: var(--light-blue);  color: var(--blue); }
+
+  /* ---- Tag ---- */
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 6px;
+    font-size: 12px; background: #F3F4F6; color: var(--muted); margin: 2px 4px 2px 0;
+  }
+  .tag-fact  { background: var(--light-blue);  color: var(--blue); }
+  .tag-infer { background: var(--light-yellow); color: var(--yellow); }
+
+  /* ---- Timeline ---- */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 11px; top: 4px; bottom: 4px;
+    width: 2px; background: #E5E7EB;
+  }
+  .tl-item { position: relative; margin-bottom: 24px; }
+  .tl-dot {
+    position: absolute; left: -32px; top: 4px; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--card); border: 3px solid var(--blue);
+    z-index: 1;
+  }
+  .tl-dot.accent { border-color: var(--accent); }
+  .tl-dot.green  { border-color: var(--green); }
+  .tl-year { font-size: 13px; font-weight: 700; color: var(--blue); }
+  .tl-year.accent { color: var(--accent); }
+  .tl-year.green  { color: var(--green); }
+  .tl-title { font-weight: 600; font-size: 15px; }
+  .tl-desc { font-size: 13px; color: var(--muted); }
+
+  /* ---- Progress bar ---- */
+  .score-row { margin-bottom: 14px; }
+  .score-row .label-row {
+    display: flex; justify-content: space-between; font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .score-row .label-row .dim { font-weight: 600; }
+  .score-row .label-row .val { color: var(--accent); font-weight: 700; }
+  .bar-bg {
+    height: 10px; border-radius: 5px; background: #E5E7EB; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 5px;
+    background: linear-gradient(90deg, var(--blue), var(--accent));
+    transition: width .6s ease;
+  }
+
+  /* ---- Table generic ---- */
+  .styled-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .styled-table th {
+    text-align: left; padding: 10px 12px; background: #F8FAFC;
+    border-bottom: 2px solid #E5E7EB; font-weight: 600; font-size: 13px;
+    color: var(--muted);
+  }
+  .styled-table td { padding: 10px 12px; border-bottom: 1px solid #F3F4F6; }
+  .styled-table tr:hover { background: #FAFBFC; }
+
+  /* ---- Highlight card ---- */
+  .highlight-card {
+    border-left: 4px solid var(--accent); padding: 16px 20px;
+    background: linear-gradient(135deg, #FFFBEB, #FFF7ED); border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 16px;
+  }
+  .highlight-card .hl-title { font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+
+  /* ---- Match matrix ---- */
+  .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .matrix-cell {
+    background: var(--card); border-radius: var(--radius); padding: 16px; text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); transition: transform .15s;
+  }
+  .matrix-cell:hover { transform: translateY(-2px); }
+  .matrix-cell .emoji { font-size: 28px; margin-bottom: 6px; }
+  .matrix-cell .m-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .matrix-cell .m-desc { font-size: 12px; color: var(--muted); }
+  .match-high   { border: 2px solid var(--green); }
+  .match-medium { border: 2px solid var(--yellow); }
+  .match-low    { border: 2px solid var(--red); }
+
+  /* ---- Risk meter ---- */
+  .risk-meter { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+  .risk-bar-bg {
+    flex: 1; height: 14px; border-radius: 7px;
+    background: linear-gradient(90deg, var(--green), var(--yellow), var(--red));
+    position: relative;
+  }
+  .risk-pointer {
+    position: absolute; top: -6px; width: 4px; height: 26px;
+    background: var(--text); border-radius: 2px;
+  }
+
+  /* ---- Cooperation network ---- */
+  .collab-list { display: flex; flex-wrap: wrap; gap: 12px; }
+  .collab-card {
+    background: var(--card); border: 1px solid #E5E7EB; border-radius: var(--radius);
+    padding: 14px 18px; min-width: 220px; flex: 1;
+  }
+  .collab-name { font-weight: 700; font-size: 15px; }
+  .collab-role { font-size: 12px; color: var(--muted); }
+
+  /* ---- Alert box ---- */
+  .alert-box {
+    padding: 14px 18px; border-radius: 8px; font-size: 14px; margin-bottom: 16px;
+  }
+  .alert-red { background: var(--light-red); border-left: 4px solid var(--red); }
+  .alert-yellow { background: var(--light-yellow); border-left: 4px solid var(--yellow); }
+  .alert-green { background: var(--light-green); border-left: 4px solid var(--green); }
+  .alert-blue { background: var(--light-blue); border-left: 4px solid var(--blue); }
+
+  /* ---- Checklist ---- */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 10px 14px; border-bottom: 1px solid #F3F4F6;
+    font-size: 14px; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .q-num {
+    background: var(--accent); color: #fff; font-size: 12px; font-weight: 700;
+    width: 24px; height: 24px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+  }
+  .checklist .q-text { flex: 1; }
+  .checklist .q-why { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* ---- Footer ---- */
+  .footer {
+    text-align: center; padding: 32px 0; color: var(--muted); font-size: 12px;
+    border-top: 1px solid #E5E7EB; margin-top: 40px;
+  }
+
+  /* ---- Annotation chip ---- */
+  .anno { font-size: 11px; border-radius: 4px; padding: 1px 6px; margin-left: 4px; vertical-align: middle; }
+  .anno-fact  { background: var(--light-blue);  color: var(--blue); }
+  .anno-infer { background: var(--light-yellow); color: var(--yellow); }
+
+  /* pub list */
+  .pub-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F3F4F6; }
+  .pub-item:last-child { border-bottom: none; }
+  .pub-title { font-weight: 600; font-size: 14px; }
+  .pub-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .pub-journal { font-weight: 600; color: var(--blue); }
+  .pub-star { color: var(--accent); font-weight: 700; }
+
+  /* ---- Print ---- */
+  @media print {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; max-width: 100%; }
+    .card { box-shadow: none; border: 1px solid #E5E7EB; }
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 860px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .matrix-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ---- Header banner ---- */
+  .hero {
+    background: linear-gradient(135deg, #1E293B, #0F172A);
+    color: #F8FAFC; border-radius: var(--radius); padding: 36px 40px;
+    margin-bottom: 36px; position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: ''; position: absolute; right: -60px; top: -60px;
+    width: 240px; height: 240px; border-radius: 50%;
+    background: rgba(217,119,6,.12);
+  }
+  .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+  .hero .sub { color: #94A3B8; font-size: 15px; }
+  .hero .score-inline {
+    display: inline-flex; align-items: baseline; gap: 8px;
+    margin-top: 16px; padding: 10px 20px;
+    background: rgba(217,119,6,.15); border-radius: 8px;
+  }
+  .hero .score-inline .num { font-size: 36px; font-weight: 800; color: var(--accent); }
+  .hero .score-inline .out { font-size: 16px; color: #94A3B8; }
+
+  /* ---- Relation diagram ---- */
+  .relation-box {
+    display: flex; align-items: center; justify-content: center; gap: 24px;
+    padding: 24px; margin: 16px 0;
+  }
+  .relation-node {
+    background: var(--card); border: 2px solid var(--blue); border-radius: var(--radius);
+    padding: 16px 24px; text-align: center; min-width: 160px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  }
+  .relation-node.primary { border-color: var(--accent); }
+  .relation-arrow {
+    font-size: 24px; color: var(--muted); display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+  }
+  .relation-arrow .arrow-label { font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Deep<span>Tutor</span> v4</div>
+  <div class="sidebar-sub">Graduate Advisor Intelligence</div>
+  <nav>
+    <a href="#sec-basic">1. 基本信息</a>
+    <a href="#sec-summary-card">2. 一句话总评</a>
+    <a href="#sec-timeline">3. 职业轨迹</a>
+    <a href="#sec-scores">4. 九维度评分</a>
+    <a href="#sec-research">5. 研究方向</a>
+    <a href="#sec-pubs">6. 发表成果</a>
+    <a href="#sec-students">7. 学生培养</a>
+    <a href="#sec-platform">8. 平台与资源</a>
+    <a href="#sec-chengjing">9. 与程京的关系</a>
+    <a href="#sec-pua">10. PUA/PUSH风险</a>
+    <a href="#sec-lights">11. 红旗/绿旗</a>
+    <a href="#sec-match">12. 毕业目标匹配</a>
+    <a href="#sec-interview">13. 面试必问</a>
+    <a href="#sec-advice">14. 综合建议</a>
+    <a href="#sec-sources">15. 数据来源</a>
+  </nav>
+  <div class="sidebar-score">
+    <div class="big">3.0</div>
+    <div class="label">综合评分 / 5.0</div>
+  </div>
+</aside>
+
+<!-- ==================== MAIN ==================== -->
+<div class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>邢婉丽 (Xing Wanli)</h1>
+    <div class="sub">清华大学医学院/生物医学工程学院 &middot; 研究员 &middot; 博士生导师</div>
+    <div class="score-inline">
+      <span class="num">3.0</span>
+      <span class="out">/ 5.0 综合评分</span>
+    </div>
+  </div>
+
+  <!-- 重要提示 -->
+  <div class="alert-box alert-red" style="margin-bottom: 28px;">
+    <strong style="color:var(--red);">院系归属纠正：</strong>邢婉丽的正式单位是清华大学<strong>医学院/生物医学工程学院</strong>，而非基础医学院。请注意区分。其办公地点主要在生物芯片北京国家工程研究中心（博奥生物园区），并非清华大学校本部。
+  </div>
+
+  <!-- ==================== 1. 基本信息 ==================== -->
+  <div class="section" id="sec-basic">
+    <div class="section-title"><span class="icon">&#128100;</span> 1. 基本信息</div>
+    <div class="card">
+      <table class="info-table">
+        <tr><td>姓名</td><td>邢婉丽 (Xing Wanli)</td></tr>
+        <tr><td>职称</td><td>研究员，博士生导师</td></tr>
+        <tr><td>单位</td><td>清华大学医学院 / 生物医学工程学院</td></tr>
+        <tr><td>核心平台</td><td>生物芯片北京国家工程研究中心 常务副主任</td></tr>
+        <tr><td>企业职务</td><td>博奥生物集团 高级副总裁/技术总监；北京博奥晶典生物技术有限公司 总裁/CEO</td></tr>
+        <tr><td>学历</td><td>南开大学化学系 硕士+博士 (1992-1997)</td></tr>
+        <tr><td>人才计划</td><td>2013年 中组部"万人计划"科技创新领军人才；2012年 科技部中青年科技创新领军人才</td></tr>
+        <tr><td>Google Scholar</td><td><a href="https://scholar.google.com/citations?user=M_BRU-4AAAAJ" target="_blank">M_BRU-4AAAAJ</a></td></tr>
+      </table>
+    </div>
+    <div class="card-grid">
+      <div class="card" style="text-align:center; border-top:3px solid var(--accent);">
+        <div style="font-size:36px; font-weight:800; color:var(--accent);">~110</div>
+        <div style="font-size:13px; color:var(--muted);">发表论文（篇）</div>
+      </div>
+      <div class="card" style="text-align:center; border-top:3px solid var(--blue);">
+        <div style="font-size:36px; font-weight:800; color:var(--blue);">~230</div>
+        <div style="font-size:13px; color:var(--muted);">国内外专利（项）</div>
+      </div>
+      <div class="card" style="text-align:center; border-top:3px solid var(--green);">
+        <div style="font-size:36px; font-weight:800; color:var(--green);">8800万+</div>
+        <div style="font-size:13px; color:var(--muted);">科研经费（元）</div>
+      </div>
+      <div class="card" style="text-align:center; border-top:3px solid var(--red);">
+        <div style="font-size:36px; font-weight:800; color:var(--red);">0</div>
+        <div style="font-size:13px; color:var(--muted);">可追踪学生去向</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 2. 一句话总评 ==================== -->
+  <div class="section" id="sec-summary-card">
+    <div class="section-title"><span class="icon">&#128173;</span> 2. 一句话总评</div>
+    <div class="highlight-card">
+      <div class="hl-title">总评</div>
+      <p style="font-size:15px; line-height:1.8;">邢婉丽是程京院士团队的核心副手，拥有清华大学+国家工程中心+博奥生物集团的顶级产业化平台资源，在生物芯片领域有扎实的产业转化实绩。但她身兼企业CEO、集团副总裁、中心常务副主任等多重身份，<strong>学生能否获得充分的学术指导是最大的不确定性</strong>。加之完全无法追踪任何已毕业学生的去向信息，本报告的评估存在显著的信息盲区。<strong>适合志在生物芯片产业界的学生，不适合追求纯学术路线的学生。</strong></p>
+    </div>
+  </div>
+
+  <!-- ==================== 3. 职业轨迹时间线 ==================== -->
+  <div class="section" id="sec-timeline">
+    <div class="section-title"><span class="icon">&#128197;</span> 3. 职业轨迹时间线</div>
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">1992 - 1997</div>
+          <div class="tl-title">南开大学化学系 硕士+博士</div>
+          <div class="tl-desc">在化学领域完成研究生阶段的全部训练 <span class="anno anno-fact">事实</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">1999</div>
+          <div class="tl-title">加入清华大学 助理教授</div>
+          <div class="tl-desc">进入清华大学任职，开始涉足生物芯片领域 <span class="anno anno-fact">事实</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">~2003</div>
+          <div class="tl-title">晋升副教授</div>
+          <div class="tl-desc">在清华大学获得晋升（具体年份为推断）<span class="anno anno-infer">推断</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">~2007</div>
+          <div class="tl-title">晋升研究员 / 博士生导师</div>
+          <div class="tl-desc">获得独立招收博士生资格（具体年份为推断）<span class="anno anno-infer">推断</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2007</div>
+          <div class="tl-title">国家技术发明奖二等奖</div>
+          <div class="tl-desc">生物芯片相关技术获得国家级奖励 <span class="anno anno-fact">事实</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2012</div>
+          <div class="tl-title">科技部中青年科技创新领军人才</div>
+          <div class="tl-desc">入选科技部人才计划 <span class="anno anno-fact">事实</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2013</div>
+          <div class="tl-title">中组部"万人计划"科技创新领军人才</div>
+          <div class="tl-desc">获得国家级人才称号认可 <span class="anno anno-fact">事实</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2018</div>
+          <div class="tl-title">国家技术发明奖二等奖（遗传性耳聋基因诊断芯片系统）</div>
+          <div class="tl-desc">作为主要完成人之一获奖，标志性产业化成果 <span class="anno anno-fact">事实</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot accent"></div>
+          <div class="tl-year accent">至今</div>
+          <div class="tl-title">博奥晶典 总裁/CEO + 博奥生物 高级副总裁</div>
+          <div class="tl-desc">同时担任清华大学研究员和多个企业高管职务 <span class="anno anno-fact">事实</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="background: linear-gradient(135deg, #EFF6FF, #F0FDF4);">
+      <div style="font-weight:700; margin-bottom:8px;">履历解读</div>
+      <p style="font-size:14px; color:var(--muted);">邢婉丽的职业轨迹呈现出清晰的"从学术到产业"演化路线。从南开大学化学博士起步，1999年加入清华大学后逐步从助理教授晋升到研究员，同时深度嵌入程京院士创办的博奥生物集团体系。她目前的身份更像是一位<strong>技术型企业高管</strong>而非传统意义上的学术教授。两次国家技术发明奖体现了其在技术转化方面的突出贡献，但这也意味着她的核心关注点在产品落地而非学术前沿探索。</p>
+    </div>
+  </div>
+
+  <!-- ==================== 4. 九维度评分 ==================== -->
+  <div class="section" id="sec-scores">
+    <div class="section-title"><span class="icon">&#128202;</span> 4. 九维度评分</div>
+    <div class="card">
+      <!-- 1. 研究方向 -->
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">1. 研究方向与前景 <span style="font-weight:400; color:var(--muted);">(10%)</span></span>
+          <span class="val">3.5 / 5.0</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:70%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">生物芯片方向成熟但偏工程应用，产业化价值高但学术前沿性一般</div>
+      </div>
+      <!-- 2. 发表成果 -->
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">2. 发表成果与质量 <span style="font-weight:400; color:var(--muted);">(15%)</span></span>
+          <span class="val">3.0 / 5.0</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:60%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">约110篇论文量可观，但期刊层次不算顶尖，以应用型论文为主</div>
+      </div>
+      <!-- 3. 学生培养 -->
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">3. 学生培养实绩 <span style="font-weight:400; color:var(--muted);">(15%)</span></span>
+          <span class="val">2.0 / 5.0</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:40%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px; color:var(--red); font-weight:600;">数据严重缺失 -- 无法追踪任何学生去向，CNKI无学位论文记录</div>
+      </div>
+      <!-- 4. 平台与资源 -->
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">4. 平台与资源 <span style="font-weight:400; color:var(--muted);">(15%)</span></span>
+          <span class="val">4.5 / 5.0</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:90%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">清华+国家工程中心+博奥生物集团，资源极其丰富</div>
+      </div>
+      <!-- 5. 独立性 -->
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">5. 独立性与成长空间 <span style="font-weight:400; color:var(--muted);">(10%)</span></span>
+          <span class="val">2.5 / 5.0</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:50%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">可能被分配到企业横向项目，学术独立性受限</div>
+      </div>
+      <!-- 6. 职业轨迹 -->
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">6. 职业轨迹与势头 <span style="font-weight:400; color:var(--muted);">(5%)</span></span>
+          <span class="val">3.5 / 5.0</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:70%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">资深稳定的研究员，但职业重心已转向产业而非学术</div>
+      </div>
+      <!-- 7. PUA风险 -->
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">7. PUA/PUSH风险 <span style="font-weight:400; color:var(--muted);">(10%)</span></span>
+          <span class="val">3.0 / 5.0</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:60%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">无数据可供评判，企业高管身份可能影响指导时间和风格（分越高越安全）</div>
+      </div>
+      <!-- 8. 时间自由度 -->
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">8. 时间自由度 <span style="font-weight:400; color:var(--muted);">(10%)</span></span>
+          <span class="val">2.5 / 5.0</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:50%;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">企业CEO+副总裁+研究员多重身份，学生能获得的直接指导时间存疑</div>
+      </div>
+      <!-- 9. 毕业目标匹配 -->
+      <div class="score-row">
+        <div class="label-row">
+          <span class="dim">9. 毕业目标匹配 <span style="font-weight:400; color:var(--muted);">(10%)</span></span>
+          <span class="val" style="color:var(--muted);">N/A</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:0%; background:#E5E7EB;"></div></div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">用户未提供具体毕业目标，暂不评分</div>
+      </div>
+    </div>
+    <div class="card" style="background: linear-gradient(135deg, #FFFBEB, #FFF7ED);">
+      <div style="font-weight:700; margin-bottom:8px;">加权总分计算</div>
+      <table class="styled-table">
+        <thead>
+          <tr><th>维度</th><th>权重</th><th>得分</th><th>加权</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>研究方向与前景</td><td>10%</td><td>3.5</td><td>0.35</td></tr>
+          <tr><td>发表成果与质量</td><td>15%</td><td>3.0</td><td>0.45</td></tr>
+          <tr><td>学生培养实绩</td><td>15%</td><td>2.0</td><td>0.30</td></tr>
+          <tr><td>平台与资源</td><td>15%</td><td>4.5</td><td>0.675</td></tr>
+          <tr><td>独立性与成长空间</td><td>10%</td><td>2.5</td><td>0.25</td></tr>
+          <tr><td>职业轨迹与势头</td><td>5%</td><td>3.5</td><td>0.175</td></tr>
+          <tr><td>PUA/PUSH风险</td><td>10%</td><td>3.0</td><td>0.30</td></tr>
+          <tr><td>时间自由度</td><td>10%</td><td>2.5</td><td>0.25</td></tr>
+          <tr><td>毕业目标匹配</td><td>10%</td><td>N/A</td><td>--</td></tr>
+          <tr style="font-weight:700; background:#FEF3C7;">
+            <td colspan="3">加权总分（排除N/A，按90%归一化）</td>
+            <td style="color:var(--accent); font-size:16px;">3.06 / 5.0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== 5. 研究方向 ==================== -->
+  <div class="section" id="sec-research">
+    <div class="section-title"><span class="icon">&#128300;</span> 5. 研究方向分析</div>
+    <div class="card-grid">
+      <div class="card" style="border-left: 4px solid var(--blue);">
+        <div style="font-weight:700; margin-bottom:8px; color:var(--blue);">核心方向一：生物芯片与IVD</div>
+        <p style="font-size:14px; color:var(--muted);">DNA芯片、蛋白芯片、细胞芯片的设计与应用。核心代表作为遗传性耳聋基因检测芯片，全球首款，已为全国超710万新生儿完成筛查，节约医疗资源近300亿元。</p>
+        <div style="margin-top:8px;">
+          <span class="tag tag-fact">成熟领域</span>
+          <span class="tag">高度产业化</span>
+          <span class="tag">IVD核心技术</span>
+          <span class="tag tag-fact">有产品落地</span>
+        </div>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--green);">
+        <div style="font-weight:700; margin-bottom:8px; color:var(--green);">核心方向二：芯片缩微实验室 (Lab-on-chip)</div>
+        <p style="font-size:14px; color:var(--muted);">微流控多重病原体检测平台、COVID-19核酸检测芯片系统、结核分枝杆菌鉴定芯片、移动式分子诊断实验室等。将复杂实验流程集成到芯片上。</p>
+        <div style="margin-top:8px;">
+          <span class="tag">微流控</span>
+          <span class="tag">POCT</span>
+          <span class="tag tag-fact">有产品落地</span>
+          <span class="tag">传染病检测</span>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-left: 4px solid var(--yellow);">
+      <div style="font-weight:700; margin-bottom:8px; color:var(--yellow);">新兴方向：大健康管理</div>
+      <p style="font-size:14px; color:var(--muted);">依托互联网大数据和人工智能的大健康管理。将生物芯片检测数据与AI结合，探索精准健康管理。方向较新，具体学术产出尚不清晰。</p>
+      <div style="margin-top:8px;">
+        <span class="tag tag-infer">方向较新</span>
+        <span class="tag">AI+健康</span>
+        <span class="tag">大数据</span>
+      </div>
+    </div>
+    <div class="highlight-card">
+      <div class="hl-title">方向评估</div>
+      <p style="font-size:14px;">邢婉丽的研究方向整体偏向<strong>工程应用和产品开发</strong>，而非基础科学探索。生物芯片/IVD领域已高度成熟，学术突破空间有限，但在临床转化和市场应用方面仍有很大空间。这种方向的学生毕业后更适合进入IVD/生物芯片企业，如果目标是发高水平学术论文则需要谨慎评估。</p>
+    </div>
+  </div>
+
+  <!-- ==================== 6. 发表成果分析 ==================== -->
+  <div class="section" id="sec-pubs">
+    <div class="section-title"><span class="icon">&#128218;</span> 6. 发表成果分析</div>
+    <div class="card-grid">
+      <div class="card" style="text-align:center; border-top:3px solid var(--accent);">
+        <div style="font-size:36px; font-weight:800; color:var(--accent);">~110</div>
+        <div style="font-size:13px; color:var(--muted);">发表论文</div>
+      </div>
+      <div class="card" style="text-align:center; border-top:3px solid var(--blue);">
+        <div style="font-size:36px; font-weight:800; color:var(--blue);">~230</div>
+        <div style="font-size:13px; color:var(--muted);">国内外专利</div>
+      </div>
+      <div class="card" style="text-align:center; border-top:3px solid var(--green);">
+        <div style="font-size:36px; font-weight:800; color:var(--green);">4</div>
+        <div style="font-size:13px; color:var(--muted);">主编论著（中英文各2部）</div>
+      </div>
+      <div class="card" style="text-align:center; border-top:3px solid var(--yellow);">
+        <div style="font-size:36px; font-weight:800; color:var(--yellow);">10+</div>
+        <div style="font-size:13px; color:var(--muted);">国家级研究课题</div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px;">发表特征分析</div>
+      <table class="styled-table">
+        <thead>
+          <tr><th>指标</th><th>评估</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>论文数量</td>
+            <td><span class="badge badge-green">较好</span></td>
+            <td>约110篇论文对于研究员级别来说数量可观 <span class="anno anno-fact">事实</span></td>
+          </tr>
+          <tr>
+            <td>期刊层次</td>
+            <td><span class="badge badge-yellow">中等</span></td>
+            <td>以应用型期刊为主，缺乏Nature/Science/Cell等顶刊发表记录 <span class="anno anno-infer">推断</span></td>
+          </tr>
+          <tr>
+            <td>专利数量</td>
+            <td><span class="badge badge-green">极优秀</span></td>
+            <td>约230项国内外专利，体现极强的技术转化能力 <span class="anno anno-fact">事实</span></td>
+          </tr>
+          <tr>
+            <td>论著</td>
+            <td><span class="badge badge-green">优秀</span></td>
+            <td>主编4部生物芯片论著（中英文各2部），在领域内有系统性输出 <span class="anno anno-fact">事实</span></td>
+          </tr>
+          <tr>
+            <td>论文vs专利比</td>
+            <td><span class="badge badge-yellow">产业导向</span></td>
+            <td>专利数(230)远超论文数(110)，说明核心精力在技术开发而非论文发表</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="background: linear-gradient(135deg, #FEF3C7, #FFFBEB);">
+      <div style="font-weight:700; margin-bottom:8px; color:var(--yellow);">发表分析总结</div>
+      <p style="font-size:14px; color:var(--muted);">邢婉丽的学术产出呈现典型的<strong>"专利&gt;论文"模式</strong>，这与她产业化导向的研究定位一致。230项专利vs 110篇论文的比例说明，她的核心价值在技术发明而非学术出版。这对于想发高影响因子论文的学生可能不利，但对于想积累产业化经验和知识产权管理能力的学生则是优势。建议面试时了解：学生的论文发表是否有KPI要求？以及近5年学生的发表节奏。</p>
+    </div>
+  </div>
+
+  <!-- ==================== 7. 学生培养评估 ==================== -->
+  <div class="section" id="sec-students">
+    <div class="section-title"><span class="icon">&#127891;</span> 7. 学生培养评估</div>
+    <div class="alert-box alert-red">
+      <strong style="color:var(--red);">严重警告：数据完全缺失</strong><br>
+      经过多渠道系统搜索，未能找到邢婉丽指导的任何已毕业学生信息。这是本报告评估中最大的不确定性来源。
+    </div>
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px;">搜索结果汇总</div>
+      <table class="styled-table">
+        <thead>
+          <tr><th>搜索渠道</th><th>结果</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>实验室网站</td>
+            <td><span class="badge badge-red">无数据</span></td>
+            <td>未找到实验室官方网站上的学生列表</td>
+          </tr>
+          <tr>
+            <td>CNKI学位论文</td>
+            <td><span class="badge badge-red">无数据</span></td>
+            <td>未检索到她指导的学位论文记录</td>
+          </tr>
+          <tr>
+            <td>知乎/小木虫</td>
+            <td><span class="badge badge-red">无数据</span></td>
+            <td>无任何导师评价或讨论帖</td>
+          </tr>
+          <tr>
+            <td>小红书</td>
+            <td><span class="badge badge-red">无数据</span></td>
+            <td>无相关内容</td>
+          </tr>
+          <tr>
+            <td>Google Scholar</td>
+            <td><span class="badge badge-yellow">间接线索</span></td>
+            <td>可通过合作者论文推测部分学生，但无法确认师生关系</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="background: linear-gradient(135deg, #FEE2E2, #FFF1F2);">
+      <div style="font-weight:700; margin-bottom:8px; color:var(--red);">缺失原因分析</div>
+      <ul style="font-size:14px; color:var(--muted); padding-left:18px;">
+        <li><strong>可能性一：</strong>她的博士生以程京院士为第一导师挂名，邢婉丽为副导师或实际指导人，导致CNKI中不显示她的指导记录 <span class="anno anno-infer">推断</span></li>
+        <li><strong>可能性二：</strong>她近年来主要精力在企业管理，实际带学生较少 <span class="anno anno-infer">推断</span></li>
+        <li><strong>可能性三：</strong>学生毕业后直接进入博奥生物/博奥晶典等关联企业，网络上缺少可追踪的学术去向信息 <span class="anno anno-infer">推断</span></li>
+        <li><strong>可能性四：</strong>她的学生培养工作可能和程京团队共享，很难单独区分归属 <span class="anno anno-infer">推断</span></li>
+      </ul>
+    </div>
+    <div class="alert-box alert-yellow">
+      <strong style="color:var(--yellow);">面试必须核实：</strong>邢婉丽目前名下有多少在读博士/硕士？近5年毕业了几位学生？这些学生目前去向如何？这是选择这位导师前<strong>必须搞清楚的核心问题</strong>。
+    </div>
+  </div>
+
+  <!-- ==================== 8. 平台与资源 ==================== -->
+  <div class="section" id="sec-platform">
+    <div class="section-title"><span class="icon">&#127963;</span> 8. 平台与资源</div>
+    <div class="card">
+      <div class="highlight-card">
+        <div class="hl-title">平台状况：极其丰富</div>
+        <p style="font-size:14px;">清华大学+国家工程研究中心+博奥生物集团的三位一体平台，在国内生物芯片/IVD领域几乎无出其右。</p>
+      </div>
+      <div class="collab-list">
+        <div class="collab-card">
+          <div class="collab-name">清华大学医学院/生物医学工程学院</div>
+          <div class="collab-role">学术挂靠单位</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:4px;">清华品牌+生物医学工程A+学科</div>
+        </div>
+        <div class="collab-card">
+          <div class="collab-name">生物芯片北京国家工程研究中心</div>
+          <div class="collab-role">核心科研平台 &middot; 常务副主任</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:4px;">国家级工程中心，设备和资源一流</div>
+        </div>
+        <div class="collab-card">
+          <div class="collab-name">博奥生物集团有限公司</div>
+          <div class="collab-role">产业平台 &middot; 高级副总裁</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:4px;">产品出口20+国家的生物芯片龙头企业</div>
+        </div>
+        <div class="collab-card">
+          <div class="collab-name">北京博奥晶典生物技术有限公司</div>
+          <div class="collab-role">执行企业 &middot; 总裁/CEO</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:4px;">博奥集团核心子公司，承担主要业务运营</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card" style="border-top: 3px solid var(--green);">
+        <div style="font-weight:700; color:var(--green); margin-bottom:8px;">资源优势</div>
+        <ul style="font-size:14px; color:var(--muted); padding-left:18px;">
+          <li>实验设备和耗材不会有短缺问题</li>
+          <li>可接触完整的从研发到产品化的链条</li>
+          <li>与临床机构有广泛合作，不缺样本</li>
+          <li>科研经费超8800万元</li>
+          <li>清华品牌背书</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top: 3px solid var(--yellow);">
+        <div style="font-weight:700; color:var(--yellow); margin-bottom:8px;">资源风险</div>
+        <ul style="font-size:14px; color:var(--muted); padding-left:18px;">
+          <li>学生可能被安排在博奥生物园区而非清华校园</li>
+          <li>企业项目可能占据主要时间</li>
+          <li>资源丰富≠学术产出丰富</li>
+          <li>横向项目可能多于纵向科研项目</li>
+          <li>读博体验可能更像"企业实习"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 9. 与程京的关系分析 ==================== -->
+  <div class="section" id="sec-chengjing">
+    <div class="section-title"><span class="icon">&#129309;</span> 9. 与程京院士的关系分析</div>
+    <div class="alert-box alert-blue">
+      <strong style="color:var(--blue);">关键背景：</strong>本报告与<strong>程京院士评估报告</strong>高度关联。两人是同一团队核心成员，很多评估维度是共享的。建议结合程京报告一同阅读。
+    </div>
+    <div class="card">
+      <div style="text-align:center; padding:20px 0;">
+        <div class="relation-box">
+          <div class="relation-node primary">
+            <div style="font-weight:700; font-size:16px; color:var(--accent);">程京</div>
+            <div style="font-size:12px; color:var(--muted);">工程院院士</div>
+            <div style="font-size:12px; color:var(--muted);">生物芯片中心主任</div>
+            <div style="font-size:12px; color:var(--muted);">博奥生物董事长兼总裁</div>
+          </div>
+          <div class="relation-arrow">
+            <div style="font-size:28px;">&#8596;</div>
+            <div class="arrow-label">核心搭档</div>
+            <div class="arrow-label">大量共同专利</div>
+            <div class="arrow-label">同一领导层</div>
+          </div>
+          <div class="relation-node">
+            <div style="font-weight:700; font-size:16px; color:var(--blue);">邢婉丽</div>
+            <div style="font-size:12px; color:var(--muted);">研究员/博导</div>
+            <div style="font-size:12px; color:var(--muted);">中心常务副主任</div>
+            <div style="font-size:12px; color:var(--muted);">博奥生物高级副总裁</div>
+          </div>
+        </div>
+      </div>
+      <table class="styled-table">
+        <thead>
+          <tr><th>维度</th><th>程京</th><th>邢婉丽</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>学术头衔</td><td>工程院院士、讲席教授</td><td>研究员、博导</td></tr>
+          <tr><td>中心职务</td><td>主任</td><td>常务副主任</td></tr>
+          <tr><td>博奥生物</td><td>董事长兼总裁</td><td>高级副总裁/技术总监</td></tr>
+          <tr><td>角色定位</td><td>战略决策者、旗帜人物</td><td>技术执行者、产业化操盘手</td></tr>
+          <tr><td>政治身份</td><td>人大常委、民建副主席</td><td>无</td></tr>
+          <tr><td>学生指导</td><td>可能更宏观</td><td>可能更具体（但也很忙）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="background: linear-gradient(135deg, #FEF3C7, #FFFBEB);">
+      <div style="font-weight:700; margin-bottom:8px; color:var(--yellow);">关系解读与影响</div>
+      <ul style="font-size:14px; color:var(--muted); padding-left:18px;">
+        <li><strong>分工模式：</strong>程京把控战略方向和外部资源，邢婉丽负责技术转化和产业化执行。选择邢婉丽可能意味着更多地参与具体的技术开发和产品化工作。<span class="anno anno-infer">推断</span></li>
+        <li><strong>共享风险点：</strong>两人共享同一个平台（国家工程中心+博奥生物），因此程京报告中指出的产业化导向、横向项目多、学术自由度有限等问题同样适用于邢婉丽的学生。</li>
+        <li><strong>独立性问题：</strong>邢婉丽虽然有独立的博导资格，但她在学术和行政上都处于程京体系之内。她的学生在研究方向上可能没有太大的独立选择空间。<span class="anno anno-infer">推断</span></li>
+        <li><strong>可能的优势：</strong>相比程京，邢婉丽可能对学生有更多的直接指导时间（她没有程京那么多的政治职务），但这个优势被她的企业CEO身份所抵消。</li>
+        <li><strong>专利共同持有：</strong>大量共同发明专利说明两人在技术开发上深度合作，学生的工作成果可能同时归属两人名下。</li>
+      </ul>
+    </div>
+    <div class="alert-box alert-yellow">
+      <strong style="color:var(--yellow);">对比建议：</strong>如果你正在程京和邢婉丽之间做选择，两者的核心差异在于：程京有更高的学术光环（院士），邢婉丽可能在日常管理和技术执行层面更具体。但两者共享相同的平台和方向局限性。建议同时参阅<strong>程京评估报告</strong>做交叉对比。
+    </div>
+  </div>
+
+  <!-- ==================== 10. PUA/PUSH风险评估 ==================== -->
+  <div class="section" id="sec-pua">
+    <div class="section-title"><span class="icon">&#9888;&#65039;</span> 10. PUA / PUSH 风险评估</div>
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px;">风险等级：中等（数据严重不足）</div>
+      <div class="risk-meter">
+        <span style="font-size:13px; color:var(--green); font-weight:600;">低</span>
+        <div class="risk-bar-bg">
+          <div class="risk-pointer" style="left: 50%;"></div>
+        </div>
+        <span style="font-size:13px; color:var(--red); font-weight:600;">高</span>
+      </div>
+      <p style="font-size:14px; color:var(--muted); margin:12px 0;">无任何直接的学生评价数据。以下评估完全基于公开信息推断：<span class="anno anno-infer">推断</span></p>
+      <table class="styled-table">
+        <thead>
+          <tr><th>风险因素</th><th>评估</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>导师可及性</td>
+            <td><span class="badge badge-red">较低</span></td>
+            <td>身兼企业CEO、集团副总裁、中心常务副主任等多重身份，日程极其繁忙，直接指导学生的时间可能非常有限</td>
+          </tr>
+          <tr>
+            <td>横向项目风险</td>
+            <td><span class="badge badge-yellow">中偏高</span></td>
+            <td>博奥晶典CEO身份意味着企业运营需求可能转嫁给学生，学生可能被安排做企业项目</td>
+          </tr>
+          <tr>
+            <td>工作地点</td>
+            <td><span class="badge badge-yellow">需确认</span></td>
+            <td>学生可能需要在博奥生物园区工作而非清华校园，影响校园生活和学术交流</td>
+          </tr>
+          <tr>
+            <td>毕业年限</td>
+            <td><span class="badge badge-yellow">待确认</span></td>
+            <td>无公开数据，需面试时了解近年博士平均毕业年限</td>
+          </tr>
+          <tr>
+            <td>学生自主权</td>
+            <td><span class="badge badge-yellow">可能受限</span></td>
+            <td>项目可能以企业需求为导向，学生自由选题空间可能有限</td>
+          </tr>
+          <tr>
+            <td>实际指导人</td>
+            <td><span class="badge badge-yellow">需确认</span></td>
+            <td>日常可能由其他人代为指导，导师本人精力有限</td>
+          </tr>
+          <tr>
+            <td>学生评价</td>
+            <td><span class="badge badge-red">完全空白</span></td>
+            <td>知乎、小木虫、小红书等平台零评价，无法判断实际指导风格</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:16px; padding:12px 16px; background: var(--light-red); border-radius:8px; font-size:14px;">
+        <strong style="color:var(--red);">核心风险：</strong>邢婉丽作为博奥晶典CEO + 博奥生物高级副总裁 + 清华研究员，其精力分配是最大的不确定性。学生的实际读博体验可能更接近"在企业做研发"而非"在高校做学术"。加之完全没有任何在读/已毕业学生的公开反馈，<strong>无法排除任何极端情况</strong>。
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 11. 红旗/绿旗清单 ==================== -->
+  <div class="section" id="sec-lights">
+    <div class="section-title"><span class="icon">&#128678;</span> 11. 红旗 / 绿旗 速查</div>
+    <div class="card-grid">
+      <div class="card" style="border-top: 3px solid var(--green);">
+        <div style="font-weight:700; color:var(--green); margin-bottom:10px;">&#9989; 绿旗信号</div>
+        <div>
+          <span class="badge badge-green">清华大学平台</span>
+          <span class="badge badge-green">国家工程中心常务副主任</span>
+          <span class="badge badge-green">万人计划领军人才</span>
+          <span class="badge badge-green">2次国家技术发明奖</span>
+          <span class="badge badge-green">230项专利 (转化能力极强)</span>
+          <span class="badge badge-green">8800万+科研经费</span>
+          <span class="badge badge-green">耳聋基因芯片 (全球首创)</span>
+          <span class="badge badge-green">产业化落地经验丰富</span>
+          <span class="badge badge-green">IVD行业人脉广泛</span>
+        </div>
+      </div>
+      <div class="card" style="border-top: 3px solid var(--red);">
+        <div style="font-weight:700; color:var(--red); margin-bottom:10px;">&#9888;&#65039; 红旗 / 注意信号</div>
+        <div>
+          <span class="badge badge-red">学生去向完全不可追踪</span>
+          <span class="badge badge-red">企业CEO身份 (精力分散)</span>
+          <span class="badge badge-red">无任何网络导师评价</span>
+          <span class="badge badge-red">CNKI无学位论文记录</span>
+          <span class="badge badge-yellow">多重企业高管身份</span>
+          <span class="badge badge-yellow">偏产业导向 (不适合纯学术)</span>
+          <span class="badge badge-yellow">论文层次不算顶尖</span>
+          <span class="badge badge-yellow">可能在博奥园区而非清华校园</span>
+          <span class="badge badge-yellow">处于程京团队体系内</span>
+          <span class="badge badge-yellow">横向项目可能较多</span>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="background: linear-gradient(135deg, #FEE2E2, #FFF1F2);">
+      <div style="font-weight:700; margin-bottom:8px; color:var(--red);">最大红旗</div>
+      <p style="font-size:14px; color:var(--muted);"><strong>学生培养数据的完全空白</strong>是最令人不安的信号。一位在清华任职超过25年、拥有博导资格的研究员，在所有公开渠道都找不到任何学生信息和评价，这本身就是一个需要在面试中重点核实的异常情况。不一定代表问题严重，但一定代表<strong>信息不透明</strong>。</p>
+    </div>
+  </div>
+
+  <!-- ==================== 12. 毕业目标匹配矩阵 ==================== -->
+  <div class="section" id="sec-match">
+    <div class="section-title"><span class="icon">&#127919;</span> 12. 毕业目标匹配矩阵</div>
+    <p style="font-size:14px; color:var(--muted); margin-bottom:14px;">用户未提供具体毕业目标，以下为通用匹配分析：</p>
+    <div class="matrix-grid">
+      <div class="matrix-cell match-high">
+        <div class="emoji">&#128736;</div>
+        <div class="m-title">IVD / 生物芯片产业</div>
+        <div class="m-desc">高匹配。博奥生物直接对接产业界，产业化经验极丰富，适合志在体外诊断行业的同学。</div>
+        <div style="margin-top:6px;"><span class="badge badge-green">高度匹配</span></div>
+      </div>
+      <div class="matrix-cell match-high">
+        <div class="emoji">&#128188;</div>
+        <div class="m-title">企业研发 / 创业</div>
+        <div class="m-desc">高匹配。导师本人就是成功的技术型企业高管，博奥生态圈提供丰富的产业化视野和人脉。</div>
+        <div style="margin-top:6px;"><span class="badge badge-green">高度匹配</span></div>
+      </div>
+      <div class="matrix-cell match-medium">
+        <div class="emoji">&#128137;</div>
+        <div class="m-title">医疗器械行业</div>
+        <div class="m-desc">中偏高匹配。生物芯片属于医疗器械范畴，NMPA注册经验丰富，但偏IVD细分。</div>
+        <div style="margin-top:6px;"><span class="badge badge-yellow">中度匹配</span></div>
+      </div>
+      <div class="matrix-cell match-medium">
+        <div class="emoji">&#127979;</div>
+        <div class="m-title">高校教职</div>
+        <div class="m-desc">中低匹配。清华品牌有加持，但实验室偏应用，独立学术训练可能不足，高水平论文产出可能有限。</div>
+        <div style="margin-top:6px;"><span class="badge badge-yellow">中低匹配</span></div>
+      </div>
+      <div class="matrix-cell match-low">
+        <div class="emoji">&#129504;</div>
+        <div class="m-title">纯基础科学研究</div>
+        <div class="m-desc">低匹配。核心方向是应用转化和产品开发，不适合追求纯基础研究的同学。</div>
+        <div style="margin-top:6px;"><span class="badge badge-red">匹配度低</span></div>
+      </div>
+      <div class="matrix-cell match-low">
+        <div class="emoji">&#128300;</div>
+        <div class="m-title">海外博后/深造</div>
+        <div class="m-desc">低匹配。应用型研究背景和中等论文层次在申请海外顶尖博后时竞争力有限。</div>
+        <div style="margin-top:6px;"><span class="badge badge-red">匹配度低</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 13. 面试必问清单 ==================== -->
+  <div class="section" id="sec-interview">
+    <div class="section-title"><span class="icon">&#128221;</span> 13. 面试必问清单</div>
+    <div class="card">
+      <ul class="checklist">
+        <li>
+          <div class="q-num">1</div>
+          <div class="q-text">
+            <strong>邢老师目前名下有几位在读研究生？近5年毕业了几位博士/硕士？</strong>
+            <div class="q-why">核实她是否真的在积极带学生，这是目前最大的信息盲区。如果她名下学生很少，可能说明她主要精力在企业。</div>
+          </div>
+        </li>
+        <li>
+          <div class="q-num">2</div>
+          <div class="q-text">
+            <strong>您近年毕业的学生目前都在哪些单位工作？</strong>
+            <div class="q-why">直接追问学生去向。如果大部分去了博奥生物，需要评估这是否符合你的职业规划。</div>
+          </div>
+        </li>
+        <li>
+          <div class="q-num">3</div>
+          <div class="q-text">
+            <strong>日常我的工作地点是在清华校园还是博奥生物园区？</strong>
+            <div class="q-why">工作地点直接影响校园生活质量、学术交流机会和社交圈子。在企业园区可能缺少学术氛围。</div>
+          </div>
+        </li>
+        <li>
+          <div class="q-num">4</div>
+          <div class="q-text">
+            <strong>您平时大概多久和学生开一次组会或一对一讨论？</strong>
+            <div class="q-why">考虑到她身兼多个企业管理职务，直接了解能获得多少指导时间。</div>
+          </div>
+        </li>
+        <li>
+          <div class="q-num">5</div>
+          <div class="q-text">
+            <strong>学生的课题方向是自己选定还是由老师分配？是否可能涉及企业横向项目？</strong>
+            <div class="q-why">产业化导向的团队可能会将企业项目需求分配给学生，这对学术论文产出可能不利。</div>
+          </div>
+        </li>
+        <li>
+          <div class="q-num">6</div>
+          <div class="q-text">
+            <strong>如果我需要发表学术论文，团队是否有明确的支持和规划？博士期间预期能发几篇文章？</strong>
+            <div class="q-why">在产业化导向的团队中，论文发表可能不是核心KPI。需要确认是否有保障。</div>
+          </div>
+        </li>
+        <li>
+          <div class="q-num">7</div>
+          <div class="q-text">
+            <strong>您和程京院士团队的学生是如何分工的？日常是否有其他老师协助指导？</strong>
+            <div class="q-why">了解实际的指导结构。如果存在"二级导师"，需要评估该人的水平和态度。</div>
+          </div>
+        </li>
+        <li>
+          <div class="q-num">8</div>
+          <div class="q-text">
+            <strong>近年博士生的平均毕业年限是多少？是否有延期毕业的情况？</strong>
+            <div class="q-why">延期毕业在工程应用型团队中较为常见。了解实际情况有助于规划时间。</div>
+          </div>
+        </li>
+        <li>
+          <div class="q-num">9</div>
+          <div class="q-text">
+            <strong>博奥生物/博奥晶典是否有学生实习或就业的通道？毕业后是否可以自由选择去向？</strong>
+            <div class="q-why">确认是否存在"毕业后必须留在博奥"的隐性要求。</div>
+          </div>
+        </li>
+        <li>
+          <div class="q-num">10</div>
+          <div class="q-text">
+            <strong>能否和目前在读的学生聊聊，了解一下日常的学习和工作节奏？</strong>
+            <div class="q-why">这是获取真实信息的最有效途径。如果被拒绝，本身就是一个红旗信号。</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== 14. 综合建议 ==================== -->
+  <div class="section" id="sec-advice">
+    <div class="section-title"><span class="icon">&#128161;</span> 14. 综合建议</div>
+    <div class="card">
+      <div class="highlight-card">
+        <div class="hl-title">核心判断</div>
+        <p style="font-size:15px; line-height:1.8;">邢婉丽是一位在生物芯片产业化领域有卓越实绩的技术型企业高管兼学术研究员。她拥有国内顶级的资源平台，但她的<strong>多重企业身份</strong>和<strong>完全空白的学生培养记录</strong>构成了两个核心不确定性。</p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card" style="border-left: 4px solid var(--green);">
+        <div style="font-weight:700; color:var(--green); margin-bottom:8px;">适合你的情况</div>
+        <ul style="font-size:14px; color:var(--muted); padding-left:18px;">
+          <li>你的职业目标是进入IVD/生物芯片产业界</li>
+          <li>你想获得从研发到产品化的完整训练</li>
+          <li>你看重平台资源和产业人脉</li>
+          <li>你对企业研发环境有心理准备</li>
+          <li>你不太在意是否发表顶刊论文</li>
+          <li>你对清华品牌有需求（但要确认毕业证是否为清华）</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--red);">
+        <div style="font-weight:700; color:var(--red); margin-bottom:8px;">不适合你的情况</div>
+        <ul style="font-size:14px; color:var(--muted); padding-left:18px;">
+          <li>你追求发表高影响因子学术论文</li>
+          <li>你的目标是海外博后或纯学术路线</li>
+          <li>你希望导师有充足的时间直接指导</li>
+          <li>你重视自由选题和独立研究</li>
+          <li>你不想做与企业相关的横向项目</li>
+          <li>你希望在清华校园有完整的校园生活体验</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="background: linear-gradient(135deg, #FEF3C7, #FFFBEB);">
+      <div style="font-weight:700; margin-bottom:8px; color:var(--yellow);">行动建议</div>
+      <ol style="font-size:14px; color:var(--muted); padding-left:18px;">
+        <li style="margin-bottom:8px;"><strong>首要任务：核实学生信息。</strong>面试时务必搞清楚她名下有多少学生、近年毕业学生去向，这是决策的关键依据。</li>
+        <li style="margin-bottom:8px;"><strong>要求和在读学生交流。</strong>获取第一手的读博体验信息，包括日常工作节奏、导师指导频率、是否有企业项目任务等。</li>
+        <li style="margin-bottom:8px;"><strong>明确工作地点。</strong>确认是在清华校园还是博奥生物园区，这会极大影响你的读博体验。</li>
+        <li style="margin-bottom:8px;"><strong>对比程京报告。</strong>如果你在两人之间选择，核心差异在学术光环（程京更高）和日常可及性（邢婉丽可能略好但仍不乐观）。</li>
+        <li style="margin-bottom:8px;"><strong>明确你的职业目标。</strong>这是决定邢婉丽是否适合你的最核心因素。产业界走向=绿灯，纯学术走向=红灯。</li>
+      </ol>
+    </div>
+
+    <div class="alert-box alert-red">
+      <strong style="color:var(--red);">院系归属再次提醒：</strong>邢婉丽隶属于清华大学<strong>医学院/生物医学工程学院</strong>，不是基础医学院。请确认你报考的院系和专业代码与她的招生资格匹配。
+    </div>
+  </div>
+
+  <!-- ==================== 15. 数据来源与局限性 ==================== -->
+  <div class="section" id="sec-sources">
+    <div class="section-title"><span class="icon">&#128214;</span> 15. 数据来源与局限性</div>
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:12px;">数据来源</div>
+      <table class="styled-table">
+        <thead>
+          <tr><th>来源</th><th>类型</th><th>可靠度</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>清华大学官方信息</td>
+            <td>院系教师介绍</td>
+            <td><span class="badge badge-green">高</span></td>
+          </tr>
+          <tr>
+            <td>生物芯片北京国家工程研究中心</td>
+            <td>官方简介</td>
+            <td><span class="badge badge-green">高</span></td>
+          </tr>
+          <tr>
+            <td>博奥生物集团</td>
+            <td>企业官网</td>
+            <td><span class="badge badge-green">高</span></td>
+          </tr>
+          <tr>
+            <td>Google Scholar</td>
+            <td>学术发表数据</td>
+            <td><span class="badge badge-green">高</span></td>
+          </tr>
+          <tr>
+            <td>国家科技奖励公告</td>
+            <td>获奖信息</td>
+            <td><span class="badge badge-green">高</span></td>
+          </tr>
+          <tr>
+            <td>万人计划/科技部公告</td>
+            <td>人才称号</td>
+            <td><span class="badge badge-green">高</span></td>
+          </tr>
+          <tr>
+            <td>CNKI论文数据库</td>
+            <td>学位论文检索</td>
+            <td><span class="badge badge-yellow">中（可能不完整）</span></td>
+          </tr>
+          <tr>
+            <td>知乎/小木虫/小红书</td>
+            <td>社区评价</td>
+            <td><span class="badge badge-red">无数据</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="background: linear-gradient(135deg, #FEE2E2, #FFF1F2);">
+      <div style="font-weight:700; margin-bottom:8px; color:var(--red);">重要局限性声明</div>
+      <ul style="font-size:14px; color:var(--muted); padding-left:18px;">
+        <li><strong>学生培养数据完全缺失：</strong>这是本报告最大的局限性。无法追踪任何已毕业学生的去向信息，也没有在读学生的任何公开评价。这意味着本报告对于"读博体验"和"培养质量"的评估几乎完全基于推断。</li>
+        <li><strong>论文详细分析受限：</strong>未能逐一分析110篇论文的期刊层次和引用情况，仅做了总体评估。</li>
+        <li><strong>职称晋升年份为推断：</strong>从助理教授到副教授到研究员的具体晋升年份未能找到官方记录。</li>
+        <li><strong>与程京的分工细节为推断：</strong>两人在学术指导和企业管理中的具体分工基于职务对比推断，未经内部人士确认。</li>
+        <li><strong>报告评分主观性：</strong>由于关键数据（尤其是学生培养维度）严重缺失，评分中包含较大的主观判断成分。实际得分可能随面试获取的新信息而显著调整。</li>
+      </ul>
+    </div>
+    <div class="alert-box alert-yellow">
+      <strong style="color:var(--yellow);">标注说明：</strong>
+      本报告使用两种标注区分信息可靠度：
+      <span class="anno anno-fact">事实</span> = 来自官方或可验证的公开来源；
+      <span class="anno anno-infer">推断</span> = 基于已知信息的合理推断，未经直接验证。
+    </div>
+  </div>
+
+  <!-- ==================== Footer ==================== -->
+  <div class="footer">
+    <p>Generated by <strong>DeepTutor v4</strong> &mdash; Powered by Claude</p>
+    <p style="margin-top:4px;">报告生成日期：2026-03-31 &nbsp;|&nbsp; 数据截至：2026年3月</p>
+    <p style="margin-top:4px; font-size:11px; color:#9CA3AF;">本报告基于公开信息编制，仅供参考。所有推断性结论均已标注，请结合面试和实地考察做出最终决策。</p>
+  </div>
+
+</div>
+
+<script>
+  // Sidebar active link highlighting
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.sidebar nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      const top = section.offsetTop;
+      if (scrollY >= top - 80) current = section.getAttribute('id');
+    });
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
