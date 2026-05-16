@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DeepTutor 导师调查报告 — 张伟</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+:root{--bg:#ffffff;--surface:#fbfbfd;--surface-2:#f5f5f7;--surface-3:#eeeef0;--text:#1d1d1f;--text-2:#515154;--text-3:#86868b;--text-4:#aeaeb2;--hairline:#d2d2d7;--hairline-thin:rgba(0,0,0,0.06);--accent:#0071e3;--accent-2:#06c;--accent-soft:rgba(0,113,227,0.08);--green:#1db954;--green-deep:#1a8a3e;--green-soft:#e7f7ec;--amber:#f59e0b;--amber-deep:#a36000;--amber-soft:#fff4e0;--red:#ff453a;--red-deep:#c70011;--red-soft:#ffe8e6;--ease:cubic-bezier(0.28,0.16,0.22,1);--ease-out:cubic-bezier(0.16,1,0.3,1)}
+html{scroll-behavior:smooth;font-feature-settings:"ss01","cv11"}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.47;font-size:17px;letter-spacing:-0.003em;font-weight:400}
+a{color:var(--accent);text-decoration:none;transition:opacity .25s var(--ease)}
+a:hover{opacity:0.7;text-decoration:none}
+h1,h2,h3,h4{color:var(--text);letter-spacing:-0.022em;font-weight:600;line-height:1.1}
+.layout{display:flex;min-height:100vh;position:relative}
+nav{position:fixed;top:0;left:0;width:240px;height:100vh;overflow-y:auto;background:rgba(255,255,255,0.72);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-right:1px solid var(--hairline-thin);padding:24px 16px 40px;z-index:10}
+nav::-webkit-scrollbar{width:0}
+nav .logo{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:600;color:var(--text);margin:8px 12px 24px;letter-spacing:-0.022em}
+nav .logo::before{content:"";width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#0071e3 0%,#06c 100%);box-shadow:0 2px 8px rgba(0,113,227,0.25)}
+nav a{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:8px;font-size:13px;color:var(--text-2);margin-bottom:1px;font-weight:400;letter-spacing:-0.005em;transition:background .2s var(--ease),color .2s var(--ease);position:relative}
+nav a::before{content:attr(data-num);font-variant-numeric:tabular-nums;color:var(--text-4);font-size:11px;font-weight:500;min-width:18px}
+nav a:hover{background:var(--surface-2);color:var(--text);opacity:1}
+nav a.active{background:var(--accent-soft);color:var(--accent);font-weight:500}
+nav a.active::before{color:var(--accent)}
+main{margin-left:240px;width:100%}
+.hero{padding:96px 64px 64px;background:linear-gradient(180deg,#fbfbfd 0%,#ffffff 100%);border-bottom:1px solid var(--hairline-thin);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-200px;right:-200px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,113,227,0.06) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:20px}
+.hero-eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.hero h1{font-size:64px;font-weight:600;letter-spacing:-0.025em;line-height:1.05;margin-bottom:18px;max-width:880px}
+.hero .subtitle{color:var(--text-2);font-size:21px;letter-spacing:-0.012em;font-weight:400;line-height:1.4;max-width:680px}
+.hero .meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:28px;font-size:13px;color:var(--text-3);letter-spacing:-0.005em}
+.hero .meta span{display:inline-flex;align-items:center;gap:6px}
+.hero .meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--text-4)}
+.hero .meta span:first-child::before{display:none}
+.content{padding:24px 64px 80px;max-width:1080px}
+section.card{background:transparent;border-radius:0;box-shadow:none;padding:64px 0 48px;margin:0;border-top:1px solid var(--hairline-thin);transition:none}
+section.card:first-of-type{border-top:none;padding-top:48px}
+section.card:hover{box-shadow:none;transform:none}
+.card h2{font-size:40px;font-weight:600;letter-spacing:-0.025em;margin-bottom:28px;line-height:1.1}
+.card h3{font-size:22px;font-weight:600;margin-bottom:14px;letter-spacing:-0.018em}
+.card h4{font-size:17px;font-weight:600;margin:28px 0 12px;letter-spacing:-0.012em;color:var(--text-2);text-transform:uppercase;font-size:12px;letter-spacing:0.06em}
+.card p{margin:10px 0;color:var(--text);font-size:17px;line-height:1.5}
+.card ul,.card ol{margin:12px 0 12px 22px}
+.card li{margin:8px 0;font-size:17px;line-height:1.5}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:980px;font-size:12px;font-weight:500;letter-spacing:-0.005em;line-height:1.4;background:var(--surface-2);color:var(--text-2)}
+.accent-badge{background:var(--accent-soft);color:var(--accent)}
+.red-badge{background:var(--red-soft);color:var(--red-deep)}
+.green-badge{background:var(--green-soft);color:var(--green-deep)}
+.muted-badge{background:var(--surface-2);color:var(--text-3)}
+.muted{color:var(--text-3);font-size:15px}
+table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px}
+thead tr{border-bottom:1px solid var(--hairline)}
+th{text-align:left;padding:12px 16px 14px;font-weight:500;color:var(--text-3);font-size:11px;letter-spacing:0.06em;text-transform:uppercase}
+th:first-child{padding-left:0}
+th:last-child{padding-right:0}
+td{padding:18px 16px;border-bottom:1px solid var(--hairline-thin);color:var(--text);vertical-align:top;font-size:15px;line-height:1.45}
+td:first-child{padding-left:0;font-weight:500}
+td:last-child{padding-right:0}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .2s var(--ease)}
+.bar-wrap{display:inline-block;width:80px;height:4px;background:var(--surface-3);border-radius:2px;vertical-align:middle;margin-right:10px;overflow:hidden}
+.bar{height:100%;border-radius:2px;transition:width .8s var(--ease-out)}
+.composite{display:flex;align-items:center;gap:32px;margin:8px 0 36px;padding:32px;background:var(--surface);border-radius:22px;border:1px solid var(--hairline-thin)}
+.composite-score{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;width:128px;height:128px;border-radius:50%;color:#fff;position:relative;font-feature-settings:"tnum"}
+.composite-score::after{content:"";position:absolute;inset:5px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.22);pointer-events:none}
+.comp-num{font-size:44px;font-weight:600;line-height:1;letter-spacing:-0.03em}
+.comp-label{font-size:11px;margin-top:6px;font-weight:500;letter-spacing:0.04em;opacity:0.95;text-transform:uppercase}
+.comp-info{flex:1}
+.comp-title{display:block;font-weight:500;color:var(--text-3);font-size:12px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px}
+.comp-desc{font-size:19px;color:var(--text);letter-spacing:-0.014em;line-height:1.4}
+.big-quote{font-size:32px;font-weight:600;margin-bottom:20px;color:var(--text);letter-spacing:-0.025em;line-height:1.18;max-width:760px}
+.qa{display:grid;grid-template-columns:140px 1fr;gap:24px;margin:0;padding:24px 0;font-size:16px;line-height:1.55;border-bottom:1px solid var(--hairline-thin)}
+.qa:last-of-type{border-bottom:none}
+.qa strong{color:var(--text-3);font-weight:500;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;margin:0;padding-top:2px}
+.deal-breakers{margin-top:24px;padding:24px 28px;background:var(--red-soft);border-radius:18px;border:1px solid rgba(199,0,17,0.12)}
+.deal-breakers strong{color:var(--red-deep);font-size:13px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600}
+.deal-breakers ul{margin:12px 0 0 0;list-style:none}
+.deal-breakers li{color:var(--text);font-size:15px;padding:6px 0 6px 22px;position:relative;line-height:1.5}
+.deal-breakers li::before{content:"";position:absolute;left:0;top:14px;width:6px;height:6px;border-radius:50%;background:var(--red-deep)}
+.flag-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:8px}
+.flag-col h3{margin-bottom:16px;font-size:13px;color:var(--text-3);font-weight:500;letter-spacing:0.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.flag-col h3::before{content:"";width:8px;height:8px;border-radius:50%}
+.red-col h3::before{background:var(--red)}
+.green-col h3::before{background:var(--green)}
+.flag-item{padding:20px 22px;border-radius:16px;margin-bottom:12px;font-size:15px;background:var(--surface);border:1px solid var(--hairline-thin)}
+.flag-item strong{font-weight:600;color:var(--text);display:block;margin-bottom:6px;font-size:15px;letter-spacing:-0.005em}
+.flag-item .badge{margin-bottom:8px}
+.red-flag{border-left:3px solid var(--red)}
+.green-flag{border-left:3px solid var(--green)}
+.ev{font-size:14px;color:var(--text-2);margin-top:8px;line-height:1.55}
+.verdict{margin-bottom:24px;padding:0;background:none;border-radius:0;border-left:3px solid var(--accent);padding-left:24px}
+.verdict[style*="dc2626"]{border-left-color:var(--red)}
+.verdict[style*="d97706"]{border-left-color:var(--amber)}
+.verdict[style*="16a34a"]{border-left-color:var(--green)}
+.verdict .badge{margin-top:12px;font-size:13px;padding:5px 14px}
+.lifecycle{font-size:24px;margin-bottom:24px;font-weight:500;letter-spacing:-0.018em;display:flex;align-items:center;gap:14px}
+.emoji{font-size:36px;line-height:1}
+.timeline{position:relative;padding-left:32px;margin-top:16px}
+.timeline::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:1px;background:var(--hairline)}
+.tl-item{margin-bottom:32px;position:relative}
+.tl-item:last-child{margin-bottom:0}
+.tl-item::before{content:"";position:absolute;left:-29px;top:6px;width:13px;height:13px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.tl-period{font-weight:500;color:var(--text-3);display:block;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px}
+.tl-desc{font-size:16px;color:var(--text);line-height:1.5}
+.deal-banner{background:linear-gradient(180deg,#ff3b30 0%,#d70015 100%);color:#fff;text-align:center;padding:14px 24px;font-weight:500;font-size:14px;letter-spacing:-0.005em;position:sticky;top:0;z-index:20;box-shadow:0 1px 0 rgba(0,0,0,0.05)}
+footer{text-align:center;padding:64px 0 32px;font-size:12px;color:var(--text-3);letter-spacing:-0.005em;border-top:1px solid var(--hairline-thin);margin-top:24px}
+@media(max-width:900px){nav{position:static;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--hairline-thin);display:flex;flex-wrap:wrap;gap:2px;padding:14px 16px;background:rgba(255,255,255,0.95);backdrop-filter:saturate(180%) blur(20px)}nav .logo{width:100%;margin:0 0 10px}nav a{font-size:12px;padding:5px 10px;border-radius:7px}nav a::before{display:none}main{margin-left:0}.hero{padding:48px 24px 32px}.hero h1{font-size:40px}.hero .subtitle{font-size:18px}.content{padding:16px 24px 64px}.card{padding:40px 0 32px}.card h2{font-size:28px;margin-bottom:20px}.flag-grid{grid-template-columns:1fr;gap:20px}.composite{flex-direction:column;gap:20px;text-align:center;padding:24px}.composite-score{width:112px;height:112px}.comp-num{font-size:38px}.qa{grid-template-columns:1fr;gap:6px;padding:18px 0}.big-quote{font-size:24px}}
+@media print{nav,.deal-banner{display:none!important}main{margin-left:0}.hero{padding:0 0 24px;background:none}.hero h1{font-size:36px}.content{padding:0}.card{break-inside:avoid;padding:24px 0;border-top:1px solid #ccc}body{background:#fff;font-size:13px}.composite{break-inside:avoid}}</style>
+</head>
+<body>
+
+<div class="layout">
+<nav>
+  <div class="logo">DeepTutor</div>
+  <a href="#sec-0" data-num="01">导师锐评</a>
+<a href="#sec-1" data-num="02">多维度评分</a>
+<a href="#sec-2" data-num="03">领域宏观趋势</a>
+<a href="#sec-3" data-num="04">学生去向(天花板原则)</a>
+<a href="#sec-4" data-num="05">红绿灯速查</a>
+<a href="#sec-5" data-num="06">PUA/毒性风险</a>
+<a href="#sec-6" data-num="07">退休与稳定性风险</a>
+<a href="#sec-7" data-num="08">基本信息</a>
+<a href="#sec-8" data-num="09">导师类型分类</a>
+<a href="#sec-9" data-num="10">目标匹配度</a>
+<a href="#sec-10" data-num="11">教育与职业时间线</a>
+<a href="#sec-11" data-num="12">研究方向</a>
+<a href="#sec-12" data-num="13">发表成果分析</a>
+<a href="#sec-13" data-num="14">合作网络</a>
+<a href="#sec-14" data-num="15">基金与项目</a>
+<a href="#sec-15" data-num="16">学术指标</a>
+<a href="#sec-16" data-num="17">院系背景</a>
+<a href="#sec-17" data-num="18">总结与下一步</a>
+<a href="#sec-18" data-num="19">数据来源</a>
+
+</nav>
+<main>
+  <header class="hero">
+    <span class="hero-eyebrow">导师调查报告</span>
+    <h1>张伟</h1>
+    <p class="subtitle">教授 / 博士生导师 · 生命科学学院 · 北京大学</p>
+    <div class="meta"><span>2026-05-16</span><span>DeepTutor v5</span><span>由 Claude 驱动</span></div>
+  </header>
+  <div class="content">
+  <section id="sec-0" class="card"><h2>导师锐评</h2>
+<div class="verdict" style="box-shadow:inset 4px 0 0 #16a34a"><p class="big-quote">&ldquo;学术轨迹稳健、组会节奏清晰的中生代 PI,适合想走学术路线但需要明确产出节奏的学生。&rdquo;</p><span class="badge" style="background:#dcfce7;color:#16a34a">推荐 (4/5)</span></div><div class="qa"><strong>人设与现实:</strong> 对外宣传以&#x27;前沿交叉&#x27;为主,实际 60% 经费集中在传统通路研究,交叉方向尚未成型。</div><div class="qa"><strong>隐藏风险:</strong> 实验室扩张过快(博士+博后从 6 人增至 14 人),老学生反馈一对一时间被压缩到每两周 15 分钟。</div><div class="qa"><strong>被低估的优势:</strong> 对学生第一作者署名极为看重,近 4 届毕业生全部以一作发表 IF&gt;10 论文。</div><div class="qa"><strong>五年预测:</strong> 若现有国自然重点项目顺利结题,3 年内有冲击杰青可能;但若交叉方向不能在 2027 前出关键论文,影响力会停滞。</div><div class="qa"><strong>替代选择:</strong> 若主要兴趣在单细胞工具开发而非通路验证,可考虑同院系王教授组(工具属性更强、组员更少)。</div><p><strong>推荐结论:</strong> 推荐报考。建议明确告知导师自己希望的方向是通路验证还是工具开发,前者匹配度极高,后者需谨慎。</p></section>
+<section id="sec-1" class="card"><h2>多维度评分</h2>
+<div class="composite"><div class="composite-score" style="background:linear-gradient(145deg,#16a34a 0%,#16a34acc 100%)"><span class="comp-num">4.1</span><span class="comp-label">/ 5.0</span></div><div class="comp-info"><span class="comp-title">综合评分</span><div class="comp-desc">推荐</div></div></div><table><thead><tr><th>维度</th><th>权重</th><th>评分</th><th>依据</th></tr></thead><tbody><tr><td>学术产出</td><td>15%</td><td><div class="bar-wrap"><div class="bar" style="width:100.0%;background:#16a34a"></div></div>5</td><td class="ev">近 5 年 25 篇通讯,7 篇 IF&gt;15</td></tr><tr><td>学生指导密度</td><td>12%</td><td><div class="bar-wrap"><div class="bar" style="width:60.0%;background:#d97706"></div></div>3</td><td class="ev">扩张后人均一对一时间下降,但有固定周会</td></tr><tr><td>学生去向(天花板)</td><td>12%</td><td><div class="bar-wrap"><div class="bar" style="width:100.0%;background:#16a34a"></div></div>5</td><td class="ev">近 3 届博士全部去 985 教职或顶尖博后</td></tr><tr><td>经费稳定性</td><td>10%</td><td><div class="bar-wrap"><div class="bar" style="width:80.0%;background:#16a34a"></div></div>4</td><td class="ev">1 项国自然重点 + 2 项面上,均在执行期</td></tr><tr><td>PUA/压力</td><td>10%</td><td><div class="bar-wrap"><div class="bar" style="width:80.0%;background:#16a34a"></div></div>4</td><td class="ev">知乎与小木虫一致评价为&#x27;要求高但不羞辱&#x27;</td></tr><tr><td>组员关系</td><td>8%</td><td><div class="bar-wrap"><div class="bar" style="width:80.0%;background:#16a34a"></div></div>4</td><td class="ev">团建频率高,氛围健康</td></tr><tr><td>工作时长</td><td>8%</td><td><div class="bar-wrap"><div class="bar" style="width:60.0%;background:#d97706"></div></div>3</td><td class="ev">默认 996,但允许灵活分配</td></tr><tr><td>课题自由度</td><td>8%</td><td><div class="bar-wrap"><div class="bar" style="width:60.0%;background:#d97706"></div></div>3</td><td class="ev">前 1.5 年导师指定方向,之后逐步放权</td></tr><tr><td>国际曝光</td><td>7%</td><td><div class="bar-wrap"><div class="bar" style="width:80.0%;background:#16a34a"></div></div>4</td><td class="ev">每年至少 2 次 CSHL 等会议送学生口头</td></tr><tr><td>退休稳定性</td><td>5%</td><td><div class="bar-wrap"><div class="bar" style="width:100.0%;background:#16a34a"></div></div>5</td><td class="ev">年龄 44,距退休 &gt;15 年</td></tr><tr><td>性别/弱势友好</td><td>5%</td><td><div class="bar-wrap"><div class="bar" style="width:80.0%;background:#16a34a"></div></div>4</td><td class="ev">实验室女生占比 50%,有 2 位育龄期 PI</td></tr></tbody></table></section>
+<section id="sec-2" class="card"><h2>领域宏观趋势</h2>
+<div class="lifecycle"><span class="emoji">📈</span> <strong>生命周期:</strong> 上升期</div><p><strong>经费趋势:</strong> 国自然在该领域近 3 年支持金额 +35%,2026 年新增重点专项</p><p><strong>就业市场:</strong> 高校教职供给充足,顶刊博后市场略饱和</p><p><strong>颠覆风险:</strong> AI 蛋白结构预测带来一定方法论冲击,但通路验证类研究短期不可替代</p><p><strong>对学生影响:</strong> 毕业时正赶上方向产出高峰,文章与就业窗口都较好</p></section>
+<section id="sec-3" class="card"><h2>学生去向(天花板原则)</h2>
+<table><thead><tr><th>姓名</th><th>时间</th><th>学位</th><th>论文数</th><th>当前职位</th></tr></thead><tbody><tr><td>李同学 (虚构)</td><td>2018-2023</td><td>博士</td><td>4</td><td>清华大学博士后</td></tr><tr><td>王同学 (虚构)</td><td>2019-2024</td><td>博士</td><td>3</td><td>复旦大学讲师</td></tr><tr><td>陈同学 (虚构)</td><td>2020-2025</td><td>博士</td><td>2</td><td>斯坦福大学博士后</td></tr></tbody></table></section>
+<section id="sec-4" class="card"><h2>红绿灯速查</h2>
+<div class="flag-grid"><div class="flag-col red-col"><h3>红旗警告</h3><div class="flag-item red-flag"><span class="badge red-badge">中</span> <strong>实验室扩张过快</strong><p class="ev">2 年内人数翻倍,一对一时间压缩</p></div><div class="flag-item red-flag"><span class="badge red-badge">低</span> <strong>经费集中在传统方向</strong><p class="ev">60% 经费来自 2 个面上项目</p></div></div><div class="flag-col green-col"><h3>绿色信号</h3><div class="flag-item green-flag"><strong>学生去向优秀</strong><p class="ev">近 3 届毕业生 100% 学术路径</p></div><div class="flag-item green-flag"><strong>一作署名规范</strong><p class="ev">学生反馈署名争议从未出现</p></div><div class="flag-item green-flag"><strong>无 PUA 记录</strong><p class="ev">知乎/小木虫/师兄师姐口径一致</p></div></div></div></section>
+<section id="sec-5" class="card"><h2>PUA/毒性风险</h2>
+<p>知乎、小木虫与师兄师姐口径一致:&#x27;要求高、节奏快,但讲道理、不羞辱&#x27;。无 PUA 投诉记录。</p><ul><li><a href="https://www.zhihu.com/example" target="_blank">知乎</a>: 组会被骂是因为实验设计漏洞,不是人身攻击。</li><li><a href="http://muchong.com/example" target="_blank">小木虫</a>: 对学生第一作者署名很负责。</li></ul></section>
+<section id="sec-6" class="card"><h2>退休与稳定性风险</h2>
+<span class="badge" style="background:#dcfce7;color:#16a34a">评分: 5/5</span><p><strong>年龄估计:</strong> 44 岁</p><p><strong>退休倒计时:</strong> &gt;15 年</p><p><strong>经费到期:</strong> 2028/12 (重点项目)</p><p><strong>接班人:</strong> 无,仍在职业上升期</p><p><strong>评估:</strong> 稳定性极高,博士期间不存在导师退休风险</p></section>
+<section id="sec-7" class="card"><h2>基本信息</h2>
+<h3>张伟</h3><p>教授 / 博士生导师 &mdash; 北京大学 生命科学学院</p><p><strong>联系方式:</strong> 邮箱: zhangwei@example-pku.edu.cn | 办公室: 吕志和楼 B312</p><p><strong>学术 ID:</strong> ORCID: 0000-0000-0000-0000 | Google Scholar: <a href="https://scholar.google.com/citations?user=EXAMPLE" target="_blank">https://scholar.google.com/citations?user=EXAMPLE</a> | Lab Website: <a href="https://example-lab.pku.edu.cn" target="_blank">https://example-lab.pku.edu.cn</a></p></section>
+<section id="sec-8" class="card"><h2>导师类型分类</h2>
+<span class="badge accent-badge">学术-指导型</span><p>每周组会 + 入学第一年每两周 1 对 1,后期以季度汇报为主</p></section>
+<section id="sec-9" class="card"><h2>目标匹配度</h2>
+<p><strong>学术路径(高校教职):</strong> 高度契合 5/5</p><p><strong>工业研发:</strong> 中等契合 3/5</p><p><strong>出国深造:</strong> 高度契合 5/5</p><p><strong>工具开发:</strong> 低度契合 2/5</p></section>
+<section id="sec-10" class="card"><h2>教育与职业时间线</h2>
+<div class="timeline"><div class="tl-item"><span class="tl-period">2002-2006</span><span class="tl-desc">学士 — 北京大学 (生物科学)</span></div><div class="tl-item"><span class="tl-period">2006-2011</span><span class="tl-desc">博士 — Harvard University (Cell Biology)</span></div><div class="tl-item"><span class="tl-period">2011-2014</span><span class="tl-desc">博士后 — Stanford University</span></div><div class="tl-item"><span class="tl-period">2014-2020</span><span class="tl-desc">助理/副教授 — 北京大学</span></div><div class="tl-item"><span class="tl-period">2020-至今</span><span class="tl-desc">教授 — 北京大学</span></div></div></section>
+<section id="sec-11" class="card"><h2>研究方向</h2>
+<ul><li>细胞自噬</li><li>代谢-自噬交叉调控</li><li>肿瘤代谢靶点</li></ul></section>
+<section id="sec-12" class="card"><h2>发表成果分析</h2>
+<p><strong>总发表:</strong> 87 &nbsp;|&nbsp; <strong>H-指数:</strong> 32 &nbsp;|&nbsp; <strong>i10-指数:</strong> 56 &nbsp;|&nbsp; <strong>趋势:</strong> 近 3 年发表数量稳定,通讯作者比例 &gt;80%</p><h4>代表论文</h4><table><thead><tr><th>#</th><th>Title</th><th>期刊</th><th>年份</th><th>引用</th></tr></thead><tbody><tr><td>1</td><td>Lysosomal control of mTORC1 (示例)</td><td>Nature</td><td>2023</td><td>124</td></tr><tr><td>2</td><td>Autophagy in tumor metabolism (示例)</td><td>Cell Metabolism</td><td>2022</td><td>98</td></tr><tr><td>3</td><td>AMPK-mediated mitophagy (示例)</td><td>Nature Cell Biology</td><td>2024</td><td>41</td></tr></tbody></table></section>
+<section id="sec-13" class="card"><h2>合作网络</h2>
+<table><thead><tr><th>合作者</th><th>合作次数</th><th>关系</th><th>机构</th></tr></thead><tbody><tr><td>Smith J (虚构)</td><td>8</td><td>博后导师</td><td>Stanford University</td></tr><tr><td>李教授 (虚构)</td><td>12</td><td>国内长期合作</td><td>清华大学</td></tr></tbody></table></section>
+<section id="sec-14" class="card"><h2>基金与项目</h2>
+<table><thead><tr><th>项目</th><th>金额</th><th>时间</th><th>状态</th></tr></thead><tbody><tr><td>国自然重点项目 (虚构)</td><td>298 万</td><td>2024-2028</td><td><span class="badge green-badge">active</span></td></tr><tr><td>国自然面上 (虚构)</td><td>62 万</td><td>2023-2026</td><td><span class="badge green-badge">active</span></td></tr><tr><td>科技部重点研发课题 (虚构)</td><td>120 万</td><td>2022-2025</td><td><span class="badge green-badge">active</span></td></tr></tbody></table></section>
+<section id="sec-15" class="card"><h2>学术指标</h2>
+<p><strong>H-指数:</strong> 32 &nbsp;|&nbsp; <strong>i10-指数:</strong> 56</p></section>
+<section id="sec-16" class="card"><h2>院系背景</h2>
+<p>北京大学生命科学学院综合实力国内前三,平台共享良好(质谱、单细胞、影像中心 24h 开放)。</p></section>
+<section id="sec-17" class="card"><h2>总结与下一步</h2>
+<ol><li>联系实验室秘书索取近 2 年代表作 PDF 全文</li><li>通过师兄师姐了解组会节奏与一对一频率</li><li>确认博士前两年的方向是否可协商</li><li>查阅近 5 届毕业生第一作者数与去向</li></ol></section>
+<section id="sec-18" class="card"><h2>数据来源</h2>
+<table><thead><tr><th>数据源</th><th>链接</th><th>访问日期</th></tr></thead><tbody><tr><td>示例数据 — 虚构教授</td><td><a href="https://example.org/demo" target="_blank">https://example.org/demo</a></td><td>2026-05-16</td></tr><tr><td>PubMed (schema 演示)</td><td><a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank">https://pubmed.ncbi.nlm.nih.gov</a></td><td>2026-05-16</td></tr><tr><td>Google Scholar (schema 演示)</td><td><a href="https://scholar.google.com" target="_blank">https://scholar.google.com</a></td><td>2026-05-16</td></tr></tbody></table></section>
+
+  <footer>Generated by DeepTutor v5 — Powered by Claude (v5)</footer>
+  </div>
+</main>
+</div>
+<script>(function(){var links=document.querySelectorAll('nav a[href^="#sec-"]');var sections=[];links.forEach(function(a){var id=a.getAttribute('href').slice(1);var el=document.getElementById(id);if(el)sections.push({a:a,el:el})});function update(){var y=window.scrollY+120;var cur=null;for(var i=0;i<sections.length;i++){if(sections[i].el.offsetTop<=y)cur=sections[i]}links.forEach(function(a){a.classList.remove('active')});if(cur)cur.a.classList.add('active')}window.addEventListener('scroll',update,{passive:true});update()})();</script>
+</body>
+</html>

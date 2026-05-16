@@ -1,0 +1,140 @@
+{
+  "lang": "en",
+  "version": "v5",
+  "generated_at": "2026-05-16T10:00:00-04:00",
+  "professor": {
+    "name": "Sarah Mitchell",
+    "name_en": "Dr. Sarah Mitchell",
+    "title": "Associate Professor",
+    "institution": "Massachusetts Institute of Technology",
+    "department": "Department of Biological Engineering",
+    "contact": {
+      "email": "smitchell@example-mit.edu",
+      "office": "Building 16, Room 5xx"
+    },
+    "ids": {
+      "ORCID": "0000-0000-0000-0001",
+      "Google Scholar": "https://scholar.google.com/citations?user=EXAMPLE2",
+      "Lab Website": "https://example-lab.mit.edu"
+    }
+  },
+  "sharp_critique": {
+    "score": 3,
+    "one_sentence": "A rising star with a strong publication record but a tenure clock that puts heavy implicit pressure on first-year PhD students.",
+    "persona_vs_reality": "Publicly emphasizes work-life balance; current students describe a de-facto 7-day-a-week pace driven by an aggressive grant timeline.",
+    "hidden_risk": "Tenure decision is expected in 2027 — if the case is unsuccessful, students mid-PhD will need to transfer advisors.",
+    "underrated_strength": "Exceptional one-on-one technical mentorship in single-cell methods; alumni report career-defining skill acquisition.",
+    "five_year_prediction": "Tenure case is competitive but not guaranteed; outcome will materially affect lab continuity through 2029.",
+    "alternatives": "If pre-tenure risk is unacceptable, consider Prof. X (same building, tenured, similar methods focus).",
+    "deal_breakers": ["Pre-tenure lab with no clear succession plan if tenure is denied"],
+    "deal_breaker_triggered": true,
+    "recommendation": "Cautious admit. Ask explicitly about contingency plans if tenure is denied, and seek funded co-advisor arrangement."
+  },
+  "scores": {
+    "composite": 3.2,
+    "dimensions": [
+      {"name": "Research Output", "weight": "15%", "score": 4, "evidence": "12 first/senior-author papers in 4 years, 2 in Nature Methods"},
+      {"name": "Mentorship Density", "weight": "12%", "score": 5, "evidence": "Weekly 1-on-1 + Slack response < 4h"},
+      {"name": "Alumni Trajectory", "weight": "12%", "score": 3, "evidence": "Only 1 PhD graduated so far — currently postdoc at Broad"},
+      {"name": "Funding Stability", "weight": "10%", "score": 2, "evidence": "R01 in renewal; 1 NSF CAREER active through 2027"},
+      {"name": "Toxicity Risk", "weight": "10%", "score": 4, "evidence": "No public reports; alumni describe respectful tone"},
+      {"name": "Lab Cohesion", "weight": "8%", "score": 4, "evidence": "Small lab (4 PhDs), tight cohort"},
+      {"name": "Work Hours", "weight": "8%", "score": 2, "evidence": "Implicit ~70h/week pre-tenure pressure"},
+      {"name": "Project Autonomy", "weight": "8%", "score": 3, "evidence": "PI-driven first 2 years; autonomy after qualifying exam"},
+      {"name": "International Exposure", "weight": "7%", "score": 4, "evidence": "Sends students to Keystone & Cell Symposia annually"},
+      {"name": "Stability (Retirement/Tenure)", "weight": "5%", "score": 2, "evidence": "Tenure decision pending 2027 — material risk"},
+      {"name": "Equity & Inclusion", "weight": "5%", "score": 5, "evidence": "Active in MIT WiBE chapter, balanced lab demographics"}
+    ]
+  },
+  "field_trend": {
+    "emoji": "📈",
+    "lifecycle": "Growth",
+    "lifecycle_en": "Growth",
+    "funding_trend": "NIH single-cell program funding up 22% over last 3 cycles; NSF Bio-AI initiative launching 2026",
+    "job_market": "Strong faculty market for ML+biology candidates; saturated for pure wet-lab single-cell",
+    "disruption_risk": "Foundation models for biology may commoditize current methods within 5-7 years",
+    "impact_on_student": "Graduation timing (2029-2030) coincides with peak hiring window if methods evolve toward AI integration"
+  },
+  "students": [
+    {"name": "J. Park (fictional)", "period": "2020-2025", "degree": "PhD", "papers": 3, "current_position": "Postdoc, Broad Institute"},
+    {"name": "M. Chen (fictional)", "period": "2021-current", "degree": "PhD (in progress)", "papers": 1, "current_position": "PhD candidate, year 5"}
+  ],
+  "flags": {
+    "red": [
+      {"flag": "Pre-tenure with no succession plan", "severity": "High", "evidence": "Tenure case 2027; no co-PI on current students"},
+      {"flag": "Single major grant (R01) up for renewal", "severity": "Medium", "evidence": "70% of lab funding dependent on R01-XX renewal in 2026"}
+    ],
+    "green": [
+      {"flag": "Strong technical mentorship", "evidence": "Alumni testimonial: 'best methods training in BE department'"},
+      {"flag": "No reported toxicity", "evidence": "Reddit r/gradschool + GradCafe both clean"},
+      {"flag": "Active equity advocacy", "evidence": "MIT WiBE board member 2023-current"}
+    ]
+  },
+  "social_reviews": {
+    "summary": "Reddit and GradCafe report a demanding but respectful PI. Main complaint is implicit time pressure rather than overt behavior.",
+    "sources": [
+      {"platform": "Reddit r/gradschool", "url": "https://reddit.com/example", "snippet": "She's tough but fair — I've never been yelled at, only pushed."},
+      {"platform": "GradCafe", "url": "https://thegradcafe.com/example", "snippet": "Interview was rigorous; she was upfront about tenure pressure."}
+    ]
+  },
+  "retirement_risk": {
+    "score": 2,
+    "age_estimate": "~38",
+    "retirement_eta": "N/A (early career)",
+    "funding_expiry": "R01: 2026/06 (under renewal); CAREER: 2027/06",
+    "succession_plan": "None — students would need to transfer if tenure is denied",
+    "assessment": "Retirement is not the risk — tenure outcome is. Mid-PhD students face material continuity risk."
+  },
+  "advisor_type": {
+    "type": "Research-Focused",
+    "type_en": "Research-Focused",
+    "evidence": "Heavy emphasis on output velocity; weekly 1-on-1 oriented around experimental decisions, not career mentoring."
+  },
+  "goal_match": {
+    "Tenure-Track Faculty": "High match 5/5",
+    "Industry R&D": "Medium match 3/5",
+    "Startup / Founder": "Low match 2/5",
+    "Consulting": "Low match 1/5"
+  },
+  "education": [
+    {"period": "2008-2012", "degree": "BS", "institution": "Stanford University", "field": "Bioengineering"},
+    {"period": "2012-2018", "degree": "PhD", "institution": "UC Berkeley", "field": "Computational Biology"}
+  ],
+  "career": [
+    {"period": "2018-2021", "position": "Postdoc", "institution": "Broad Institute"},
+    {"period": "2021-current", "position": "Assistant Professor", "institution": "MIT"}
+  ],
+  "research_directions": ["Single-cell multi-omics", "Foundation models for cell-state inference", "Spatial transcriptomics method development"],
+  "publications": {
+    "total": 28,
+    "h_index": 19,
+    "i10_index": 22,
+    "trend": "Sharp upward — 6 papers in 2025 vs 2 in 2022",
+    "top_papers": [
+      {"title": "Foundation models for single-cell perturbation prediction (example)", "journal": "Nature Methods", "year": 2025, "citations": 89},
+      {"title": "Spatial decomposition with self-supervised priors (example)", "journal": "Nature Methods", "year": 2024, "citations": 142},
+      {"title": "Trajectory inference benchmark redux (example)", "journal": "Genome Biology", "year": 2023, "citations": 76}
+    ]
+  },
+  "coauthors": [
+    {"name": "A. Regev (fictional reference)", "count": 5, "relationship": "Postdoc advisor", "institution": "Broad Institute"},
+    {"name": "K. Tanaka (fictional)", "count": 4, "relationship": "Long-term collaborator", "institution": "RIKEN"}
+  ],
+  "funding": [
+    {"name": "NIH R01-XX-EXAMPLE", "amount": "$1.8M total", "period": "2022-2026 (renewing)", "status": "renewing"},
+    {"name": "NSF CAREER (example)", "amount": "$550K", "period": "2022-2027", "status": "active"},
+    {"name": "MIT internal seed (example)", "amount": "$150K", "period": "2023-2024", "status": "ended"}
+  ],
+  "department_context": "MIT Biological Engineering is consistently top-3 in US News; shared core facilities (BioMicro Center, Koch Institute imaging) are 24/7 accessible to all groups.",
+  "next_steps": [
+    "Explicitly ask about contingency arrangements if tenure case fails in 2027",
+    "Request to speak with the one graduated PhD (J. Park) about her experience",
+    "Verify R01 renewal status before committing",
+    "Negotiate a formal co-advisor arrangement if accepted"
+  ],
+  "data_sources": [
+    {"name": "Example data — fictional professor", "url": "https://example.org/demo", "accessed": "2026-05-16"},
+    {"name": "PubMed (schema demo)", "url": "https://pubmed.ncbi.nlm.nih.gov", "accessed": "2026-05-16"},
+    {"name": "NIH RePORTER (schema demo)", "url": "https://reporter.nih.gov", "accessed": "2026-05-16"}
+  ]
+}

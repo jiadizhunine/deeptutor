@@ -1,0 +1,142 @@
+{
+  "lang": "zh",
+  "version": "v5",
+  "generated_at": "2026-05-16T10:00:00+08:00",
+  "professor": {
+    "name": "张伟",
+    "name_en": "Zhang Wei",
+    "title": "教授 / 博士生导师",
+    "institution": "北京大学",
+    "department": "生命科学学院",
+    "contact": {
+      "email": "zhangwei@example-pku.edu.cn",
+      "office": "吕志和楼 B312"
+    },
+    "ids": {
+      "ORCID": "0000-0000-0000-0000",
+      "Google Scholar": "https://scholar.google.com/citations?user=EXAMPLE",
+      "Lab Website": "https://example-lab.pku.edu.cn"
+    }
+  },
+  "sharp_critique": {
+    "score": 4,
+    "one_sentence": "学术轨迹稳健、组会节奏清晰的中生代 PI,适合想走学术路线但需要明确产出节奏的学生。",
+    "persona_vs_reality": "对外宣传以'前沿交叉'为主,实际 60% 经费集中在传统通路研究,交叉方向尚未成型。",
+    "hidden_risk": "实验室扩张过快(博士+博后从 6 人增至 14 人),老学生反馈一对一时间被压缩到每两周 15 分钟。",
+    "underrated_strength": "对学生第一作者署名极为看重,近 4 届毕业生全部以一作发表 IF>10 论文。",
+    "five_year_prediction": "若现有国自然重点项目顺利结题,3 年内有冲击杰青可能;但若交叉方向不能在 2027 前出关键论文,影响力会停滞。",
+    "alternatives": "若主要兴趣在单细胞工具开发而非通路验证,可考虑同院系王教授组(工具属性更强、组员更少)。",
+    "deal_breakers": [],
+    "deal_breaker_triggered": false,
+    "recommendation": "推荐报考。建议明确告知导师自己希望的方向是通路验证还是工具开发,前者匹配度极高,后者需谨慎。"
+  },
+  "scores": {
+    "composite": 4.1,
+    "dimensions": [
+      {"name": "学术产出", "weight": "15%", "score": 5, "evidence": "近 5 年 25 篇通讯,7 篇 IF>15"},
+      {"name": "学生指导密度", "weight": "12%", "score": 3, "evidence": "扩张后人均一对一时间下降,但有固定周会"},
+      {"name": "学生去向(天花板)", "weight": "12%", "score": 5, "evidence": "近 3 届博士全部去 985 教职或顶尖博后"},
+      {"name": "经费稳定性", "weight": "10%", "score": 4, "evidence": "1 项国自然重点 + 2 项面上,均在执行期"},
+      {"name": "PUA/压力", "weight": "10%", "score": 4, "evidence": "知乎与小木虫一致评价为'要求高但不羞辱'"},
+      {"name": "组员关系", "weight": "8%", "score": 4, "evidence": "团建频率高,氛围健康"},
+      {"name": "工作时长", "weight": "8%", "score": 3, "evidence": "默认 996,但允许灵活分配"},
+      {"name": "课题自由度", "weight": "8%", "score": 3, "evidence": "前 1.5 年导师指定方向,之后逐步放权"},
+      {"name": "国际曝光", "weight": "7%", "score": 4, "evidence": "每年至少 2 次 CSHL 等会议送学生口头"},
+      {"name": "退休稳定性", "weight": "5%", "score": 5, "evidence": "年龄 44,距退休 >15 年"},
+      {"name": "性别/弱势友好", "weight": "5%", "score": 4, "evidence": "实验室女生占比 50%,有 2 位育龄期 PI"}
+    ]
+  },
+  "field_trend": {
+    "emoji": "📈",
+    "lifecycle": "上升期",
+    "lifecycle_en": "Growth",
+    "funding_trend": "国自然在该领域近 3 年支持金额 +35%,2026 年新增重点专项",
+    "job_market": "高校教职供给充足,顶刊博后市场略饱和",
+    "disruption_risk": "AI 蛋白结构预测带来一定方法论冲击,但通路验证类研究短期不可替代",
+    "impact_on_student": "毕业时正赶上方向产出高峰,文章与就业窗口都较好"
+  },
+  "students": [
+    {"name": "李同学 (虚构)", "period": "2018-2023", "degree": "博士", "papers": 4, "current_position": "清华大学博士后"},
+    {"name": "王同学 (虚构)", "period": "2019-2024", "degree": "博士", "papers": 3, "current_position": "复旦大学讲师"},
+    {"name": "陈同学 (虚构)", "period": "2020-2025", "degree": "博士", "papers": 2, "current_position": "斯坦福大学博士后"}
+  ],
+  "flags": {
+    "red": [
+      {"flag": "实验室扩张过快", "severity": "中", "evidence": "2 年内人数翻倍,一对一时间压缩"},
+      {"flag": "经费集中在传统方向", "severity": "低", "evidence": "60% 经费来自 2 个面上项目"}
+    ],
+    "green": [
+      {"flag": "学生去向优秀", "evidence": "近 3 届毕业生 100% 学术路径"},
+      {"flag": "一作署名规范", "evidence": "学生反馈署名争议从未出现"},
+      {"flag": "无 PUA 记录", "evidence": "知乎/小木虫/师兄师姐口径一致"}
+    ]
+  },
+  "social_reviews": {
+    "summary": "知乎、小木虫与师兄师姐口径一致:'要求高、节奏快,但讲道理、不羞辱'。无 PUA 投诉记录。",
+    "sources": [
+      {"platform": "知乎", "url": "https://www.zhihu.com/example", "snippet": "组会被骂是因为实验设计漏洞,不是人身攻击。"},
+      {"platform": "小木虫", "url": "http://muchong.com/example", "snippet": "对学生第一作者署名很负责。"}
+    ]
+  },
+  "retirement_risk": {
+    "score": 5,
+    "age_estimate": "44 岁",
+    "retirement_eta": ">15 年",
+    "funding_expiry": "2028/12 (重点项目)",
+    "succession_plan": "无,仍在职业上升期",
+    "assessment": "稳定性极高,博士期间不存在导师退休风险"
+  },
+  "advisor_type": {
+    "type": "学术-指导型",
+    "type_en": "Mentorship-Heavy",
+    "evidence": "每周组会 + 入学第一年每两周 1 对 1,后期以季度汇报为主"
+  },
+  "goal_match": {
+    "学术路径(高校教职)": "高度契合 5/5",
+    "工业研发": "中等契合 3/5",
+    "出国深造": "高度契合 5/5",
+    "工具开发": "低度契合 2/5"
+  },
+  "education": [
+    {"period": "2002-2006", "degree": "学士", "institution": "北京大学", "field": "生物科学"},
+    {"period": "2006-2011", "degree": "博士", "institution": "Harvard University", "field": "Cell Biology"}
+  ],
+  "career": [
+    {"period": "2011-2014", "position": "博士后", "institution": "Stanford University"},
+    {"period": "2014-2020", "position": "助理/副教授", "institution": "北京大学"},
+    {"period": "2020-至今", "position": "教授", "institution": "北京大学"}
+  ],
+  "research_directions": ["细胞自噬", "代谢-自噬交叉调控", "肿瘤代谢靶点"],
+  "publications": {
+    "total": 87,
+    "h_index": 32,
+    "i10_index": 56,
+    "trend": "近 3 年发表数量稳定,通讯作者比例 >80%",
+    "top_papers": [
+      {"title": "Lysosomal control of mTORC1 (示例)", "journal": "Nature", "year": 2023, "citations": 124},
+      {"title": "Autophagy in tumor metabolism (示例)", "journal": "Cell Metabolism", "year": 2022, "citations": 98},
+      {"title": "AMPK-mediated mitophagy (示例)", "journal": "Nature Cell Biology", "year": 2024, "citations": 41}
+    ]
+  },
+  "coauthors": [
+    {"name": "Smith J (虚构)", "count": 8, "relationship": "博后导师", "institution": "Stanford University"},
+    {"name": "李教授 (虚构)", "count": 12, "relationship": "国内长期合作", "institution": "清华大学"}
+  ],
+  "funding": [
+    {"name": "国自然重点项目 (虚构)", "amount": "298 万", "period": "2024-2028", "status": "active"},
+    {"name": "国自然面上 (虚构)", "amount": "62 万", "period": "2023-2026", "status": "active"},
+    {"name": "科技部重点研发课题 (虚构)", "amount": "120 万", "period": "2022-2025", "status": "active"}
+  ],
+  "department_context": "北京大学生命科学学院综合实力国内前三,平台共享良好(质谱、单细胞、影像中心 24h 开放)。",
+  "next_steps": [
+    "联系实验室秘书索取近 2 年代表作 PDF 全文",
+    "通过师兄师姐了解组会节奏与一对一频率",
+    "确认博士前两年的方向是否可协商",
+    "查阅近 5 届毕业生第一作者数与去向"
+  ],
+  "data_sources": [
+    {"name": "示例数据 — 虚构教授", "url": "https://example.org/demo", "accessed": "2026-05-16"},
+    {"name": "PubMed (schema 演示)", "url": "https://pubmed.ncbi.nlm.nih.gov", "accessed": "2026-05-16"},
+    {"name": "Google Scholar (schema 演示)", "url": "https://scholar.google.com", "accessed": "2026-05-16"}
+  ]
+}
