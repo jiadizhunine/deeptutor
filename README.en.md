@@ -12,9 +12,10 @@
 
 Before committing years of your life to a graduate advisor, let AI run a deep due diligence investigation. DeepTutor automatically searches a professor's publications, student outcomes, social reputation, and lab culture, then delivers a standalone HTML report to help you make a smarter decision.
 
-![Version](https://img.shields.io/badge/version-v1.3-blue)
+![Version](https://img.shields.io/badge/version-v1.4-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Platform](https://img.shields.io/badge/platform-Claude_Code%20|%20Cursor%20|%20OpenClaw%20|%20OpenCode-purple)
+![Platform](https://img.shields.io/badge/platform-Claude_Code%20|%20Codex_CLI%20|%20Cursor%20|%20OpenCode%20|%20OpenClaw-purple)
+![Spec](https://img.shields.io/badge/spec-agents.md%20|%20agentskills.io-orange)
 
 <!-- screenshot of example report -->
 
@@ -38,6 +39,8 @@ Before committing years of your life to a graduate advisor, let AI run a deep du
 - **Retirement & Stability Risk (v1.1)** — Assesses whether the advisor will remain active for the student's full degree
 - **Multi-Advisor Comparison Mode** — Side-by-side comparison of multiple professors with a synthesized recommendation
 - **Standalone HTML Reports** — Single-file delivery with zero external dependencies, viewable offline
+- **Multi-Platform Support (v1.4)** — Works out of the box with Claude Code (`SKILL.md`), Codex CLI / OpenCode / OpenClaw / Aider / Cline / Roo / GitHub Copilot CLI (`AGENTS.md`), and Cursor (`.cursor/rules/`). One source, multiple entry points, kept in sync via symlinks
+- **agents.md Spec Compliance (v1.4)** — Root-level `AGENTS.md` follows the [agents.md](https://agents.md) open spec; any compliant tool works without extra config
 
 ---
 
@@ -121,26 +124,29 @@ DeepTutor scores advisors across **11 weighted dimensions** (International versi
 
 ```
 deeptutor/
-├── SKILL.md                          # Core skill definition
-├── .claude/skills/deeptutor/SKILL.md # Claude Code adapter
-├── .agents/skills/deeptutor/SKILL.md # AGENTS.md ecosystem
-├── .cursor/rules/deeptutor.mdc       # Cursor IDE adapter
-├── .openclaw/AGENTS.md               # OpenClaw adapter
-├── .opencode/AGENTS.md               # OpenCode adapter
-├── scripts/                          # Self-contained tools (zero dependencies)
-│   ├── robust_fetch.py               # Anti-bot web fetch (3-layer fallback)
-│   ├── search_social.py              # Chinese social platform search
-│   └── generate_report.py            # JSON → HTML report renderer
-├── references/                       # Reference documents
+├── SKILL.md                                      # Core skill definition (detailed, Claude Code / agentskills.io entry)
+├── AGENTS.md                                     # agents.md spec entry (Codex CLI / OpenCode / Aider / Cline / etc.)
+├── .claude/skills/deeptutor/SKILL.md → ../../../SKILL.md   # symlink, no drift
+├── .agents/skills/deeptutor/SKILL.md → ../../../SKILL.md   # symlink
+├── .cursor/rules/deeptutor.mdc                   # Cursor IDE adapter (short pointer)
+├── .opencode/AGENTS.md → ../AGENTS.md            # symlink
+├── .openclaw/AGENTS.md → ../AGENTS.md            # symlink
+├── scripts/                                      # Self-contained tools (zero dependencies)
+│   ├── robust_fetch.py                           # Anti-bot web fetch (3-layer fallback)
+│   ├── search_social.py                          # Chinese social platform search
+│   └── generate_report.py                        # JSON → HTML report renderer
+├── references/                                   # Reference documents
 │   ├── advisor_evaluation_framework.md
 │   ├── chinese_academic_system.md
 │   ├── international_academic_system.md
 │   ├── publication_search_protocol.md
 │   ├── report_template.md
-│   ├── web_rooter_integration.md     # Web access fallback strategy
-│   └── lite_mode.md                  # Lite mode specification
-└── examples/                         # Sample reports
+│   ├── web_rooter_integration.md                 # Web access fallback strategy
+│   └── lite_mode.md                              # Lite mode specification
+└── examples/                                     # Sample reports
 ```
+
+> **v1.4 design principle**: `SKILL.md` (detailed) and `AGENTS.md` (concise) are the only two sources of truth, each serving a different tool ecosystem. Every file under `.claude/`, `.agents/`, `.opencode/`, `.openclaw/` is a symlink — edit once, propagate everywhere, zero drift.
 
 ---
 

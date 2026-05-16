@@ -15,12 +15,14 @@ description: >
   "rate my potential advisor", "review this PI", or provide a professor's name + institution for evaluation.
   Also triggers on comparative requests ("帮我对比这三个导师", "compare these advisors").
 metadata:
-  author: jiadizhu
-  version: "1.3"
+  author: jiadizhunine
+  version: "1.4"
   license: MIT
 ---
 
-# DeepTutor v5 — Academic Advisor Investigation System
+# DeepTutor — Academic Advisor Investigation System
+
+> **Multi-platform skill.** This `SKILL.md` is the entry for Claude Code / agentskills.io. For Codex CLI, OpenCode, OpenClaw, Aider, Cline, Continue, and any other tool following the [agents.md spec](https://agents.md/), the equivalent entry point is the repo-root `AGENTS.md`. Cursor reads `.cursor/rules/deeptutor.mdc`. All three documents describe the same workflow; updates should be propagated to `AGENTS.md` when changing the workflow itself.
 
 ## Core Principle
 
@@ -67,15 +69,20 @@ DeepTutor has two investigation modes. The right mode depends on the model runni
 ### Auto-Detection Rule
 
 **Full Version (完整版)** — run without asking:
-- Claude Opus 4.6+, Claude Sonnet 4.6+, Codex series, and future Claude models of equivalent or higher capability
+- Claude Opus 4.6+ / Claude Sonnet 4.6+
+- GPT-5 / GPT-5-Codex (powering Codex CLI) and equivalent
+- Gemini 2.5 Pro / Gemini 3 and equivalent
+- Future flagship models of equivalent or higher capability
 
-**Prompt user to choose** — for all other models (GPT-4o, Gemini, GLM, MiniMax, Haiku, etc.), display:
+**Prompt user to choose** — for all other models (GPT-4o, Gemini Flash, GLM, MiniMax, Claude Haiku, smaller open models, etc.), display:
 
 > ⚠️ **DeepTutor 模式选择**
-> 检测到当前模型非 Opus/Sonnet 4.6 级别。
+> 检测到当前模型非旗舰级别。
 > - **完整版**: 10阶段/11维度/18节报告（推荐高端模型）
 > - **轻量版**: 6阶段/7维度/7节报告（Token约完整版40%，可能遗漏部分信息）
 > 请选择：完整版 or 轻量版？
+
+If unsure of the running model's class, default to prompting rather than silently running Full — a Lite report from a weaker model beats a hallucinated Full report.
 
 ### Lite Version: 6-Phase Workflow
 
